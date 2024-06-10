@@ -1,24 +1,15 @@
-from typing import Callable, Optional, Any
-from datetime import datetime
-
-
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel, QListWidget, QStackedWidget, QWidget, QLineEdit
-from PyQt6 import uic
-from PyQt6 import QtCore
-from PyQt6.QtCore import QDate
-
+# ------IMPORTS------------------------------------------
+from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit
 import sys
-from pathlib import Path
 import os
-
-# Ensure the project root is in the system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from db_session import DBSession
-from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
+# ---------------------------------------------------------
 
+# ------SEARCHBOOK_UI CLASS---------------------------------
 class SearchBook_UI:
-    # Search page
+    # List of objects in .ui file related to this module
     input_choose            : QComboBox
     input_find              : QLabel
     find_btn                : QPushButton
@@ -33,7 +24,7 @@ class SearchBook_UI:
     input_year_3            : QLineEdit
     
     def __init__(self, ui, db_session: DBSession):
-        self.ui = ui
+        self.ui         = ui
         self.db_session = db_session
         
     def searchBookInformation(self):
@@ -43,32 +34,26 @@ class SearchBook_UI:
             self.ui.search_table.setRowCount(0)
 
             column_mapping = {
-                "Book ID": "book_id",
-                "Warehouse ID": "warehouse_id",
-                "Title": "title",
-                "Author": "author",
-                "Public Year": "public_year",
+                "Book ID"       : "book_id",
+                "Warehouse ID"  : "warehouse_id",
+                "Title"         : "title",
+                "Author"        : "author",
+                "Public Year"   : "public_year",
                 "Public Company": "public_comp",
-                "ISBN": "isbn",
-                "Quantity": "quantity",
-                "Stage": "stage"
+                "ISBN"          : "isbn",
+                "Quantity"      : "quantity",
+                "Stage"         : "stage"
             }
 
             filter_criteria = self.ui.input_choose.currentText()
-            print(filter_criteria)
-            column_name = column_mapping[filter_criteria]
-            print(column_name)
-            search_query = self.ui.input_find.text().strip()
-            print(search_query)
-    
+            column_name     = column_mapping[filter_criteria]
+            search_query    = self.ui.input_find.text().strip()
     
             search_results = list(self.db_session.searchBook(column_name, search_query))
             
-            print(search_results)
-
             if search_results:
                 self.ui.search_table.setRowCount(len(search_results))
-                column_count = len(search_results[0])  # Assuming all rows have the same length
+                column_count = len(search_results[0]) 
                 self.ui.search_table.setColumnCount(column_count)
                 
                 if filter_criteria != "Book ID" and filter_criteria != "Title":

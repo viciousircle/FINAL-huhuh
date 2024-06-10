@@ -1,24 +1,17 @@
-from typing import Callable, Optional, Any
-from datetime import datetime
-
-
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel, QListWidget, QStackedWidget, QWidget, QLineEdit
-from PyQt6 import uic
-from PyQt6 import QtCore
-from PyQt6.QtCore import QDate
+# -------IMPORTS------------------------------------------
+from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QStackedWidget, QWidget
 
 import sys
-from pathlib import Path
 import os
-
-# Ensure the project root is in the system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from db_session import DBSession
-from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
+from lms_types import BooksBookMarcData, BooksBookData
+# ---------------------------------------------------------
 
+# ------SHOWFILE_UI CLASS---------------------------------
 class ShowFile_UI:
-        # Open File page
+    # List of objects in .ui file related to this module
     show_file_1             : QPushButton
     show_file_2             : QPushButton
     files_stackedWidget     : QStackedWidget
@@ -29,7 +22,7 @@ class ShowFile_UI:
     book_table              : QTableWidget
     
     def __init__(self, ui, db_session: DBSession):
-        self.ui = ui
+        self.ui         = ui
         self.db_session = db_session
         
         self.buttons_open = [

@@ -4,6 +4,7 @@ from .editbook import EditBook_UI
 from .searchbook import SearchBook_UI
 from .showfile import ShowFile_UI
 from .navigation import Navigation_UI
+from .homelms import Home_UI
 
 __all__ = [
     'Login_UI',
@@ -11,5 +12,6 @@ __all__ = [
     'EditBook_UI',
     'SearchBook_UI',
     'ShowFile_UI',
-    'Navigation_UI'
+    'Navigation_UI',
+    'Home_UI'
 ]

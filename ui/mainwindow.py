@@ -1,5 +1,8 @@
+
+# ---------IMPORTS------------------------------------------
+
 from typing import Optional
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox, QLabel, QListWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton
 from PyQt6 import uic
 
 import sys
@@ -11,6 +14,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from db_session import DBSession
 
 from ui import Navigation_UI, ShowFile_UI, EditBook_UI, AddBook_UI, SearchBook_UI
+
+# ------------------------------------------------------------
+
+# ---------MAINWINDOW_UI CLASS--------------------------------
 
 class MainWindow_UI(QMainWindow):
     
@@ -84,6 +91,10 @@ class MainWindow_UI(QMainWindow):
         
         self.lastClickedPageButton = button
 
+# ------------------------------------------------------------
+
+# ---------MAIN-----------------------------------------------
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     
@@ -91,3 +102,5 @@ if __name__ == "__main__":
     widget = MainWindow_UI(db_session_instance)
     widget.show()
     sys.exit(app.exec())
+    
+# ------------------------------------------------------------

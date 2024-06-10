@@ -1,15 +1,16 @@
+# ------IMPORTS------------------------------------------
 import sys
 import os
 from PyQt6.QtWidgets import  QPushButton, QMessageBox, QLabel
 from db_session import DBSession
 from typing import Optional
 from login import Login_UI
-
-# Ensure the project root is in the system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# ---------------------------------------------------------
 
+# ---------NAVIGATION_UI CLASS--------------------------------
 class Navigation_UI:
-    
+    # List of objects in .ui file related to this module
     admin_id                : QLabel
     admin_name              : QLabel
     

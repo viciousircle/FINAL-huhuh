@@ -1,24 +1,19 @@
-from typing import Callable, Optional, Any
-from datetime import datetime
 
-
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel, QListWidget, QStackedWidget, QWidget, QLineEdit
-from PyQt6 import uic
-from PyQt6 import QtCore
+# ------ IMPORTS ------------------------------------------
+from PyQt6.QtWidgets import QPushButton, QMessageBox, QComboBox, QLineEdit
 from PyQt6.QtCore import QDate
 
 import sys
-from pathlib import Path
 import os
-
-# Ensure the project root is in the system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from db_session import DBSession
-from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
+from lms_types import BooksBookMarcData, BooksBookData
+# ---------------------------------------------------------
 
+# ------ ADDBOOK_UI CLASS ---------------------------------
 class AddBook_UI:
-    
+    # List of objects in .ui file related to this module
     input_title     : QLineEdit
     input_author    : QLineEdit
     input_isbn      : QLineEdit
@@ -31,11 +26,11 @@ class AddBook_UI:
     
     
     def __init__(self, ui, db_session: DBSession):
-        self.ui = ui
+        self.ui         = ui
         self.db_session = db_session
         
         from ui import ShowFile_UI
-        self.showfile = ShowFile_UI(self.ui, self.db_session)
+        self.showfile   = ShowFile_UI(self.ui, self.db_session)
     
     def addBookInformation(self):
         try:
@@ -83,5 +78,5 @@ class AddBook_UI:
         except Exception as e:
             print("Error:", e)
 
-
+# ---------------------------------------------------------
   
