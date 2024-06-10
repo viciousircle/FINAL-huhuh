@@ -14,8 +14,6 @@ from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksB
 
 class Login_UI(QMainWindow):
     
-    
-    
     DESIGNER_FILE: str = "login.ui"
     
     def __init__(self, db_session: DBSession)-> None:
@@ -79,6 +77,8 @@ class Login_UI(QMainWindow):
         # Connect the "Enter" button to the handle_enter method
         self.ui.enterBtn.clicked.connect(self.handle_enter)
             
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     db_session_instance = DBSession()

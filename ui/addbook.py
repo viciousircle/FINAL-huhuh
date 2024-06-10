@@ -33,6 +33,9 @@ class AddBook:
     def __init__(self, ui, db_session: DBSession):
         self.ui = ui
         self.db_session = db_session
+        
+        from ui import ShowFile
+        self.showfile = ShowFile(self.ui, self.db_session)
     
     def addBookInformation(self):
         try:
@@ -73,8 +76,8 @@ class AddBook:
 
             if result[0]:
                 QMessageBox.information(self.ui, "Success", "Book information added successfully.")
-                self.updateBookMarcTable()
-                self.updateBookTable()
+                self.showfile.updateBookMarcTable()
+                self.showfile.updateBookTable()
             else:
                 QMessageBox.critical(self.ui, "Database Error", f"An error occurred: {result[1]}")
         except Exception as e:
