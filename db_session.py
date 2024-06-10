@@ -1,13 +1,13 @@
+
+# -------IMPORTS------------------------------------------
 import pyodbc
-from typing import Optional, Generator, Callable, Union, Tuple
+from typing import Optional, Generator, Tuple
 from datetime import datetime
 from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
-
-# from .lms_types import UserData, BookData, BookBorrowHistoryData, BookBorrowReviewData, BookReturnReviewData, ExecuteResult
-
+# ---------------------------------------------------------
 
 # nhớ chỉnh lại cái username
-# ----------------------------------------------
+# -------CONNECT TO DATABASE------------------------------------------
 DRIVER_NAME = "SQL Server"
 SERVER_NAME = "DESKTOP-BS6RK24\\SQLEXPRESS"
 DATABASE_NAME = "LMS"
@@ -16,25 +16,18 @@ connection_string = f"""
     DRIVER={DRIVER_NAME};
     SERVER={SERVER_NAME};
     DATABASE={DATABASE_NAME};
-    Trusted_Connection=yes;
+    Trusted_Connection = yes;
 """
+# ---------------------------------------------------------------   
 
-conn = pyodbc.connect(connection_string)
-print("Connected to database")
-print(conn)     
-# ----------------------------------------------    
-
+# -------DBSESSION CLASS------------------------------------------
 class DBSession:
-    connection: pyodbc.Connection
-
-    cursor: pyodbc.Cursor
+    # Define the connection and cursor as class variables
+    connection  : pyodbc.Connection
+    cursor      : pyodbc.Cursor
     
-    """
-    Initialize the DBSession class with a database connection and cursor.
-    """
-    connection = pyodbc.connect(connection_string)
-    cursor = connection.cursor()
-    
+    connection  = pyodbc.connect(connection_string)
+    cursor      = connection.cursor()
     print("DBSession initialized")
 
     def __init__(self) -> None:
