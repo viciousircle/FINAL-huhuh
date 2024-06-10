@@ -1,11 +1,16 @@
 
 from PyQt6.QtWidgets import QApplication, QWidget, QMessageBox, QMainWindow
 from PyQt6 import uic
+
+import os
 import sys
 from pathlib import Path
 
-from mainwindow import MainWindow_UI
+# Ensure the project root is in the system path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from db_session import DBSession
+from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
 
 class Login_UI(QMainWindow):
     
@@ -13,8 +18,9 @@ class Login_UI(QMainWindow):
     
     DESIGNER_FILE: str = "login.ui"
     
-    def __init__(self) -> None:
+    def __init__(self, db_session: DBSession)-> None:
         super().__init__()
+        self.db_session = db_session
         
         
         # for designer file
@@ -31,18 +37,27 @@ class Login_UI(QMainWindow):
         self.ui.backBtn_1.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_welcome))
         self.ui.backBtn_4.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_welcome))
     
-        
     def handle_login(self):
+        
         admin_id = self.ui.input_id.text()
         admin_password = self.ui.input_pass.text()
+        
+        print(admin_id, admin_password)
+        
+        admin_data = self.db_session.logIn(admin_id, admin_password)
 
         # Check if username and password are correct
-        if admin_id == "admin" and admin_password == "secret":
-            main_window = MainWindow_UI()  
+        if admin_data is not None:
+            print("Login successful")
+            
+            from mainwindow import MainWindow_UI
+            main_window = MainWindow_UI(self.db_session, admin_data.admin_id, admin_data.admin_name)  
+            
             main_window.show()
             self.close()
         else:
             # Show an error message
+            print("Login failed")
             QMessageBox.critical(self, "Login Failed", "Invalid username or password. Please try again.")
             
     def handle_enter(self):
@@ -52,7 +67,8 @@ class Login_UI(QMainWindow):
             # Show an error message
             QMessageBox.critical(self, "Enter Failed", "You need enter your name first. Please try again.")  
         else:
-            main_window = MainWindow_UI()  
+            from mainwindow import MainWindow_UI
+            main_window = MainWindow_UI(self.db_session)  
             main_window.show()
             self.close()
 
@@ -65,7 +81,10 @@ class Login_UI(QMainWindow):
             
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    login_window = Login_UI()
+    db_session_instance = DBSession()
+    login_window = Login_UI(db_session_instance)
+
+    # login_window = Login_UI(Session)
     login_window.setup_connections()
     login_window.show()
     sys.exit(app.exec())

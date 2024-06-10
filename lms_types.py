@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TypeVar, Union, Optional, Literal
 
@@ -31,18 +31,18 @@ ExecuteResult = Union[
 
 @dataclass
 class BooksBookMarcData:
-    book_id: Optional[int]
     title: Optional[str]
     author: Optional[str]
-    isbn: Optional[str]
     public_year: Optional[int]
-    public_company: Optional[str]
+    public_comp: Optional[str]
+    isbn: Optional[str]
+    book_id: Optional[int] = field(default=None)
     
 @dataclass
 class BooksBookData:
-    book_id: Optional[int]
-    warehouse_id: Optional[int]
     quantity: Optional[int]
     stage: Optional[str]
+    book_id: Optional[int] = field(default=None)
+    warehouse_id: Optional[int] = field(default=None)
 
 

@@ -1,5 +1,5 @@
 SELECT @@ServerName;
-
+USE master;
 -- Create the LMS database
 CREATE DATABASE LMS;
 GO
@@ -15,6 +15,8 @@ GO
 -- Create the book schema
 CREATE SCHEMA books;
 GO
+
+DROP DATABASE LMS;
 
 -- Create the account table for users
 CREATE TABLE users.account (
@@ -44,7 +46,7 @@ GO
 
 -- Create the bookMarc table for book details
 CREATE TABLE books.bookMarc (
-    book_id INT PRIMARY KEY,
+    book_id INT PRIMARY KEY IDENTITY(1,1),
     title VARCHAR(255),
     author VARCHAR(255),
     public_year INT,
@@ -55,8 +57,8 @@ GO
 
 -- Create the book table for book inventory
 CREATE TABLE books.book (
-    book_id INT PRIMARY KEY,
-    warehouse_id INT,
+    warehouse_id INT PRIMARY KEY IDENTITY(1,1),
+    book_id INT,
     quantity INT,
     stage VARCHAR(255),
     FOREIGN KEY (book_id) REFERENCES books.bookMarc(book_id)

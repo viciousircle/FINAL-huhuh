@@ -29,50 +29,149 @@ class DBSession:
 
     cursor: pyodbc.Cursor
     
+    """
+    Initialize the DBSession class with a database connection and cursor.
+    """
+    connection = pyodbc.connect(connection_string)
+    cursor = connection.cursor()
     
+    print("DBSession initialized")
+
     def __init__(self) -> None:
-        """
-        Initialize the DBSession class with a database connection and cursor.
-        """
-        self.connection = pyodbc.connect(connection_string)
-        self.cursor = self.connection.cursor()
+        pass
         
-        # print("DBSession initialized")
+    def logIn(self, admin_id: str, password: str) -> Optional[UsersAccountData]:
+        # print(admin_id, password)  # Add a print statement to check input values
+
+        try:
+            query = "SELECT * FROM users.account WHERE admin_id = ? AND password = ?"
+            self.cursor.execute(query, (admin_id, password))
+            row = self.cursor.fetchone()
+            if row:
+                # print("Login successful")
+                return UsersAccountData(*row)
+            else:
+                print("Login failed")
+                return None
+        except pyodbc.Error as err:
+            print("Database error:", err)  # Print database error for debugging
+            return None
+        except Exception as err:
+            print("Unexpected error:", err)  # Print unexpected errors for debugging
+            raise err
+
+
+    def recordGuestLogIn(self, guest_name: str) -> ExecuteResult[None]:
+        try:
+            self.cursor.execute("INSERT INTO users.guest (guest_name, timestamp) VALUES (?, ?)", (guest_name, datetime.now()))
+            self.connection.commit()
+            return (True, None)
+        except pyodbc.Error as err:
+            self.connection.rollback()
+            return (False, str(err))
+        except Exception as err:
+            return (False, str(err))
         
+# ------------------------------------------
+    
     def addBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
-        
         try:
             # Insert data into BookMarcData table
             self.cursor.execute(
-                "INSERT INTO books.bookMarc (book_id, title, author, isbn, public_year, public_comp) VALUES (?, ?, ?, ?, ?, ?)",
-                (bookMarcData.book_id, bookMarcData.title, bookMarcData.author, bookMarcData.isbn, bookMarcData.public_year, bookMarcData.public_company)
+                "INSERT INTO books.bookMarc (title, author, isbn, public_year, public_comp) VALUES (?, ?, ?, ?, ?)",
+                (bookMarcData.title, bookMarcData.author, bookMarcData.isbn, bookMarcData.public_year, bookMarcData.public_comp)
             )
-            self.connection.commit()
+    
+            print("BookMarcData inserted")
 
-            # Get the last inserted book ID
-            self.cursor.execute("SELECT @@IDENTITY")
+            # Get the last inserted book ID using SCOPE_IDENTITY()
+            self.cursor.execute("SELECT SCOPE_IDENTITY()")
             book_id = self.cursor.fetchone()[0]
+            print("Book ID:", book_id)
+            
+
 
             # Insert data into BookData table
             self.cursor.execute(
-                "INSERT INTO books.book (book_id, warehouse_id, quantity, stage) VALUES (?, ?, ?, ?)",
-                (book_id, bookData.warehouse_id, bookData.quantity, bookData.stage)
+                "INSERT INTO books.book (book_id, quantity, stage) VALUES (?, ?, ?)",
+                (book_id, bookData.quantity, bookData.stage)
             )
             self.connection.commit()
+            print("BookData inserted")
 
-            return (True, book_id)
+            # Get the last inserted warehouse ID using SCOPE_IDENTITY()
+            self.cursor.execute("SELECT SCOPE_IDENTITY()")
+            warehouse_id = self.cursor.fetchone()[0]
+            print("Warehouse ID:", warehouse_id)
+            return (True, None)
+            
+            
+            # 0------------------
+            # self.cursor.execute(
+            #     "INSERT INTO books.book (quantity, stage) VALUES (?, ?)",
+            #     (bookData.quantity, bookData.stage)
+            # )
+            # self.connection.commit()
+            
+            # self.cursor.execute("SELECT SCOPE_IDENTITY()")
+            # book_id = self.cursor.fetchone()[0]
+            
+            # self.cursor.execute(
+            #     "INSERT INTO books.book (book_id) VALUES (?)",
+            #     (book_id,)
+            # )
+            # self.connection.commit()
+            
+            # self.cursor.execute("SELECT SCOPE_IDENTITY()")
+            # warehouse_id = self.cursor.fetchone()[0]
+            # print("Warehouse ID:", warehouse_id)
+            # return (True, None)
+
 
         except pyodbc.Error as err:
-            # Check if the error is related to duplicate book_id or warehouse_id
+            self.connection.rollback()
             if "duplicate key" in str(err).lower():
-                return (False, f"Duplicate book ID or warehouse ID detected.")
+                return (False, "Duplicate book ID or warehouse ID detected.")
             else:
-                self.connection.rollback()
                 return (False, str(err))
 
         except Exception as err:
+            self.connection.rollback()
             return (False, str(err))
     
+    def getBookById(self, book_id: int) -> Optional[Tuple[BooksBookMarcData, BooksBookData]]:
+        try:
+            query = """
+                SELECT BM.book_id, BM.title, BM.author, BM.isbn, BM.public_year, BM.public_comp, BD.warehouse_id, BD.quantity, BD.stage
+                FROM books.bookMarc BM
+                JOIN books.book BD ON BM.book_id = BD.book_id
+                WHERE BM.book_id = ?
+            """
+            self.cursor.execute(query, (book_id,))
+            row = self.cursor.fetchone()
+            print("Row:", row)
+            if row:
+                bookMarcData = BooksBookMarcData(
+                    title=row[1],
+                    author=row[2],
+                    isbn=row[3],
+                    public_year=row[4],
+                    public_comp=row[5],
+                    book_id=row[0]
+                )
+                bookData = BooksBookData(
+                    warehouse_id=row[6],
+                    quantity=row[7],
+                    stage=row[8],
+                    book_id=row[0]
+                )
+                print("Book found")
+                return (bookMarcData, bookData)
+            else:
+                return None
+        except Exception as err:
+            return None            
+
     
     def updateBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:
@@ -98,9 +197,9 @@ class DBSession:
                 if bookMarcData.public_year != old_bookMarcData.public_year:
                     update_query += "public_year = ?, "
                     params.append(bookMarcData.public_year)
-                if bookMarcData.public_company != old_bookMarcData.public_company:
-                    update_query += "public_company = ?, "
-                    params.append(bookMarcData.public_company)
+                if bookMarcData.public_comp != old_bookMarcData.public_comp:
+                    update_query += "public_comp = ?, "
+                    params.append(bookMarcData.public_comp)
 
                 if update_query.endswith(", "):
                     update_query = update_query[:-2]  # Remove the trailing comma and space
@@ -146,11 +245,12 @@ class DBSession:
         except Exception as err:
             return (False, str(err))
             
-    def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None, order_by: Optional[str] = None) -> Generator[Tuple[str, int, str], None, None]:
+
+    def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[str, int, str], None, None]:
         try:
             # Define the base query with the common columns
             query = """
-                SELECT BM.title, BD.book_id
+                SELECT BD.book_id, BM.title 
                 FROM books.bookMarc BM
                 JOIN books.book BD ON BM.book_id = BD.book_id
             """
@@ -164,21 +264,27 @@ class DBSession:
                     FROM books.book BD
                     JOIN books.bookMarc BM ON BD.book_id = BM.book_id
                 """
-
+            print("Query:", query)
             # Add WHERE clause based on the filter criteria and value
             if filter_criteria and filter_value:
                 query += f" WHERE BM.{filter_criteria} = ? "
                 params.append(filter_value)
+            print("Query:", query)
+            print("Params:", params)
 
-            # Add ORDER BY clause based on the order_by parameter
-            if order_by:
-                query += f" ORDER BY {order_by}"
+            
 
             self.cursor.execute(query, params)
+            print("Query executed")
             for row in self.cursor.fetchall():
                 yield row
+            print("Rows fetched")
+                
+            
         except Exception as err:
-            return None
+            return err
+    
+
     
     def showFileBookMarc(self) -> Generator[BooksBookMarcData, None, None]:
         try:
@@ -257,4 +363,4 @@ class DBSession:
     def close(self) -> None:
         self.cursor.close()
         self.connection.close()
-    
+
