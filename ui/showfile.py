@@ -37,7 +37,11 @@ class ShowFile_UI:
             self.ui.show_file_2,
         ]
         
-                # Show file
+        # Link database to the table files
+        self.showFileBookMarc()
+        self.showFileBook()
+        
+        # Show file_page
         self.ui.show_file_1.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.bookMarc_page))
         self.ui.show_file_2.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.book_page))
         
