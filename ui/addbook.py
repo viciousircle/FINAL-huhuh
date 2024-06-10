@@ -17,7 +17,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from db_session import DBSession
 from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
 
-class AddBook:
+class AddBook_UI:
     
     input_title     : QLineEdit
     input_author    : QLineEdit
@@ -34,8 +34,8 @@ class AddBook:
         self.ui = ui
         self.db_session = db_session
         
-        from ui import ShowFile
-        self.showfile = ShowFile(self.ui, self.db_session)
+        from ui import ShowFile_UI
+        self.showfile = ShowFile_UI(self.ui, self.db_session)
     
     def addBookInformation(self):
         try:

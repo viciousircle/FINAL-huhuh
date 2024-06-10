@@ -29,7 +29,7 @@ class Navigation_UI:
             self.ui.edit_btn,
             self.ui.open_btn,
         ]
-        
+
 
         # Add page
         self.ui.add_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.add_page))
@@ -41,4 +41,7 @@ class Navigation_UI:
         self.ui.open_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.open_page))
         # Home page
         self.ui.home_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.home_page))
-        
+    
+
+    
+    

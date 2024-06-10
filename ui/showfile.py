@@ -17,7 +17,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from db_session import DBSession
 from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
 
-class ShowFile:
+class ShowFile_UI:
         # Open File page
     show_file_1             : QPushButton
     show_file_2             : QPushButton
@@ -31,6 +31,11 @@ class ShowFile:
     def __init__(self, ui, db_session: DBSession):
         self.ui = ui
         self.db_session = db_session
+        
+        self.buttons_open = [
+            self.ui.show_file_1,
+            self.ui.show_file_2,
+        ]
         
     def showFileBookMarc(self):
         # Fetch data from the database

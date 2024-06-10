@@ -12,7 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from db_session import DBSession
 from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
 
-from ui import AddBook, EditBook, SearchBook, ShowFile, Navigation_UI
+from ui import Navigation_UI, ShowFile_UI, EditBook_UI, AddBook_UI, SearchBook_UI
 # from addbook import AddBook
 
 class MainWindow_UI(QMainWindow):
@@ -41,66 +41,38 @@ class MainWindow_UI(QMainWindow):
         super().__init__()
         
         # Set up the database session
-        self.db_session = db_session
+        self.db_session     = db_session
         
         # Set up the UI
         designer_files_path = Path(__file__).resolve().parent.joinpath("designer-files", self.DESIGNER_FILE)
-        self.ui = uic.loadUi(designer_files_path, self)
+        self.ui             = uic.loadUi(designer_files_path, self)
         
         # Save the account id and name
         self.account_id     = account_id
         self.account_name   = account_name
-
-        
-        # # List of buttons_nav in navigation bar
-        # self.buttons_nav = [
-        #     self.ui.home_btn,
-        #     self.ui.add_btn,
-        #     self.ui.search_btn,
-        #     self.ui.edit_btn,
-        #     self.ui.open_btn,
-        # ]
-        
-        self.buttons_open = [
-            self.ui.show_file_1,
-            self.ui.show_file_2,
-        ]
-        
         # Show admin id and name in the main window
         self.ui.admin_id.setText(str(self.account_id))
         self.ui.admin_name.setText(self.account_name)
         
         # Connect
-        self.navigation = Navigation_UI(self.ui, self.db_session)
-        self.addbook = AddBook(self.ui, self.db_session)
-        self.editbook = EditBook(self.ui, self.db_session)
-        self.searchbook = SearchBook(self.ui, self.db_session)
-        self.showfile = ShowFile(self.ui, self.db_session)
+        self.navigation     = Navigation_UI(self.ui, self.db_session)
+        self.addbook        = AddBook_UI(self.ui, self.db_session)
+        self.editbook       = EditBook_UI(self.ui, self.db_session)
+        self.searchbook     = SearchBook_UI(self.ui, self.db_session)
+        self.showfile       = ShowFile_UI(self.ui, self.db_session)
         
         self.show()
         
         self.lastClickedButton: Optional[QPushButton] = None
                 
-        # # Switch page
-        # # Add page
-        # self.ui.add_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.add_page))
-        # # Search page
-        # self.ui.search_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.search_page))
-        # # Edit page
-        # self.ui.edit_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.edit_page))
-        # # Open page
-        # self.ui.open_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.open_page))
-        # # Home page
-        # self.ui.home_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.home_page))
         
         # Show file
         self.ui.show_file_1.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.bookMarc_page))
         self.ui.show_file_2.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.book_page))
         
-    # Chuaw lamf 
-        # for button in self.buttons_nav:
-        #     button.clicked.connect(lambda checked, b=button: self.buttonClicked(b))
-        for button in self.buttons_open:
+        for button in self.navigation.buttons_nav:
+            button.clicked.connect(lambda checked, b=button: self.buttonClicked(b))
+        for button in self.showfile.buttons_open:
             button.clicked.connect(lambda checked, b=button: self.buttonClicked(b))
         
         #Connect log out button
