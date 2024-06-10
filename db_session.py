@@ -32,27 +32,35 @@ class DBSession:
 
     def __init__(self) -> None:
         pass
-        
+    
+    # --- LOG IN FUNCTION ------------------------------------------
     def logIn(self, admin_id: str, password: str) -> Optional[UsersAccountData]:
-        # print(admin_id, password)  # Add a print statement to check input values
-
         try:
             query = "SELECT * FROM users.account WHERE admin_id = ? AND password = ?"
             self.cursor.execute(query, (admin_id, password))
             row = self.cursor.fetchone()
             if row:
-                # print("Login successful")
                 return UsersAccountData(*row)
             else:
                 print("Login failed")
                 return None
         except pyodbc.Error as err:
-            print("Database error:", err)  # Print database error for debugging
+            print("Database error:", err)  
             return None
         except Exception as err:
-            print("Unexpected error:", err)  # Print unexpected errors for debugging
+            print("Unexpected error:", err)  
             raise err
 
+    def getAdmin(self, admin_id: int) -> Optional[UsersAccountData]:
+        try:
+            self.cursor.execute("SELECT * FROM users.admin WHERE admin_id = ?", (admin_id,))
+            row = self.cursor.fetchone()
+            if row:
+                return UsersAccountData(*row)
+            else:
+                return None
+        except Exception as err:
+            return None        
 
     def recordGuestLogIn(self, guest_name: str) -> ExecuteResult[None]:
         try:
@@ -65,8 +73,7 @@ class DBSession:
         except Exception as err:
             return (False, str(err))
         
-# ------------------------------------------
-    
+    # --- ADD BOOK FUNCTION ------------------------------------------
     def addBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
         try:
             # Insert data into BookMarcData table
@@ -132,6 +139,7 @@ class DBSession:
             self.connection.rollback()
             return (False, str(err))
     
+    # --- EDIT BOOK FUNCTION ------------------------------------------
     def getBookById(self, book_id: int) -> Optional[Tuple[BooksBookMarcData, BooksBookData]]:
         try:
             query = """
@@ -165,7 +173,6 @@ class DBSession:
         except Exception as err:
             return None            
 
-    
     def updateBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:
             # Check if book_id exists
@@ -237,8 +244,8 @@ class DBSession:
             return (False, str(err))
         except Exception as err:
             return (False, str(err))
-            
-
+    
+    # --- SEARCH BOOK FUNCTION ------------------------------------------
     def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[str, int, str], None, None]:
         try:
             # Define the base query with the common columns
@@ -277,8 +284,7 @@ class DBSession:
         except Exception as err:
             return err
     
-
-    
+    # --- SHOW FILE FUNCTION ------------------------------------------
     def showFileBookMarc(self) -> Generator[BooksBookMarcData, None, None]:
         try:
             query = "SELECT * FROM books.bookMarc"
@@ -297,6 +303,7 @@ class DBSession:
         except Exception as err:
             raise err
         
+    # --- SHOW HISTORY FUNCTION ------------------------------------------
     def showHistory(self) -> Generator[UsersHistoryData, None, None]:
         try:
             query = "SELECT * FROM users.history"
@@ -314,7 +321,8 @@ class DBSession:
                 yield UsersHistoryData(*row)
         except Exception as err:
             raise err
-        
+    
+    # --- SHOW USERS FUNCTION ------------------------------------------
     def showGuest(self) -> Generator[UsersGuestData, None, None]:
         try:
             query = "SELECT * FROM users.guest"
@@ -332,9 +340,7 @@ class DBSession:
                 yield UsersHistoryData(*row)
         except Exception as err:
             raise err
-            
-        
-        
+                
     def getGuestCount(self) -> int:
         try:
             self.cursor.execute("SELECT COUNT(*) FROM users.guest")
@@ -342,17 +348,7 @@ class DBSession:
         except Exception as err:
             raise err
         
-    def getAdmin(self, admin_id: int) -> Optional[UsersAccountData]:
-        try:
-            self.cursor.execute("SELECT * FROM users.admin WHERE admin_id = ?", (admin_id,))
-            row = self.cursor.fetchone()
-            if row:
-                return UsersAccountData(*row)
-            else:
-                return None
-        except Exception as err:
-            return None    
-        
+
     def close(self) -> None:
         self.cursor.close()
         self.connection.close()
