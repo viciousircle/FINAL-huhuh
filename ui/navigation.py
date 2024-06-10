@@ -41,6 +41,23 @@ class Navigation_UI:
         self.ui.open_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.open_page))
         # Home page
         self.ui.home_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.home_page))
+        
+    def comfirmLogOut(self):
+        reply = QMessageBox.question(self, 'Message', "Are you sure you want to log out?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        
+        if reply == QMessageBox.StandardButton.Yes:
+            self.logOut()
+        
+    def logOut(self):
+        print("Log Out")
+        
+        self.close()
+        
+        from login import Login_UI
+        self.login_window = Login_UI(self.db_session)
+        self.login_window.show()
+    
+    
     
 
     

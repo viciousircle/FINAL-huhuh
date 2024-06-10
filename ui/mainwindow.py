@@ -47,13 +47,6 @@ class MainWindow_UI(QMainWindow):
         designer_files_path = Path(__file__).resolve().parent.joinpath("designer-files", self.DESIGNER_FILE)
         self.ui             = uic.loadUi(designer_files_path, self)
         
-        # Save the account id and name
-        self.account_id     = account_id
-        self.account_name   = account_name
-        # Show admin id and name in the main window
-        self.ui.admin_id.setText(str(self.account_id))
-        self.ui.admin_name.setText(self.account_name)
-        
         # Connect
         self.navigation     = Navigation_UI(self.ui, self.db_session)
         self.addbook        = AddBook_UI(self.ui, self.db_session)
@@ -61,38 +54,42 @@ class MainWindow_UI(QMainWindow):
         self.searchbook     = SearchBook_UI(self.ui, self.db_session)
         self.showfile       = ShowFile_UI(self.ui, self.db_session)
         
-        self.show()
+        # Save the account id and name
+        self.account_id     = account_id
+        self.account_name   = account_name
+        # Show admin id and name in the main window
+        self.ui.admin_id.setText(str(self.account_id))
+        self.ui.admin_name.setText(self.account_name)
         
-        self.lastClickedButton: Optional[QPushButton] = None
                 
-        
-        # Show file
-        self.ui.show_file_1.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.bookMarc_page))
-        self.ui.show_file_2.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.book_page))
-        
-        for button in self.navigation.buttons_nav:
-            button.clicked.connect(lambda checked, b=button: self.buttonClicked(b))
-        for button in self.showfile.buttons_open:
-            button.clicked.connect(lambda checked, b=button: self.buttonClicked(b))
-        
-        #Connect log out button
-        self.ui.logout_btn.clicked.connect(self.comfirmLogOut)  
-        
-        
         # Connect buttons
         self.ui.submit_btn.clicked.connect(self.addbook.addBookInformation)
         self.ui.find_btn.clicked.connect(self.searchbook.searchBookInformation)
         self.ui.find_btn_2.clicked.connect(self.editbook.editBookInformation)
         self.ui.save_btn.clicked.connect(self.editbook.saveBookInformation)
-        # Show file page
+        self.ui.logout_btn.clicked.connect(self.navigation.comfirmLogOut)  
+        
+        # Show files in page open file
         self.showfile.showFileBookMarc()
         self.showfile.showFileBook()
+        
+        # Save the last clicked button
+        self.lastClickedButton: Optional[QPushButton] = None
+
+        for button in self.navigation.buttons_nav:
+            button.clicked.connect(lambda checked, b=button: self.buttonClicked(b))
+        for button in self.showfile.buttons_open:
+            button.clicked.connect(lambda checked, b=button: self.buttonClicked(b))
         
         
         # Set home page as default
         self.buttonClicked(self.ui.home_btn)
         
         
+        # ----- Show the main window -----
+        self.show()
+        
+
     def buttonClicked(self,button):
         
         if self.lastClickedButton is not None:
@@ -120,20 +117,20 @@ class MainWindow_UI(QMainWindow):
         
         self.lastClickedButton = button
     
-    def comfirmLogOut(self):
-        reply = QMessageBox.question(self, 'Message', "Are you sure you want to log out?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+    # def comfirmLogOut(self):
+    #     reply = QMessageBox.question(self, 'Message', "Are you sure you want to log out?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         
-        if reply == QMessageBox.StandardButton.Yes:
-            self.logOut()
+    #     if reply == QMessageBox.StandardButton.Yes:
+    #         self.logOut()
         
-    def logOut(self):
-        print("Log Out")
+    # def logOut(self):
+    #     print("Log Out")
         
-        self.close()
+    #     self.close()
         
-        from login import Login_UI
-        self.login_window = Login_UI(self.db_session)
-        self.login_window.show()
+    #     from login import Login_UI
+    #     self.login_window = Login_UI(self.db_session)
+    #     self.login_window.show()
     
     
 if __name__ == "__main__":
