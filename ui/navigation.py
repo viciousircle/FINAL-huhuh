@@ -2,7 +2,7 @@ import sys
 import os
 from PyQt6.QtWidgets import  QPushButton, QMessageBox, QLabel
 from db_session import DBSession
-
+from typing import Optional
 from login import Login_UI
 
 # Ensure the project root is in the system path
@@ -48,6 +48,12 @@ class Navigation_UI:
         # Log out
         self.ui.logout_btn.clicked.connect(self.comfirmLogOut)
         
+        # Save the last clicked button
+        self.lastClickedNavButton: Optional[QPushButton] = None
+        
+        for button in self.buttons_nav:
+            button.clicked.connect(lambda checked, b=button: self.navigationButtonClicked(b))
+        
     def comfirmLogOut(self):
         
         reply = QMessageBox.question(self.ui, 'Message', "Are you sure you want to log out?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
@@ -61,6 +67,31 @@ class Navigation_UI:
         
         self.login_window = Login_UI(self.db_session)
         self.login_window.show()
+    
+    def navigationButtonClicked(self, button):
+        if self.lastClickedNavButton is not None:
+            self.lastClickedNavButton.setStyleSheet("""
+                QPushButton{
+                    border: 2px solid black;
+                    color: black;
+                }
+                QPushButton:hover{
+                    border: 2px solid #560bad;
+                    color: #560bad;
+                }
+            """)
+            self.lastClickedNavButton.setDisabled(False)
+        
+        button.setStyleSheet("""
+            QPushButton{
+                border: 2px solid grey;
+                color: grey;
+            }
+        """)
+        button.setDisabled(True)
+        
+        self.lastClickedNavButton = button
+    
     
     
     
