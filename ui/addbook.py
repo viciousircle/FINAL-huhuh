@@ -14,15 +14,18 @@ from lms_types import BooksBookMarcData, BooksBookData
 # ------ ADDBOOK_UI CLASS ---------------------------------
 class AddBook_UI:
     # List of objects in .ui file related to this module
+    input_isbn      : QLineEdit
+    
     input_title     : QLineEdit
     input_author    : QLineEdit
-    input_isbn      : QLineEdit
     input_comp      : QLineEdit
     input_year      : QDate
     input_quantity  : QLineEdit
     input_stage     : QComboBox
     
     submit_btn      : QPushButton
+    reset_btn       : QPushButton
+    enter_btn       : QPushButton
     
     
     def __init__(self, ui, db_session: DBSession):

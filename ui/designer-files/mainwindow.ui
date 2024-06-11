@@ -82,12 +82,17 @@
         </attribute>
         <column>
          <property name="text">
-          <string>Warehouse ID</string>
+          <string>Book ID</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Book ID</string>
+          <string>ISBN</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Warehouse ID</string>
          </property>
         </column>
         <column>
@@ -146,6 +151,11 @@
         </column>
         <column>
          <property name="text">
+          <string>ISBN</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>Title</string>
          </property>
         </column>
@@ -164,15 +174,10 @@
           <string>Public Company</string>
          </property>
         </column>
-        <column>
-         <property name="text">
-          <string>ISBN</string>
-         </property>
-        </column>
        </widget>
       </widget>
      </widget>
-     <widget class="QPushButton" name="show_file_1">
+     <widget class="QPushButton" name="show_file_BookMarc">
       <property name="geometry">
        <rect>
         <x>40</x>
@@ -208,7 +213,7 @@ QPushButton:visited{
        <string>File bookMarc.bin</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="show_file_2">
+     <widget class="QPushButton" name="show_file_Book">
       <property name="geometry">
        <rect>
         <x>220</x>
@@ -283,7 +288,7 @@ QPushButton::after{
         <string>ISBN</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="input_isbn">
+      <widget class="QLineEdit" name="input_isbnAdd">
        <property name="geometry">
         <rect>
          <x>250</x>
@@ -299,7 +304,7 @@ padding: 0px 10px 0px 10px ;
 </string>
        </property>
       </widget>
-      <widget class="QPushButton" name="submit_btn_2">
+      <widget class="QPushButton" name="enter_btn">
        <property name="geometry">
         <rect>
          <x>700</x>
@@ -358,7 +363,7 @@ QPushButton::after{
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="input_title">
+         <widget class="QLineEdit" name="input_titleAdd">
           <property name="styleSheet">
            <string notr="true">border: 2px solid black;
 color: rgb(0, 0, 0);
@@ -380,7 +385,7 @@ padding: 0px 10px 0px 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="input_author">
+         <widget class="QLineEdit" name="input_authorAdd">
           <property name="styleSheet">
            <string notr="true">border: 2px solid black;
 color: rgb(0, 0, 0);
@@ -402,7 +407,7 @@ padding: 0px 10px 0px 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="input_comp">
+         <widget class="QLineEdit" name="input_compAdd">
           <property name="styleSheet">
            <string notr="true">border: 2px solid black;
 color: rgb(0, 0, 0);
@@ -424,7 +429,7 @@ padding: 0px 10px 0px 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QDateEdit" name="input_year">
+         <widget class="QDateEdit" name="input_yearAdd">
           <property name="styleSheet">
            <string notr="true">border: 2px solid black;
 color: rgb(0, 0, 0);
@@ -467,7 +472,7 @@ padding: 0px 10px 0px 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="input_quantity">
+         <widget class="QSpinBox" name="input_quantityAdd">
           <property name="styleSheet">
            <string notr="true">border: 2px solid black;
 color: rgb(0, 0, 0);
@@ -489,7 +494,7 @@ padding: 0px 10px 0px 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="input_stage">
+         <widget class="QComboBox" name="input_stageAdd">
           <property name="styleSheet">
            <string notr="true">border: 2px solid black;
 color: rgb(0, 0, 0);
@@ -543,10 +548,10 @@ QPushButton::after{
 </string>
        </property>
        <property name="text">
-        <string>Add</string>
+        <string>Submit</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="submit_btn_3">
+      <widget class="QPushButton" name="reset_btn">
        <property name="geometry">
         <rect>
          <x>330</x>
@@ -719,6 +724,11 @@ padding: 5 10px 5 10px ;
          </property>
          <item>
           <property name="text">
+           <string>IBSN</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>Book ID</string>
           </property>
          </item>
@@ -740,11 +750,6 @@ padding: 5 10px 5 10px ;
          <item>
           <property name="text">
            <string>Stage</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>IBSN</string>
           </property>
          </item>
          <item>
@@ -891,7 +896,7 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit"/>
+         <widget class="QLineEdit" name="input_titleEdit"/>
         </item>
         <item alignment="Qt::AlignTop">
          <widget class="QLabel" name="author_4">
@@ -906,7 +911,7 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_2"/>
+         <widget class="QLineEdit" name="input_authorEdit"/>
         </item>
         <item>
          <widget class="QLabel" name="publish_comp_4">
@@ -921,7 +926,7 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_4"/>
+         <widget class="QLineEdit" name="input_compEdit"/>
         </item>
         <item>
          <widget class="QLabel" name="publish_year_4">
@@ -936,7 +941,7 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_5"/>
+         <widget class="QLineEdit" name="input_yearEdit"/>
         </item>
         <item>
          <widget class="QLabel" name="quantity_5">
@@ -951,7 +956,7 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox"/>
+         <widget class="QSpinBox" name="input_quantityEdit"/>
         </item>
         <item>
          <widget class="QLabel" name="status_5">
@@ -966,11 +971,22 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBox"/>
+         <widget class="QComboBox" name="input_stageEdit">
+          <item>
+           <property name="text">
+            <string>Available</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Unavailable</string>
+           </property>
+          </item>
+         </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QPushButton" name="edit_btn_2">
+      <widget class="QPushButton" name="edit_btn">
        <property name="geometry">
         <rect>
          <x>440</x>
@@ -1009,7 +1025,7 @@ padding: 0 10px 0 10px ;
         <string>Edit</string>
        </property>
       </widget>
-      <widget class="QStackedWidget" name="stackedWidget">
+      <widget class="QStackedWidget" name="editStackedWidget">
        <property name="geometry">
         <rect>
          <x>420</x>
@@ -1019,10 +1035,10 @@ padding: 0 10px 0 10px ;
         </rect>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
-       <widget class="QWidget" name="page">
-        <widget class="QPushButton" name="edit_btn_3">
+       <widget class="QWidget" name="delete_page">
+        <widget class="QPushButton" name="delete_btn">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -1062,8 +1078,8 @@ padding: 0 10px 0 10px ;
          </property>
         </widget>
        </widget>
-       <widget class="QWidget" name="page_2">
-        <widget class="QPushButton" name="edit_btn_4">
+       <widget class="QWidget" name="save_page">
+        <widget class="QPushButton" name="save_btn">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -1102,7 +1118,7 @@ padding: 0 10px 0 10px ;
           <string>Save</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="edit_btn_5">
+        <widget class="QPushButton" name="cancel_btn">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -1176,7 +1192,7 @@ padding: 0 10px 0 10px ;
          <string>ISBN</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_3">
+       <widget class="QLineEdit" name="input_isbnEdit">
         <property name="geometry">
          <rect>
           <x>50</x>
@@ -1204,7 +1220,7 @@ padding: 0 10px 0 10px ;
          <string>Warehouse ID</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_6">
+       <widget class="QLineEdit" name="input_warehouse_idEdit">
         <property name="geometry">
          <rect>
           <x>372</x>
@@ -1215,9 +1231,9 @@ padding: 0 10px 0 10px ;
         </property>
        </widget>
       </widget>
-      <zorder>stackedWidget</zorder>
+      <zorder>editStackedWidget</zorder>
       <zorder>verticalLayoutWidget_12</zorder>
-      <zorder>edit_btn_2</zorder>
+      <zorder>edit_btn</zorder>
       <zorder>frame_2</zorder>
      </widget>
     </widget>
