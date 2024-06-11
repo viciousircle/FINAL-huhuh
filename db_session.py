@@ -96,34 +96,59 @@ class DBSession:
     # --- ADD BOOK FUNCTION ------------------------------------------
     def addBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
         try:
-            # Insert data into BookMarcData table
-            self.cursor.execute(
-                "INSERT INTO books.bookMarc (title, author, isbn, public_year, public_comp) VALUES (?, ?, ?, ?, ?)",
-                (bookMarcData.title, bookMarcData.author, bookMarcData.isbn, bookMarcData.public_year, bookMarcData.public_comp)
-            )
-    
-            print("BookMarcData inserted")
+            # Check if the ISBN is already in the database
+            self.cursor.execute("SELECT * FROM books.bookMarc WHERE isbn = ?", (bookMarcData.isbn,))
 
-            # Get the last inserted book ID using SCOPE_IDENTITY()
-            self.cursor.execute("SELECT SCOPE_IDENTITY()")
-            book_id = self.cursor.fetchone()[0]
-            print("Book ID:", book_id)
+            existing_book = self.cursor.fetchone()
             
+            if existing_book:
+                # If ISBN exists, get Book by ISBN
+                bookMarcData = BooksBookMarcData(
+                    title=existing_book[1],
+                    author=existing_book[2],
+                    public_year=existing_book[3],
+                    public_comp=existing_book[4],
+                    isbn=existing_book[5]
+                )
+                
+                book_id = existing_book[0]
+                
+                # Insert data into BookData table
+                self.cursor.execute(
+                    "INSERT INTO books.book (book_id, isbn ,quantity, stage) VALUES (?, ?, ?)",
+                    (book_id, bookMarcData.isbn , bookData.quantity, bookData.stage)
+                )
+                self.connection.commit()
+                
+                return (True, None)
+            else:
+                # If ISBN does not exist, insert new Book
+                # Insert data into BookMarcData table
+                self.cursor.execute(
+                    "INSERT INTO books.bookMarc (title, author, isbn, public_year, public_comp) VALUES (?, ?, ?, ?, ?)",
+                    (bookMarcData.title, bookMarcData.author, bookMarcData.isbn, bookMarcData.public_year, bookMarcData.public_comp)
+                )
 
+                print("BookMarcData inserted")
 
-            # Insert data into BookData table
-            self.cursor.execute(
-                "INSERT INTO books.book (book_id, quantity, stage) VALUES (?, ?, ?)",
-                (book_id, bookData.quantity, bookData.stage)
-            )
-            self.connection.commit()
-            print("BookData inserted")
+                # Get the last inserted book ID using SCOPE_IDENTITY()
+                self.cursor.execute("SELECT SCOPE_IDENTITY()")
+                book_id = self.cursor.fetchone()[0]
+                print("Book ID:", book_id)
+                
+                # Insert data into BookData table
+                self.cursor.execute(
+                    "INSERT INTO books.book (book_id, isbn ,quantity, stage) VALUES (?, ?, ?)",
+                    (book_id, bookMarcData.isbn , bookData.quantity, bookData.stage)
+                )
+                self.connection.commit()
+                print("BookData inserted")
 
-            # Get the last inserted warehouse ID using SCOPE_IDENTITY()
-            self.cursor.execute("SELECT SCOPE_IDENTITY()")
-            warehouse_id = self.cursor.fetchone()[0]
-            print("Warehouse ID:", warehouse_id)
-            return (True, None)
+                # Get the last inserted warehouse ID using SCOPE_IDENTITY()
+                self.cursor.execute("SELECT SCOPE_IDENTITY()")
+                warehouse_id = self.cursor.fetchone()[0]
+                print("Warehouse ID:", warehouse_id)
+                return (True, None)
             
         except pyodbc.Error as err:
             self.connection.rollback()
@@ -135,8 +160,12 @@ class DBSession:
         except Exception as err:
             self.connection.rollback()
             return (False, str(err))
-    
-    
+            
+                
+            
+
+            
+            
     
     
     
