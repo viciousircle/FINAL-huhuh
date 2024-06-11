@@ -196,14 +196,9 @@ class DBSession:
         except Exception as err:
             return None            
 
+
     def updateBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:
-            # Check if book_id exists
-            if old_bookMarcData is not None and old_bookMarcData.book_id is not None:
-                self.cursor.execute("SELECT COUNT(*) FROM books.bookMarc WHERE book_id = ?", (old_bookMarcData.book_id,))
-                if self.cursor.fetchone()[0] == 0:
-                    return (False, f"Book with ID {old_bookMarcData.book_id} does not exist.")
-
             # Update BookMarcData if old data is provided and there are changes
             if old_bookMarcData is not None:
                 update_query = "UPDATE books.bookMarc SET "
@@ -215,11 +210,19 @@ class DBSession:
                     update_query += "author = ?, "
                     params.append(bookMarcData.author)
                 if bookMarcData.isbn != old_bookMarcData.isbn:
+                    # Check if the new ISBN is already in the database
+                    self.cursor.execute("SELECT COUNT(*) FROM books.bookMarc WHERE isbn = ? AND book_id != ?", (bookMarcData.isbn, old_bookMarcData.book_id))
+                    
+                    if self.cursor.fetchone()[0] > 0:
+                        return (False, f"ISBN {bookMarcData.isbn} is already assigned to another book.")
+                    
                     update_query += "isbn = ?, "
                     params.append(bookMarcData.isbn)
+                    
                 if bookMarcData.public_year != old_bookMarcData.public_year:
                     update_query += "public_year = ?, "
                     params.append(bookMarcData.public_year)
+                    
                 if bookMarcData.public_comp != old_bookMarcData.public_comp:
                     update_query += "public_comp = ?, "
                     params.append(bookMarcData.public_comp)
@@ -232,19 +235,11 @@ class DBSession:
                     self.cursor.execute(update_query, params)
                     self.connection.commit()
 
-
             # Update BookData if old data is provided and there are changes
             if old_bookData is not None:
                 update_query = "UPDATE books.book SET "
                 params = []
-                
-                if bookData.warehouse_id is not None:
-                    self.cursor.execute("SELECT COUNT(*) FROM books.book WHERE warehouse_id = ? AND book_id != ?", (bookData.warehouse_id, old_bookMarcData.book_id))
-                    if self.cursor.fetchone()[0] > 0:
-                        return (False, f"Warehouse ID {bookData.warehouse_id} is already assigned to another book.")
-                if bookData.warehouse_id != old_bookData.warehouse_id:
-                    update_query += "warehouse_id = ?, "
-                    params.append(bookData.warehouse_id)
+
                 if bookData.quantity != old_bookData.quantity:
                     update_query += "quantity = ?, "
                     params.append(bookData.quantity)
@@ -255,11 +250,12 @@ class DBSession:
                 if update_query.endswith(", "):
                     update_query = update_query[:-2]  # Remove the trailing comma and space
                     update_query += " WHERE book_id = ?"
-                    params.append(bookMarcData.book_id)
+                    params.append(old_bookMarcData.book_id)
 
                     self.cursor.execute(update_query, params)
                     self.connection.commit()
-
+                    
+            print("Book updated")
             return (True, None)
         
         except pyodbc.Error as err:
@@ -267,7 +263,8 @@ class DBSession:
             return (False, str(err))
         except Exception as err:
             return (False, str(err))
-    
+
+        
     # --- SEARCH BOOK FUNCTION ------------------------------------------
     def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[str, int, str], None, None]:
         try:
