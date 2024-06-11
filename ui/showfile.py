@@ -12,12 +12,14 @@ from lms_types import BooksBookMarcData, BooksBookData
 # ------SHOWFILE_UI CLASS---------------------------------
 class ShowFile_UI:
     # List of objects in .ui file related to this module
-    show_file_1             : QPushButton
-    show_file_2             : QPushButton
+    show_file_BookMarc      : QPushButton
+    show_file_Book          : QPushButton
+    
     files_stackedWidget     : QStackedWidget
     blank_page              : QWidget 
     bookMarc_page           : QWidget
     book_page               : QWidget
+    
     bookMarc_table          : QTableWidget
     book_table              : QTableWidget
     
@@ -26,8 +28,8 @@ class ShowFile_UI:
         self.db_session = db_session
         
         self.buttons_open = [
-            self.ui.show_file_1,
-            self.ui.show_file_2,
+            self.ui.show_file_BookMarc,
+            self.ui.show_file_Book,
         ]
         
         # Link database to the table files
@@ -35,8 +37,8 @@ class ShowFile_UI:
         self.showFileBook()
         
         # Show file_page
-        self.ui.show_file_1.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.bookMarc_page))
-        self.ui.show_file_2.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.book_page))
+        self.ui.show_file_BookMarc.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.bookMarc_page))
+        self.ui.show_file_Book.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.book_page))
         
         
     

@@ -52,9 +52,15 @@
          <rect>
           <x>20</x>
           <y>10</y>
-          <width>1021</width>
+          <width>631</width>
           <height>481</height>
          </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
@@ -68,8 +74,14 @@
         <property name="midLineWidth">
          <number>2</number>
         </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustIgnored</enum>
+        </property>
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
         <attribute name="horizontalHeaderVisible">
          <bool>true</bool>
@@ -82,17 +94,17 @@
         </attribute>
         <column>
          <property name="text">
+          <string>Warehouse ID</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>Book ID</string>
          </property>
         </column>
         <column>
          <property name="text">
           <string>ISBN</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Warehouse ID</string>
          </property>
         </column>
         <column>
@@ -113,7 +125,7 @@
          <rect>
           <x>20</x>
           <y>10</y>
-          <width>1021</width>
+          <width>751</width>
           <height>471</height>
          </rect>
         </property>
@@ -151,11 +163,6 @@
         </column>
         <column>
          <property name="text">
-          <string>ISBN</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>Title</string>
          </property>
         </column>
@@ -172,6 +179,11 @@
         <column>
          <property name="text">
           <string>Public Company</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ISBN</string>
          </property>
         </column>
        </widget>

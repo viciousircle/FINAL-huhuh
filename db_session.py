@@ -92,7 +92,6 @@ class DBSession:
         except Exception as err:
             raise err
         
-     
     # --- ADD BOOK FUNCTION ------------------------------------------
     def addBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
         try:
@@ -161,7 +160,6 @@ class DBSession:
             self.connection.rollback()
             return (False, str(err))
             
-    
     # --- EDIT BOOK FUNCTION ------------------------------------------
     def getBookById(self, book_id: int) -> Optional[Tuple[BooksBookMarcData, BooksBookData]]:
         try:
@@ -195,7 +193,6 @@ class DBSession:
                 return None
         except Exception as err:
             return None            
-
 
     def updateBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:
@@ -264,7 +261,6 @@ class DBSession:
         except Exception as err:
             return (False, str(err))
 
-        
     # --- SEARCH BOOK FUNCTION ------------------------------------------
     def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[int, str, str, int, Optional[str]], None, None]:
         try:

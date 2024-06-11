@@ -36,13 +36,13 @@ class MainWindow_UI(QMainWindow):
         
         # Connect modules
         self.navigation     = Navigation_UI(self.ui, self.db_session)
-        self.addbook        = AddBook_UI(self.ui, self.db_session)
-        self.searchbook     = SearchBook_UI(self.ui, self.db_session)
+        # self.addbook        = AddBook_UI(self.ui, self.db_session)
+        # self.searchbook     = SearchBook_UI(self.ui, self.db_session)
         self.showfile       = ShowFile_UI(self.ui, self.db_session)
         
         # Connect buttons to functions in the modules
-        self.ui.submit_btn.clicked.connect(self.addbook.addBookInformation)
-        self.ui.find_btn.clicked.connect(self.searchbook.searchBookInformation)
+        # self.ui.submit_btn.clicked.connect(self.addbook.addBookInformation)
+        # self.ui.find_btn.clicked.connect(self.searchbook.searchBookInformation)
 
         
         # Show admin id and name in the navigation bar
@@ -52,14 +52,14 @@ class MainWindow_UI(QMainWindow):
         self.ui.admin_name.setText(self.account_name)
         
         
-        # Set up the page buttons
+        # # Set up the page buttons
         self.lastClickedPageButton: Optional[QPushButton] = None
-            # For buttons in the showfile module
+        #     # For buttons in the showfile module
         for button in self.showfile.buttons_open:
             button.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
         
         
-        # Set home page as default page
+        # # Set home page as default page
         self.navigation.navigationButtonClicked(self.ui.home_btn)
     
         # ----- Show the main window -----
