@@ -8,7 +8,6 @@ GO
 USE LMS;
 GO
 
--- ihsidoaodadwk
 
 -- Create the user schema
 CREATE SCHEMA users;
@@ -34,7 +33,8 @@ CREATE TABLE users.history (
     admin_id INT,
     book_id INT,
     [timestamp] DATETIME,
-    FOREIGN KEY (admin_id) REFERENCES users.account(admin_id)
+    FOREIGN KEY (admin_id) REFERENCES users.account(admin_id),
+    FOREIGN KEY (book_id) REFERENCES books.bookMarc(book_id)
 );
 GO
 
