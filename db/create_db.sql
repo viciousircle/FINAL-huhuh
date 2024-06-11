@@ -18,6 +18,18 @@ CREATE SCHEMA books;
 GO
 
 DROP DATABASE LMS;
+GO
+DROP TABLE users.account;
+GO
+DROP TABLE users.history;
+GO
+DROP TABLE users.guest;
+GO
+DROP TABLE books.bookMarc;
+GO
+DROP TABLE books.book;
+GO
+
 
 -- Create the account table for users
 CREATE TABLE users.account (
@@ -32,9 +44,10 @@ CREATE TABLE users.history (
     edit_id     INT PRIMARY KEY,
     admin_id    VARCHAR(20),
     book_id     INT,
+    isbn        VARCHAR(25),
     [timestamp] DATETIME,
     FOREIGN KEY (admin_id) REFERENCES users.account(admin_id),
-    FOREIGN KEY (book_id) REFERENCES books.bookMarc(book_id)
+    FOREIGN KEY (book_id,isbn) REFERENCES books.bookMarc(book_id,isbn)
 );
 GO
 
@@ -61,9 +74,10 @@ GO
 -- Create the book table for book inventory
 CREATE TABLE books.book (
     warehouse_id    INT PRIMARY KEY IDENTITY(1,1),
-    book_id         INT,
-    quantity        INT,
+    book_id         INT NOT NULL,
+    isbn            VARCHAR(25),
+    quantity        INT NOT NULL,
     stage           VARCHAR(100),
-    FOREIGN KEY (book_id) REFERENCES books.bookMarc(book_id)
+    FOREIGN KEY (book_id,isbn) REFERENCES books.bookMarc(book_id,isbn)
 );
 GO
