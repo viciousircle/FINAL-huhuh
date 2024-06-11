@@ -266,46 +266,67 @@ class DBSession:
 
         
     # --- SEARCH BOOK FUNCTION ------------------------------------------
-    def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[str, int, str], None, None]:
+    def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[int, str, str, int, Optional[str]], None, None]:
         try:
-            # Define the base query with the common columns
-            query = """
-                SELECT BD.book_id, BM.title 
-                FROM books.bookMarc BM
-                JOIN books.book BD ON BM.book_id = BD.book_id
-            """
-
-            params = []
-
-            # Adjust the SELECT statement based on the filter criteria
-            if filter_criteria != "book_id" and filter_criteria != "title":
-                query = f"""
-                    SELECT BD.{filter_criteria}, BD.book_id, BM.title
-                    FROM books.book BD
-                    JOIN books.bookMarc BM ON BD.book_id = BM.book_id
-                """
-            print("Query:", query)
-            # Add WHERE clause based on the filter criteria and value
+            additional_column = None
             if filter_criteria and filter_value:
-                query += f" WHERE BM.{filter_criteria} = ? "
-                params.append(filter_value)
-            print("Query:", query)
-            print("Params:", params)
-
-            
+                # Determine the table and column to filter by
+                if filter_criteria in ['title', 'author', 'isbn', 'public_year', 'public_comp']:
+                    table = 'BM'
+                else:
+                    table = 'B'
+                    
+                if filter_criteria not in ['title', 'isbn', 'warehouse_id']:
+                    additional_column = f"{table}.{filter_criteria}"
+                    query = f"""
+                        SELECT BM.book_id, BM.title, BM.isbn, B.warehouse_id, {additional_column}
+                        FROM books.bookMarc BM
+                        JOIN books.book B ON BM.book_id = B.book_id
+                        WHERE {table}.{filter_criteria} LIKE ?
+                    """
+                else:
+                    query = f"""
+                        SELECT BM.book_id, BM.title, BM.isbn, B.warehouse_id
+                        FROM books.bookMarc BM
+                        JOIN books.book B ON BM.book_id = B.book_id
+                        WHERE {table}.{filter_criteria} LIKE ?
+                    """
+                params = (f"%{filter_value}%",)
+            else:
+                # If no filter criteria, search in every relevant column in both tables
+                query = """
+                    SELECT BM.book_id, BM.title, BM.isbn, B.warehouse_id
+                    FROM books.bookMarc BM
+                    JOIN books.book B ON BM.book_id = B.book_id
+                    WHERE BM.book_id LIKE ?
+                    OR BM.title LIKE ?
+                    OR BM.author LIKE ?
+                    OR BM.isbn LIKE ?
+                    OR BM.public_year LIKE ?
+                    OR BM.public_comp LIKE ?
+                    OR B.warehouse_id LIKE ?
+                    OR B.quantity LIKE ?
+                    OR B.stage LIKE ?
+                """
+                params = (
+                    f"%{filter_value}%", f"%{filter_value}%", f"%{filter_value}%", f"%{filter_value}%", f"%{filter_value}%",
+                    f"%{filter_value}%", f"%{filter_value}%", f"%{filter_value}%", f"%{filter_value}%"
+                )
 
             self.cursor.execute(query, params)
-            print("Query executed")
-            for row in self.cursor.fetchall():
-                yield row
-            print("Rows fetched")
-                
-            
-        except Exception as err:
-            return err
-    
+            rows = self.cursor.fetchall()
 
+            for row in rows:
+                if filter_criteria and filter_value and additional_column:
+                    yield (row[0], row[1], row[2], row[3], row[4])
+                else:
+                    yield (row[0], row[1], row[2], row[3], None)
         
+        except pyodbc.Error as err:
+            print(f"Database error: {err}")
+        except Exception as err:
+            print(f"Error: {err}")
+            
     # --- SHOW HISTORY FUNCTION ------------------------------------------
     def showHistory(self) -> Generator[UsersHistoryData, None, None]:
         try:
