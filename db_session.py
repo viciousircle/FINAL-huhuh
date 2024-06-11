@@ -73,6 +73,26 @@ class DBSession:
         except Exception as err:
             return (False, str(err))
         
+    # --- SHOW FILE FUNCTION ------------------------------------------
+    def showFileBookMarc(self) -> Generator[BooksBookMarcData, None, None]:
+        try:
+            query = "SELECT * FROM books.bookMarc"
+            self.cursor.execute(query)
+            for row in self.cursor.fetchall():
+                yield BooksBookMarcData(*row)
+        except Exception as err:
+            raise err
+        
+    def showFileBook(self) -> Generator[BooksBookData, None, None]:
+        try:
+            query = "SELECT * FROM books.book"
+            self.cursor.execute(query)
+            for row in self.cursor.fetchall():
+                yield BooksBookData(*row)
+        except Exception as err:
+            raise err
+        
+     
     # --- ADD BOOK FUNCTION ------------------------------------------
     def addBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
         try:
@@ -105,29 +125,6 @@ class DBSession:
             print("Warehouse ID:", warehouse_id)
             return (True, None)
             
-            
-            # 0------------------
-            # self.cursor.execute(
-            #     "INSERT INTO books.book (quantity, stage) VALUES (?, ?)",
-            #     (bookData.quantity, bookData.stage)
-            # )
-            # self.connection.commit()
-            
-            # self.cursor.execute("SELECT SCOPE_IDENTITY()")
-            # book_id = self.cursor.fetchone()[0]
-            
-            # self.cursor.execute(
-            #     "INSERT INTO books.book (book_id) VALUES (?)",
-            #     (book_id,)
-            # )
-            # self.connection.commit()
-            
-            # self.cursor.execute("SELECT SCOPE_IDENTITY()")
-            # warehouse_id = self.cursor.fetchone()[0]
-            # print("Warehouse ID:", warehouse_id)
-            # return (True, None)
-
-
         except pyodbc.Error as err:
             self.connection.rollback()
             if "duplicate key" in str(err).lower():
@@ -138,6 +135,10 @@ class DBSession:
         except Exception as err:
             self.connection.rollback()
             return (False, str(err))
+    
+    
+    
+    
     
     # --- EDIT BOOK FUNCTION ------------------------------------------
     def getBookById(self, book_id: int) -> Optional[Tuple[BooksBookMarcData, BooksBookData]]:
@@ -284,24 +285,7 @@ class DBSession:
         except Exception as err:
             return err
     
-    # --- SHOW FILE FUNCTION ------------------------------------------
-    def showFileBookMarc(self) -> Generator[BooksBookMarcData, None, None]:
-        try:
-            query = "SELECT * FROM books.bookMarc"
-            self.cursor.execute(query)
-            for row in self.cursor.fetchall():
-                yield BooksBookMarcData(*row)
-        except Exception as err:
-            raise err
-        
-    def showFileBook(self) -> Generator[BooksBookData, None, None]:
-        try:
-            query = "SELECT * FROM books.book"
-            self.cursor.execute(query)
-            for row in self.cursor.fetchall():
-                yield BooksBookData(*row)
-        except Exception as err:
-            raise err
+
         
     # --- SHOW HISTORY FUNCTION ------------------------------------------
     def showHistory(self) -> Generator[UsersHistoryData, None, None]:
