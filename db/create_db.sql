@@ -48,12 +48,13 @@ GO
 
 -- Create the bookMarc table for book details
 CREATE TABLE books.bookMarc (
-    book_id INT PRIMARY KEY IDENTITY(1,1),
+    book_id INT IDENTITY(1,1),
     title VARCHAR(255),
     author VARCHAR(255),
     public_year INT,
     public_comp VARCHAR(255),
-    isbn VARCHAR(255)
+    isbn VARCHAR(255) UNIQUE,
+    PRIMARY KEY (book_id, isbn)
 );
 GO
 
