@@ -35,6 +35,8 @@ class SearchBook_UI:
         self.ui         = ui
         self.db_session = db_session
         
+        self.ui.search_table.cellClicked.connect(self.displayBookDetails)
+        
     def searchBookInformation(self):
         try:
             # Clear previous search results from the table
@@ -83,3 +85,36 @@ class SearchBook_UI:
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
 
+    def displayBookDetails(self, row, column):
+        try:
+            # Get the book ID from the selected row
+            book_id_item = self.ui.search_table.item(row, 0)  
+            # Assuming book_id is in the first column
+            
+            if book_id_item is None:
+                return
+            
+            book_id = int(book_id_item.text())
+
+            # Fetch the book details using the book ID
+            book_details = self.db_session.getBookById(book_id)
+            
+            if book_details is None:
+                QMessageBox.warning(self.ui, "Error", "Book details not found.")
+                return
+            
+            bookMarcData, bookData = book_details
+
+            # Update UI components with the book details
+
+            self.ui.input_titleEdit.setText(bookMarcData.title)
+            self.ui.input_authorEdit.setText(bookMarcData.author)
+            self.ui.input_isbnEdit.setText(bookMarcData.isbn)
+            self.ui.input_yearEdit.setText(str(bookMarcData.public_year))
+            self.ui.input_compEdit.setText(bookMarcData.public_comp)
+            self.ui.input_warehouse_idEdit.setText(str(bookData.warehouse_id))
+            self.ui.input_quantityEdit.setValue(bookData.quantity)
+            self.ui.input_stageEdit.setCurrentText(bookData.stage)
+
+        except Exception as e:
+            QMessageBox.critical(self.ui, "Error", str(e))
