@@ -53,7 +53,7 @@ class DBSession:
 
     def getAdmin(self, admin_id: int) -> Optional[UsersAccountData]:
         try:
-            self.cursor.execute("SELECT * FROM users.admin WHERE admin_id = ?", (admin_id,))
+            self.cursor.execute("SELECT * FROM users.admin WHERE admin_id = ?", (admin_id))
             row = self.cursor.fetchone()
             if row:
                 return UsersAccountData(*row)
