@@ -18,7 +18,6 @@ class Navigation_UI:
     open_btn                : QPushButton
     search_btn              : QPushButton
     add_btn                 : QPushButton
-    edit_btn                : QPushButton
     
     logout_btn              : QPushButton
     
@@ -31,7 +30,6 @@ class Navigation_UI:
             self.ui.home_btn,
             self.ui.add_btn,
             self.ui.search_btn,
-            self.ui.edit_btn,
             self.ui.open_btn,
         ]
 
@@ -39,8 +37,6 @@ class Navigation_UI:
         self.ui.add_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.add_page))
         # Search page
         self.ui.search_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.search_page))
-        # Edit page
-        self.ui.edit_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.edit_page))
         # Open page
         self.ui.open_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.open_page))
         # Home page

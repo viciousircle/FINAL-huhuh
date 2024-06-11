@@ -38,6 +38,9 @@ class ShowFile_UI:
         self.ui.show_file_1.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.bookMarc_page))
         self.ui.show_file_2.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.book_page))
         
+        
+    
+        
     def showFileBookMarc(self):
         # Fetch data from the database
         data = list(self.db_session.showFileBookMarc())

@@ -27,7 +27,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="open_page">
      <widget class="QStackedWidget" name="files_stackedWidget">
@@ -40,7 +40,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="blank_page"/>
       <widget class="QWidget" name="book_page">
@@ -264,17 +264,88 @@ QPushButton::after{
       <property name="lineWidth">
        <number>3</number>
       </property>
+      <widget class="QLabel" name="isbn">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>40</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>ISBN</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="input_isbn">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>40</y>
+         <width>441</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 0px 10px 0px 10px ;
+</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="submit_btn_2">
+       <property name="geometry">
+        <rect>
+         <x>700</x>
+         <y>40</y>
+         <width>91</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+	border: 2px solid black;
+	color: rgb(0, 0, 0);
+	padding: 5 10px 5 10px ;
+}
+QPushButton:hover{
+	border: 2px solid #560bad;
+	color: #560bad;
+	padding: 0 10px 0 10px ;
+}
+QPushButton::after{
+	border: 2px solid grey;\ncolor: grey;\npadding: 0 10px 0 10px ;\n
+}
+
+
+</string>
+       </property>
+       <property name="text">
+        <string>Enter</string>
+       </property>
+      </widget>
       <widget class="QWidget" name="verticalLayoutWidget_15">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>110</y>
+         <x>50</x>
+         <y>120</y>
          <width>441</width>
          <height>301</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_14">
-        <item alignment="Qt::AlignTop">
+        <item>
          <widget class="QLabel" name="title">
           <property name="font">
            <font>
@@ -310,28 +381,6 @@ padding: 0px 10px 0px 10px ;
         </item>
         <item>
          <widget class="QLineEdit" name="input_author">
-          <property name="styleSheet">
-           <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 0px 10px 0px 10px ;
-</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="isbn">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>ISBN</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="input_isbn">
           <property name="styleSheet">
            <string notr="true">border: 2px solid black;
 color: rgb(0, 0, 0);
@@ -395,8 +444,8 @@ padding: 0px 10px 0px 10px ;
       <widget class="QWidget" name="verticalLayoutWidget_16">
        <property name="geometry">
         <rect>
-         <x>490</x>
-         <y>110</y>
+         <x>500</x>
+         <y>120</y>
          <width>441</width>
          <height>111</height>
         </rect>
@@ -461,31 +510,12 @@ padding: 0px 10px 0px 10px ;
         </item>
        </layout>
       </widget>
-      <widget class="QLabel" name="label_4">
-       <property name="geometry">
-        <rect>
-         <x>370</x>
-         <y>50</y>
-         <width>231</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>18</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Add New Book</string>
-       </property>
-      </widget>
       <widget class="QPushButton" name="submit_btn">
        <property name="geometry">
         <rect>
-         <x>430</x>
-         <y>460</y>
-         <width>131</width>
+         <x>490</x>
+         <y>450</y>
+         <width>151</width>
          <height>31</height>
         </rect>
        </property>
@@ -514,6 +544,42 @@ QPushButton::after{
        </property>
        <property name="text">
         <string>Add</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="submit_btn_3">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>450</y>
+         <width>151</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+	border: 2px solid black;
+	color: rgb(0, 0, 0);
+	padding: 5 10px 5 10px ;
+}
+QPushButton:hover{
+	border: 2px solid #560bad;
+	color: #560bad;
+	padding: 0 10px 0 10px ;
+}
+QPushButton::after{
+	border: 2px solid grey;\ncolor: grey;\npadding: 0 10px 0 10px ;\n
+}
+
+
+</string>
+       </property>
+       <property name="text">
+        <string>Reset</string>
        </property>
       </widget>
      </widget>
@@ -802,90 +868,13 @@ padding: 0 10px 0 10px ;
       <property name="lineWidth">
        <number>4</number>
       </property>
-      <widget class="QWidget" name="horizontalLayoutWidget_5">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>30</y>
-         <width>241</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <item>
-         <spacer name="verticalSpacer_12">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Book ID</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_13">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="book_id_text_2">
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_14">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="verticalLayoutWidget_12">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>90</y>
-         <width>321</width>
-         <height>295</height>
+         <x>40</x>
+         <y>70</y>
+         <width>361</width>
+         <height>371</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -902,11 +891,7 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="title_text_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
+         <widget class="QLineEdit" name="lineEdit"/>
         </item>
         <item alignment="Qt::AlignTop">
          <widget class="QLabel" name="author_4">
@@ -921,30 +906,7 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="author_text_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="isbn_4">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>ISBN</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="isbn_text_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
+         <widget class="QLineEdit" name="lineEdit_2"/>
         </item>
         <item>
          <widget class="QLabel" name="publish_comp_4">
@@ -959,11 +921,7 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="comp_text_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
+         <widget class="QLineEdit" name="lineEdit_4"/>
         </item>
         <item>
          <widget class="QLabel" name="publish_year_4">
@@ -978,47 +936,9 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="year_text_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="verticalLayoutWidget_17">
-       <property name="geometry">
-        <rect>
-         <x>390</x>
-         <y>90</y>
-         <width>121</width>
-         <height>221</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_16">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item alignment="Qt::AlignVCenter">
-         <widget class="QLabel" name="warehouse_id_5">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Warehouse ID</string>
-          </property>
-         </widget>
+         <widget class="QLineEdit" name="lineEdit_5"/>
         </item>
         <item>
-         <widget class="QLabel" name="warehouse_id_text_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignVCenter">
          <widget class="QLabel" name="quantity_5">
           <property name="font">
            <font>
@@ -1031,13 +951,9 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="quantity_text_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
+         <widget class="QSpinBox" name="spinBox"/>
         </item>
-        <item alignment="Qt::AlignVCenter">
+        <item>
          <widget class="QLabel" name="status_5">
           <property name="font">
            <font>
@@ -1050,19 +966,15 @@ padding: 0 10px 0 10px ;
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="stage_text_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
+         <widget class="QComboBox" name="comboBox"/>
         </item>
        </layout>
       </widget>
       <widget class="QPushButton" name="edit_btn_2">
        <property name="geometry">
         <rect>
-         <x>390</x>
-         <y>360</y>
+         <x>440</x>
+         <y>120</y>
          <width>121</width>
          <height>31</height>
         </rect>
@@ -1097,468 +1009,26 @@ padding: 0 10px 0 10px ;
         <string>Edit</string>
        </property>
       </widget>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="edit_page">
-     <widget class="QFrame" name="body_3">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>1061</width>
-        <height>531</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Box</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
-      </property>
-      <property name="lineWidth">
-       <number>4</number>
-      </property>
-      <widget class="QWidget" name="horizontalLayoutWidget_3">
+      <widget class="QStackedWidget" name="stackedWidget">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>10</y>
-         <width>1021</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLineEdit" name="input_find_2">
-          <property name="styleSheet">
-           <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 5px 10px 5px 10px ;
-</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="placeholderText">
-           <string>Enter Book ID</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="find_btn_2">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton{
-	border: 2px solid black;
-	color: rgb(0, 0, 0);
-	padding: 5 10px 5 10px ;
-}
-QPushButton:hover{
-	border: 2px solid #560bad;
-	color: #560bad;
-	padding: 0 10px 0 10px ;
-}
-QPushButton::after{
-	border: 2px solid grey;\ncolor: grey;\npadding: 0 10px 0 10px ;\n
-}
-
-
-</string>
-          </property>
-          <property name="text">
-           <string>Find</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QStackedWidget" name="edit_stackedWidget">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>70</y>
-         <width>1021</width>
-         <height>451</height>
+         <x>420</x>
+         <y>160</y>
+         <width>151</width>
+         <height>101</height>
         </rect>
        </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="edit_main_page">
-        <widget class="QFrame" name="frame_8">
+       <widget class="QWidget" name="page">
+        <widget class="QPushButton" name="edit_btn_3">
          <property name="geometry">
           <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>181</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
-         <property name="lineWidth">
-          <number>3</number>
-         </property>
-         <widget class="QWidget" name="horizontalLayoutWidget_4">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>181</width>
-            <height>41</height>
-           </rect>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Book ID</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_5">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item alignment="Qt::AlignHCenter">
-            <widget class="QLabel" name="book_id_text">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-        <widget class="QFrame" name="frame_9">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>60</y>
-           <width>991</width>
-           <height>341</height>
-          </rect>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Panel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
-         <property name="lineWidth">
-          <number>3</number>
-         </property>
-         <widget class="QWidget" name="verticalLayoutWidget_10">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>20</y>
-            <width>431</width>
-            <height>295</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_8">
-           <item alignment="Qt::AlignTop">
-            <widget class="QLabel" name="title_2">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Title</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="input_title_2">
-             <property name="styleSheet">
-              <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 0px 10px 0px 10px ;
-</string>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignTop">
-            <widget class="QLabel" name="author_2">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Author</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="input_author_2">
-             <property name="styleSheet">
-              <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 0px 10px 0px 10px ;
-</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="isbn_2">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>ISBN</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="input_isbn_2">
-             <property name="styleSheet">
-              <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 0px 10px 0px 10px ;
-</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="publish_comp_2">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Public Company</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="input_comp_2">
-             <property name="styleSheet">
-              <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 0px 10px 0px 10px ;
-</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="publish_year_2">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Public Year</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDateEdit" name="input_year_2">
-             <property name="styleSheet">
-              <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 0px 10px 0px 10px ;
-</string>
-             </property>
-             <property name="currentSection">
-              <enum>QDateTimeEdit::YearSection</enum>
-             </property>
-             <property name="displayFormat">
-              <string>yyyy</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="verticalLayoutWidget_11">
-          <property name="geometry">
-           <rect>
-            <x>500</x>
-            <y>20</y>
-            <width>451</width>
-            <height>206</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item alignment="Qt::AlignTop">
-            <widget class="QLabel" name="warehouse_id_2">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Warehouse ID</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="warehouse_id_text">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_15">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item alignment="Qt::AlignTop">
-            <widget class="QLabel" name="quantity_2">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Quantity</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="input_quantity_2">
-             <property name="styleSheet">
-              <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 0px 10px 0px 10px ;
-</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_16">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="status_2">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Stage</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="input_stage_2">
-             <property name="styleSheet">
-              <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 0px 10px 0px 10px ;
-</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>Available</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Unavailable</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-        <widget class="QPushButton" name="reset_btn">
-         <property name="geometry">
-          <rect>
-           <x>310</x>
-           <y>410</y>
-           <width>83</width>
-           <height>29</height>
+           <x>20</x>
+           <y>20</y>
+           <width>121</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="font">
@@ -1578,23 +1048,28 @@ QPushButton:hover{
 	padding: 0 10px 0 10px ;
 }
 QPushButton::after{
-	border: 2px solid grey;\ncolor: grey;\npadding: 0 10px 0 10px ;\n
+	border: 2px solid grey;
+color: grey;
+padding: 0 10px 0 10px ;
+
 }
 
 
 </string>
          </property>
          <property name="text">
-          <string>Reset</string>
+          <string>Delete</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="save_btn">
+       </widget>
+       <widget class="QWidget" name="page_2">
+        <widget class="QPushButton" name="edit_btn_4">
          <property name="geometry">
           <rect>
-           <x>510</x>
-           <y>410</y>
-           <width>83</width>
-           <height>29</height>
+           <x>20</x>
+           <y>20</y>
+           <width>121</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="font">
@@ -1614,7 +1089,10 @@ QPushButton:hover{
 	padding: 0 10px 0 10px ;
 }
 QPushButton::after{
-	border: 2px solid grey;\ncolor: grey;\npadding: 0 10px 0 10px ;\n
+	border: 2px solid grey;
+color: grey;
+padding: 0 10px 0 10px ;
+
 }
 
 
@@ -1624,13 +1102,13 @@ QPushButton::after{
           <string>Save</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="undo_btn">
+        <widget class="QPushButton" name="edit_btn_5">
          <property name="geometry">
           <rect>
-           <x>410</x>
-           <y>410</y>
-           <width>83</width>
-           <height>29</height>
+           <x>20</x>
+           <y>60</y>
+           <width>121</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="font">
@@ -1650,19 +1128,97 @@ QPushButton:hover{
 	padding: 0 10px 0 10px ;
 }
 QPushButton::after{
-	border: 2px solid grey;\ncolor: grey;\npadding: 0 10px 0 10px ;\n
+	border: 2px solid grey;
+color: grey;
+padding: 0 10px 0 10px ;
+
 }
 
 
 </string>
          </property>
          <property name="text">
-          <string>Undo</string>
+          <string>Cancel</string>
          </property>
         </widget>
        </widget>
-       <widget class="QWidget" name="blank_page_2"/>
       </widget>
+      <widget class="QFrame" name="frame_2">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>20</y>
+         <width>501</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLabel" name="isbn_4">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>51</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>ISBN</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_3">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>0</y>
+          <width>191</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="warehouse_id_5">
+        <property name="geometry">
+         <rect>
+          <x>250</x>
+          <y>0</y>
+          <width>111</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Warehouse ID</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_6">
+        <property name="geometry">
+         <rect>
+          <x>372</x>
+          <y>0</y>
+          <width>121</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <zorder>stackedWidget</zorder>
+      <zorder>verticalLayoutWidget_12</zorder>
+      <zorder>edit_btn_2</zorder>
+      <zorder>frame_2</zorder>
      </widget>
     </widget>
    </widget>
@@ -1684,7 +1240,7 @@ QPushButton::after{
     <property name="lineWidth">
      <number>4</number>
     </property>
-    <widget class="QWidget" name="verticalLayoutWidget_4">
+    <widget class="QFrame" name="verticalFrame_4">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -1745,22 +1301,29 @@ QPushButton::after{
        </spacer>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="burger">
-        <item>
-         <widget class="QPushButton" name="home_btn">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="cursor">
-           <cursorShape>ArrowCursor</cursorShape>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton{
+       <widget class="QFrame" name="frame">
+        <layout class="QVBoxLayout" name="burger">
+         <item>
+          <widget class="QPushButton" name="home_btn">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="cursor">
+            <cursorShape>ArrowCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
                     border: 2px solid black;
                     color: black;
                 }
@@ -1772,34 +1335,40 @@ QPushButton:hover{
 
 
 </string>
-          </property>
-          <property name="text">
-           <string>Home</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="open_btn">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton{
+           </property>
+           <property name="text">
+            <string>Home</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="open_btn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
                     border: 2px solid black;
                     color: black;
                 }
@@ -1811,34 +1380,40 @@ QPushButton:hover{
 
 
 </string>
-          </property>
-          <property name="text">
-           <string>Open File</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_6">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="search_btn">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton{
+           </property>
+           <property name="text">
+            <string>Open File</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="search_btn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
                     border: 2px solid black;
                     color: black;
                 }
@@ -1850,37 +1425,43 @@ QPushButton:hover{
 
 
 </string>
-          </property>
-          <property name="text">
-           <string>Search Book</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_7">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="add_btn">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton{
+           </property>
+           <property name="text">
+            <string>Search Book</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="add_btn">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
                     border: 2px solid black;
                     color: black;
                 }
@@ -1892,34 +1473,66 @@ QPushButton:hover{
 
 
 </string>
-          </property>
-          <property name="text">
-           <string>Add New Book</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_8">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="edit_btn">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton{
+           </property>
+           <property name="text">
+            <string>Add Book</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="logout_btn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
                     border: 2px solid black;
                     color: black;
                 }
@@ -1931,65 +1544,27 @@ QPushButton:hover{
 
 
 </string>
-          </property>
-          <property name="text">
-           <string>Edit Book</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="logout_btn">
-        <property name="font">
-         <font>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton{
-                    border: 2px solid black;
-                    color: black;
-                }
-QPushButton:hover{
-                    border: 2px solid #560bad;
-                    color: #560bad;
-                }
-
-
-
-</string>
-        </property>
-        <property name="text">
-         <string>Log Out</string>
-        </property>
+           </property>
+           <property name="text">
+            <string>Log Out</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_23">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>

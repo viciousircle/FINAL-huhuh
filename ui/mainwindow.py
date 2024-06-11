@@ -37,20 +37,18 @@ class MainWindow_UI(QMainWindow):
         # Connect modules
         self.navigation     = Navigation_UI(self.ui, self.db_session)
         self.addbook        = AddBook_UI(self.ui, self.db_session)
-        self.editbook       = EditBook_UI(self.ui, self.db_session)
         self.searchbook     = SearchBook_UI(self.ui, self.db_session)
         self.showfile       = ShowFile_UI(self.ui, self.db_session)
         
         # Connect buttons to functions in the modules
         self.ui.submit_btn.clicked.connect(self.addbook.addBookInformation)
         self.ui.find_btn.clicked.connect(self.searchbook.searchBookInformation)
-        self.ui.find_btn_2.clicked.connect(self.editbook.editBookInformation)
-        self.ui.save_btn.clicked.connect(self.editbook.saveBookInformation)
+
         
         # Show admin id and name in the navigation bar
-        self.account_id     = account_id
+        self.account_id     = str(account_id)
         self.account_name   = account_name
-        self.ui.admin_id.setText(str(self.account_id))
+        self.ui.admin_id.setText(self.account_id)
         self.ui.admin_name.setText(self.account_name)
         
         
