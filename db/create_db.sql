@@ -66,7 +66,7 @@ CREATE TABLE books.bookMarc (
     author      VARCHAR(255),
     public_year INT,
     public_comp VARCHAR(255),
-    isbn        VARCHAR(25) UNIQUE,
+    isbn        VARCHAR(25),
     PRIMARY KEY (book_id, isbn)
 );
 GO
