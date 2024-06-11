@@ -52,10 +52,13 @@ class MainWindow_UI(QMainWindow):
         self.ui.admin_name.setText(self.account_name)
         
         
-        # # Set up the page buttons
+        # Set up the page buttons
         self.lastClickedPageButton: Optional[QPushButton] = None
-        #     # For buttons in the showfile module
+            # For buttons in the showfile module
         for button in self.showfile.buttons_open:
+            button.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
+            
+        for button in self.searchbook.buttons_edit:
             button.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
         
         

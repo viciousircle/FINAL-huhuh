@@ -199,6 +199,7 @@ class DBSession:
             print("Error:", err)
             return None            
 
+
     def updateBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:
             # Update BookMarcData if old data is provided and there are changes
