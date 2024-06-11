@@ -1,5 +1,5 @@
 # ------IMPORTS------------------------------------------
-from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit
+from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit,QSpinBox
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -10,18 +10,26 @@ from db_session import DBSession
 # ------SEARCHBOOK_UI CLASS---------------------------------
 class SearchBook_UI:
     # List of objects in .ui file related to this module
-    input_choose            : QComboBox
-    input_find              : QLabel
+    input_filterSearch      : QComboBox
+    input_findSearch        : QLineEdit
+    
     find_btn                : QPushButton
     search_table            : QTableWidget
     
-    book_id_text_2          : QLabel
-    warehouse_id_text_2     : QLabel
-    input_title_3           : QLineEdit
-    input_author_3          : QLineEdit
-    input_isbn_3            : QLineEdit
-    input_comp_3            : QLineEdit
-    input_year_3            : QLineEdit
+    input_warehouse_idEdit  : QLabel
+    input_titleEdit         : QLineEdit
+    input_authorEdit        : QLineEdit
+    input_isbnEdit          : QLineEdit
+    input_compEdit          : QLineEdit
+    input_yearEdit          : QLineEdit
+    input_quantityEdit      : QSpinBox
+    input_stageEdit         :QComboBox
+    
+    edit_btn                : QPushButton
+    delete_btn              : QPushButton
+    save_btn                : QPushButton
+    cancel_btn              : QPushButton
+    
     
     def __init__(self, ui, db_session: DBSession):
         self.ui         = ui
@@ -42,12 +50,13 @@ class SearchBook_UI:
                 "Public Company": "public_comp",
                 "ISBN"          : "isbn",
                 "Quantity"      : "quantity",
-                "Stage"         : "stage"
+                "Stage"         : "stage",
+                ""              : ""
             }
 
-            filter_criteria = self.ui.input_choose.currentText()
+            filter_criteria = self.ui.input_filterSearch.currentText()
             column_name     = column_mapping[filter_criteria]
-            search_query    = self.ui.input_find.text().strip()
+            search_query    = self.ui.input_findSearch.text().strip()
     
             search_results = list(self.db_session.searchBook(column_name, search_query))
             
@@ -56,10 +65,11 @@ class SearchBook_UI:
                 column_count = len(search_results[0]) 
                 self.ui.search_table.setColumnCount(column_count)
                 
-                if filter_criteria != "Book ID" and filter_criteria != "Title":
-                    header_labels = ['Book ID','Title', filter_criteria]
+                # Set the header labels
+                if filter_criteria in ["Book ID", "Title", "ISBN", "Warehouse ID", ""]:
+                    header_labels = ['Book ID', 'Title', 'ISBN', 'Warehouse ID']
                 else:
-                    header_labels = ['Book ID','Title']
+                    header_labels = ['Book ID', 'Title', 'ISBN', 'Warehouse ID', filter_criteria]
                     
                 self.ui.search_table.setHorizontalHeaderLabels(header_labels)
 

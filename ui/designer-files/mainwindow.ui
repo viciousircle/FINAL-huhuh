@@ -707,7 +707,7 @@ QPushButton::after{
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QComboBox" name="input_choose">
+        <widget class="QComboBox" name="input_filterSearch">
          <property name="font">
           <font>
            <bold>true</bold>
@@ -777,7 +777,7 @@ padding: 5 10px 5 10px ;
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="input_find">
+        <widget class="QLineEdit" name="input_findSearch">
          <property name="styleSheet">
           <string notr="true">border: 2px solid black;
 color: rgb(0, 0, 0);
@@ -1047,7 +1047,7 @@ padding: 0 10px 0 10px ;
         </rect>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="delete_page">
         <widget class="QPushButton" name="delete_btn">

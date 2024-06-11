@@ -267,12 +267,12 @@ class DBSession:
             additional_column = None
             if filter_criteria and filter_value:
                 # Determine the table and column to filter by
-                if filter_criteria in ['title', 'author', 'isbn', 'public_year', 'public_comp']:
+                if filter_criteria in ['book_id','title', 'author', 'isbn', 'public_year', 'public_comp']:
                     table = 'BM'
                 else:
                     table = 'B'
                     
-                if filter_criteria not in ['title', 'isbn', 'warehouse_id']:
+                if filter_criteria not in ['book_id','title', 'isbn', 'warehouse_id','']:
                     additional_column = f"{table}.{filter_criteria}"
                     query = f"""
                         SELECT BM.book_id, BM.title, BM.isbn, B.warehouse_id, {additional_column}
