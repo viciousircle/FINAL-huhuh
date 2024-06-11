@@ -173,6 +173,7 @@ class DBSession:
             row = self.cursor.fetchone()
             print("Row:", row)
             if row:
+                print("Book found")
                 bookMarcData = BooksBookMarcData(
                     title=row[1],
                     author=row[2],
@@ -185,13 +186,17 @@ class DBSession:
                     warehouse_id=row[6],
                     quantity=row[7],
                     stage=row[8],
-                    book_id=row[0]
+                    book_id=row[0],
+                    isbn=row[3]
                 )
                 print("Book found")
+                print(bookMarcData)
+                print(bookData)
                 return (bookMarcData, bookData)
             else:
                 return None
         except Exception as err:
+            print("Error:", err)
             return None            
 
     def updateBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:

@@ -736,6 +736,11 @@ padding: 5 10px 5 10px ;
          </property>
          <item>
           <property name="text">
+           <string>All</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>IBSN</string>
           </property>
          </item>

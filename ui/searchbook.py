@@ -53,7 +53,7 @@ class SearchBook_UI:
                 "ISBN"          : "isbn",
                 "Quantity"      : "quantity",
                 "Stage"         : "stage",
-                ""              : ""
+                "All"              : ""
             }
 
             filter_criteria = self.ui.input_filterSearch.currentText()
@@ -95,15 +95,19 @@ class SearchBook_UI:
                 return
             
             book_id = int(book_id_item.text())
+            print(book_id)
 
             # Fetch the book details using the book ID
-            book_details = self.db_session.getBookById(book_id)
+            bookMarcData, bookData = self.db_session.getBookById(book_id)
             
-            if book_details is None:
+                        
+            print(bookMarcData)
+            print(bookData)
+            if bookMarcData is None or bookData is None:
                 QMessageBox.warning(self.ui, "Error", "Book details not found.")
                 return
             
-            bookMarcData, bookData = book_details
+
 
             # Update UI components with the book details
 
