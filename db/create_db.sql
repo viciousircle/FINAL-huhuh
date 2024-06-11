@@ -21,9 +21,9 @@ DROP DATABASE LMS;
 
 -- Create the account table for users
 CREATE TABLE users.account (
-    admin_id INT PRIMARY KEY,
-    [password] VARCHAR(255),
-    admin_name VARCHAR(255)
+    admin_id VARCHAR(20) PRIMARY KEY,
+    [password] VARCHAR(20),
+    admin_name VARCHAR(100)
 );
 GO
 

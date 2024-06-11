@@ -8,6 +8,7 @@ SELECT * FROM users.guest;
 SELECT * FROM books.bookMarc;
 SELECT * FROM books.book;
 
+GO
 sp_help 'users.account';
 GO 
 sp_help 'users.history';
