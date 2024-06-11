@@ -161,13 +161,6 @@ class DBSession:
             self.connection.rollback()
             return (False, str(err))
             
-                
-            
-
-            
-            
-    
-    
     
     # --- EDIT BOOK FUNCTION ------------------------------------------
     def getBookById(self, book_id: int) -> Optional[Tuple[BooksBookMarcData, BooksBookData]]:
