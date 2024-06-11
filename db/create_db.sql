@@ -1,11 +1,11 @@
 SELECT @@ServerName;
 USE master;
 -- Create the LMS database
-CREATE DATABASE LMS;
+CREATE DATABASE LMS2;
 GO
 
 -- Use the LMS database
-USE LMS;
+USE LMS2;
 GO
 
 
@@ -18,19 +18,6 @@ CREATE SCHEMA books;
 GO
 
 DROP DATABASE LMS;
-GO
-GO
-DROP TABLE users.history;
-GO
-DROP TABLE users.guest;
-GO
-DROP TABLE users.account;
-
-DROP TABLE books.bookMarc;
-GO
-DROP TABLE books.book;
-GO
-
 
 -- Create the account table for users
 CREATE TABLE users.account (

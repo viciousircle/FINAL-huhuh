@@ -1,5 +1,5 @@
 -- Use the LMS database
-USE LMS;
+USE LMS2;
 GO
 
 SELECT * FROM users.account;
