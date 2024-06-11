@@ -8,6 +8,8 @@ GO
 USE LMS;
 GO
 
+-- ihsidoaodadwk
+
 -- Create the user schema
 CREATE SCHEMA users;
 GO
