@@ -53,7 +53,8 @@ class SearchBook_UI:
                 "ISBN"          : "isbn",
                 "Quantity"      : "quantity",
                 "Stage"         : "stage",
-                "All"              : ""
+                "All"           : None,
+                ""              : None
             }
 
             filter_criteria = self.ui.input_filterSearch.currentText()

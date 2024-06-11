@@ -59,7 +59,6 @@ class MainWindow_UI(QMainWindow):
             button.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
         
         
-        
         # # Set home page as default page
         self.navigation.navigationButtonClicked(self.ui.home_btn)
     

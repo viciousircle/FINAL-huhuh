@@ -277,7 +277,7 @@ class DBSession:
                 else:
                     table = 'B'
                     
-                if filter_criteria not in ['book_id','title', 'isbn', 'warehouse_id','']:
+                if filter_criteria not in ['book_id','title', 'isbn', 'warehouse_id']:
                     additional_column = f"{table}.{filter_criteria}"
                     query = f"""
                         SELECT BM.book_id, BM.title, BM.isbn, B.warehouse_id, {additional_column}
@@ -321,7 +321,7 @@ class DBSession:
                 if filter_criteria and filter_value and additional_column:
                     yield (row[0], row[1], row[2], row[3], row[4])
                 else:
-                    yield (row[0], row[1], row[2], row[3], None)
+                    yield (row[0], row[1], row[2], row[3])
         
         except pyodbc.Error as err:
             print(f"Database error: {err}")
