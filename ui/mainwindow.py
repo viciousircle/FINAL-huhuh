@@ -46,7 +46,7 @@ class MainWindow_UI(QMainWindow):
 
         
         # Show admin id and name in the navigation bar
-        self.account_id     = str(account_id)
+        self.account_id     = account_id
         self.account_name   = account_name
         self.ui.admin_id.setText(self.account_id)
         self.ui.admin_name.setText(self.account_name)
