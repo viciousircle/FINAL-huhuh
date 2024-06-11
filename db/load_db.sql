@@ -35,81 +35,85 @@ GO
 
 -- Insert sample data into user.account
 INSERT INTO users.account (admin_id, [password], admin_name) VALUES
-(030504, 'vuminhquy0305', 'Vu Minh Quy'),
-(160105, 'dunghoang1601', 'Do Hoang Dung'),
-(010101, 'viciousircle', 'Vicious Circle');
+('1','1','Nam'),
+('2','2','Hoa'),
+('3','3','Lan'),
+('4','4','Hai'),
+('5','5','Dung');
 GO
 
 -- Insert sample data into user.history
 INSERT INTO users.history (edit_id, admin_id, book_id, [timestamp]) VALUES
-(1, 030504, 1, '2023-01-01 09:00:00'),
-(2, 160105, 2, '2023-01-02 10:00:00'),
-(3, 010101, 3, '2023-01-03 11:00:00');
+(1, '1', 1, '2023-01-01 09:00:00'),
+(2, '2', 2, '2023-01-02 10:00:00'),
+(3, '3', 3, '2023-01-03 11:00:00'),
+(4, '4', 4, '2023-01-04 12:00:00'),
+(5, '5', 5, '2023-01-05 13:00:00');
 GO
 
 
 -- Insert sample data into user.guest
 INSERT INTO users.guest (guest_id, guest_name, [timestamp]) VALUES
-(1, 'Nam', '2023-01-01 09:00:00'),
-(2, 'Hoa', '2023-01-02 10:00:00'),
+(1, 'Hoa', '2023-01-01 09:00:00'),
+(2, 'Nam', '2023-01-02 10:00:00'),
 (3, 'Lan', '2023-01-03 11:00:00'),
 (4, 'Hai', '2023-01-04 12:00:00'),
 (5, 'Dung', '2023-01-05 13:00:00');
 GO
 
--- Insert sample data into book.bookMarc
+-- Insert data into books.bookMarc
 INSERT INTO books.bookMarc (title, author, public_year, public_comp, isbn) VALUES
-('To Kill a Mockingbird', 'Harper Lee', 1960, 'J.B. Lippincott & Co.', '978-0061120084'),
-('1984', 'George Orwell', 1949, 'Secker & Warburg', '978-0451524935'),
-('The Great Gatsby', 'F. Scott Fitzgerald', 1925, 'Charles Scribners Sons', '978-0743273565'),
-('The Catcher in the Rye', 'J.D. Salinger', 1951, 'Little, Brown and Company', '978-0316769488'),
-('The Grapes of Wrath', 'John Steinbeck', 1939, 'The Viking Press', '978-0143039433'),
-('The Lord of the Rings', 'J.R.R. Tolkien', 1954, 'Allen & Unwin', '978-0618640157'),
-('The Hobbit', 'J.R.R. Tolkien', 1937, 'Allen & Unwin', '978-0618260300'),
-('Pride and Prejudice', 'Jane Austen', 1813, 'T. Egerton', '978-1503290563'),
-('Moby-Dick', 'Herman Melville', 1851, 'Harper & Brothers', '978-1503280786'),
-('War and Peace', 'Leo Tolstoy', 1869, 'The Russian Messenger', '978-0199232765'),
-('Ulysses', 'James Joyce', 1922, 'Shakespeare and Company', '978-0199535675'),
-('The Odyssey', 'Homer', -800, 'Ancient Greece', '978-0140268867'),
-('Madame Bovary', 'Gustave Flaubert', 1857, 'Revue de Paris', '978-0140449129'),
-('The Divine Comedy', 'Dante Alighieri', 1320, 'Italy', '978-0142437223'),
-('Alices Adventures in Wonderland', 'Lewis Carroll', 1865, 'Macmillan', '978-1503222687'),
-('Wuthering Heights', 'Emily Brontë', 1847, 'Thomas Cautley Newby', '978-0141439556'),
-('Crime and Punishment', 'Fyodor Dostoevsky', 1866, 'The Russian Messenger', '978-0143058144'),
-('The Brothers Karamazov', 'Fyodor Dostoevsky', 1880, 'The Russian Messenger', '978-0374528379'),
-('Great Expectations', 'Charles Dickens', 1861, 'Chapman & Hall', '978-0141439563'),
-('One Hundred Years of Solitude', 'Gabriel García Márquez', 1967, 'Harper & Row', '978-0060883287'),
-('Don Quixote', 'Miguel de Cervantes', 1615, 'Francisco de Robles', '978-0060934347'),
-('The Sound and the Fury', 'William Faulkner', 1929, 'Jonathan Cape and Harrison Smith', '978-0679732242'),
-('Catch-22', 'Joseph Heller', 1961, 'Simon & Schuster', '978-1451626650'),
-('The Bell Jar', 'Sylvia Plath', 1963, 'Heinemann', '978-0060837020'),
-('Brave New World', 'Aldous Huxley', 1932, 'Chatto & Windus', '978-0060850524'),
-('Invisible Man', 'Ralph Ellison', 1952, 'Random House', '978-0679732760'),
-('Beloved', 'Toni Morrison', 1987, 'Alfred A. Knopf', '978-1400033416'),
-('Lolita', 'Vladimir Nabokov', 1955, 'Olympia Press', '978-0679723164'),
-('The Stranger', 'Albert Camus', 1942, 'Gallimard', '978-0679720200'),
-('Jane Eyre', 'Charlotte Brontë', 1847, 'Smith, Elder & Co.', '978-0142437209'),
-('Anna Karenina', 'Leo Tolstoy', 1877, 'The Russian Messenger', '978-0143035008'),
-('Fahrenheit 451', 'Ray Bradbury', 1953, 'Ballantine Books', '978-1451673319'),
-('The Sun Also Rises', 'Ernest Hemingway', 1926, 'Scribner', '978-0743297332'),
-('Middlemarch', 'George Eliot', 1871, 'William Blackwood and Sons', '978-0141439549'),
-('Frankenstein', 'Mary Shelley', 1818, 'Lackington, Hughes, Harding, Mavor & Jones', '978-0486282114'),
-('Dracula', 'Bram Stoker', 1897, 'Archibald Constable and Company', '978-0486411095'),
-('The Picture of Dorian Gray', 'Oscar Wilde', 1890, 'Lippincotts Monthly Magazine', '978-0141439570'),
-('Heart of Darkness', 'Joseph Conrad', 1899, 'Blackwoods Magazine', '978-0141441672'),
-('The Metamorphosis', 'Franz Kafka', 1915, 'Kurt Wolff Verlag', '978-0553213690'),
-('The Iliad', 'Homer', -750, 'Ancient Greece', '978-0140275360'),
-('Les Misérables', 'Victor Hugo', 1862, 'A. Lacroix, Verboeckhoven & Cie.', '978-0451419439'),
-('A Tale of Two Cities', 'Charles Dickens', 1859, 'Chapman & Hall', '978-0141439600'),
-('Sense and Sensibility', 'Jane Austen', 1811, 'Thomas Egerton', '978-0141439662'),
-('David Copperfield', 'Charles Dickens', 1850, 'Bradbury & Evans', '978-0140439441'),
-('The Old Man and the Sea', 'Ernest Hemingway', 1952, 'Charles Scribners Sons', '978-0684801223'),
-('Mansfield Park', 'Jane Austen', 1814, 'Thomas Egerton', '978-0141439808'),
-('Emma', 'Jane Austen', 1815, 'John Murray', '978-0141439587'),
-('The Scarlet Letter', 'Nathaniel Hawthorne', 1850, 'Ticknor, Reed & Fields', '978-0142437261'),
-('Treasure Island', 'Robert Louis Stevenson', 1883, 'Cassell and Company', '978-0141439815'),
-('The Count of Monte Cristo', 'Alexandre Dumas', 1844, 'Penguin Classics', '978-0140449266');
+('The Great Gatsby', 'F. Scott Fitzgerald', 1925, 'Scribner', '9780743273565'),
+('To Kill a Mockingbird', 'Harper Lee', 1960, 'J.B. Lippincott & Co.', '9780061120084'),
+('1984', 'George Orwell', 1949, 'Secker & Warburg', '9780451524935'),
+('Pride and Prejudice', 'Jane Austen', 1813, 'T. Egerton', '9781503290563'),
+('The Catcher in the Rye', 'J.D. Salinger', 1951, 'Little, Brown and Company', '9780316769488'),
+('The Hobbit', 'J.R.R. Tolkien', 1937, 'George Allen & Unwin', '9780547928227'),
+('Fahrenheit 451', 'Ray Bradbury', 1953, 'Ballantine Books', '9781451673319'),
+('Moby-Dick', 'Herman Melville', 1851, 'Harper & Brothers', '9781503280786'),
+('War and Peace', 'Leo Tolstoy', 1869, 'The Russian Messenger', '9781400079988'),
+('The Odyssey', 'Homer', -800, 'Penguin Classics', '9780140268867'),
+('Crime and Punishment', 'Fyodor Dostoevsky', 1866, 'The Russian Messenger', '9780486415871'),
+('The Divine Comedy', 'Dante Alighieri', 1320, 'Penguin Classics', '9780140448955'),
+('The Brothers Karamazov', 'Fyodor Dostoevsky', 1880, 'The Russian Messenger', '9780374528379'),
+('Brave New World', 'Aldous Huxley', 1932, 'Chatto & Windus', '9780060850524'),
+('Jane Eyre', 'Charlotte Bronte', 1847, 'Smith, Elder & Co.', '9780142437209'),
+('Wuthering Heights', 'Emily Bronte', 1847, 'Thomas Cautley Newby', '9780141439556'),
+('The Iliad', 'Homer', -750, 'Penguin Classics', '9780140275360'),
+('Les Misérables', 'Victor Hugo', 1862, 'A. Lacroix, Verboeckhoven & Cie', '9780451419438'),
+('Anna Karenina', 'Leo Tolstoy', 1878, 'The Russian Messenger', '9780143035008'),
+('One Hundred Years of Solitude', 'Gabriel Garcia Marquez', 1967, 'Harper & Row', '9780060883287'),
+('Madame Bovary', 'Gustave Flaubert', 1857, 'Michel Lévy Frères', '9780140449129'),
+('The Great Expectations', 'Charles Dickens', 1861, 'Chapman & Hall', '9780141439563'),
+('The Kite Runner', 'Khaled Hosseini', 2003, 'Riverhead Books', '9781594631931'),
+('Slaughterhouse-Five', 'Kurt Vonnegut', 1969, 'Delacorte Press', '9780440180296'),
+('The Scarlet Letter', 'Nathaniel Hawthorne', 1850, 'Ticknor, Reed & Fields', '9780142437261'),
+('Dracula', 'Bram Stoker', 1897, 'Archibald Constable and Company', '9780486411095'),
+('The Sun Also Rises', 'Ernest Hemingway', 1926, 'Scribner', '9780743297332'),
+('Heart of Darkness', 'Joseph Conrad', 1899, 'Blackwoods Magazine', '9780486264646'),
+('The Metamorphosis', 'Franz Kafka', 1915, 'Kurt Wolff Verlag', '9780553213690'),
+('Emma', 'Jane Austen', 1815, 'John Murray', '9780141439587'),
+('Great Expectations', 'Charles Dickens', 1861, 'Chapman & Hall', '9780141439563'),
+('David Copperfield', 'Charles Dickens', 1850, 'Bradbury & Evans', '9780140439441'),
+('The Count of Monte Cristo', 'Alexandre Dumas', 1844, 'Penguin Classics', '9780140449266'),
+('Frankenstein', 'Mary Shelley', 1818, 'Lackington, Hughes, Harding, Mavor & Jones', '9780486282114'),
+('The Picture of Dorian Gray', 'Oscar Wilde', 1890, 'Lippincotts Monthly Magazine', '9780141439570'),
+('Sense and Sensibility', 'Jane Austen', 1811, 'Thomas Egerton', '9780141439662'),
+('The Old Man and the Sea', 'Ernest Hemingway', 1952, 'Charles Scribners Sons', '9780684801223'),
+('The Sound and the Fury', 'William Faulkner', 1929, 'Jonathan Cape and Harrison Smith', '9780679732242'),
+('Invisible Man', 'Ralph Ellison', 1952, 'Random House', '9780679732761'),
+('Don Quixote', 'Miguel de Cervantes', 1605, 'Francisco de Robles', '9780060934347'),
+('Mansfield Park', 'Jane Austen', 1814, 'Thomas Egerton', '9780141439808'),
+('Middlemarch', 'George Eliot', 1871, 'William Blackwood', '9780141439549'),
+('Ulysses', 'James Joyce', 1922, 'Sylvia Beach', '9780141182803'),
+('Gullivers Travels', 'Jonathan Swift', 1726, 'Benjamin Motte', '9780141439495'),
+('The Call of the Wild', 'Jack London', 1903, 'Macmillan', '9780486264721'),
+('Robinson Crusoe', 'Daniel Defoe', 1719, 'William Taylor', '9780486404271'),
+('The Three Musketeers', 'Alexandre Dumas', 1844, 'Penguin Classics', '9780140449266'),
+('Treasure Island', 'Robert Louis Stevenson', 1883, 'Cassell & Co.', '9780141439822'),
+('Moby-Dick', 'Herman Melville', 1851, 'Harper & Brothers', '9781503280786');
 GO
+
 
 -- Insert sample data into books.book without specifying warehouse_id
 INSERT INTO books.book (book_id, quantity, stage) VALUES
