@@ -23,7 +23,7 @@ class AddBook_UI:
     input_stageAdd     : QComboBox
     
     submit_btn      : QPushButton
-    reset_btn       : QPushButton
+    clear_btn       : QPushButton
     enter_btn       : QPushButton
     
     
@@ -36,6 +36,8 @@ class AddBook_UI:
         
         self.ui.submit_btn.clicked.connect(self.addBookInformation)
         self.ui.enter_btn.clicked.connect(self.getBookInformation)
+        
+        self.ui.clear_btn.clicked.connect(self.clearInputFields)
         
         self.disableInputFields()
         
@@ -141,15 +143,30 @@ class AddBook_UI:
         self.ui.input_yearAdd.setEnabled(True)
         
     def clearInputFields(self):
-        # Clear and disable input fields
-        self.ui.input_titleAdd.clear()
-        self.ui.input_authorAdd.clear()
-        self.ui.input_compAdd.clear()
-        self.ui.input_yearAdd.setDate(QDate())
-        self.ui.input_quantityAdd.clear()
-        self.ui.input_stageAdd.setCurrentIndex(0)
-        # self.ui.input_isbnAdd.clear()
-        self.disableInputFields()
+        # Create a confirmation message box
+        reply = QMessageBox.question(
+            self.ui, 'Message',
+            "Are you sure you want to clear all fields?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        
+        # Check the user's response
+        if reply == QMessageBox.StandardButton.Yes:
+            # Clear input fields
+            self.ui.input_isbnAdd.clear()
+            self.ui.input_titleAdd.clear()
+            self.ui.input_authorAdd.clear()
+            self.ui.input_compAdd.clear()
+            self.ui.input_yearAdd.setDate(QDate(2000, 1, 1))
+            self.ui.input_quantityAdd.setValue(0)
+            self.ui.input_stageAdd.setCurrentIndex(0)
+            
+            # Disable input fields
+            self.disableInputFields()
+        else:
+            # If the user chooses not to clear the fields, do nothing
+            return
+
         
     def populateInputFields(self, book):
         # Populate input fields with book information
@@ -157,3 +174,4 @@ class AddBook_UI:
         self.ui.input_authorAdd.setText(book.author)
         self.ui.input_compAdd.setText(book.public_comp)
         self.ui.input_yearAdd.setDate(QDate(book.public_year, 1, 1))    
+        

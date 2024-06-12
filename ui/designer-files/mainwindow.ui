@@ -477,7 +477,7 @@ QPushButton::after{
         <string>Submit</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="reset_btn">
+      <widget class="QPushButton" name="clear_btn">
        <property name="geometry">
         <rect>
          <x>620</x>
