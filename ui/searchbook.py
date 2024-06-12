@@ -67,6 +67,7 @@ class SearchBook_UI:
         self.ui.delete_btn.clicked.connect(self.deleteButtonClicked)
         
         
+        
     def searchBookInformation(self):
         try:
             # Clear previous search results from the table
@@ -248,6 +249,7 @@ class SearchBook_UI:
             
             
     def deleteButtonClicked(self):
+    
         try:
             # Get the index of the selected row
             selected_row = self.ui.search_table.currentRow()
@@ -264,10 +266,14 @@ class SearchBook_UI:
             
             book_id = int(book_id_item.text())
             
+            
             confirmation = QMessageBox.question(self.ui, 'Message', "Are you sure you want to delete this book?",
                                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if confirmation == QMessageBox.StandardButton.Yes:
-                success, message = self.db_session.deleteBook(book_id)
+                
+                admin_id = self.ui.admin_id.text()
+                
+                success, message = self.db_session.deleteBook(book_id, admin_id)
                 
                 if not success:
                     QMessageBox.warning(self.ui, "Error", message)

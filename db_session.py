@@ -51,6 +51,8 @@ class DBSession:
             print("Unexpected error:", err)  
             raise err
 
+    
+    
     def getAdmin(self, admin_id: int) -> Optional[UsersAccountData]:
         try:
             self.cursor.execute("SELECT * FROM users.admin WHERE admin_id = ?", (admin_id))
@@ -268,10 +270,27 @@ class DBSession:
         except Exception as err:
             return (False, str(err))
 
-    def deleteBook(self, book_id: int) -> ExecuteResult[None]:
+    def deleteBook(self, book_id: int, admin_id: int) -> ExecuteResult[None]:
         try:
-            self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ?", (book_id,))
+            # Retrieve the ISBN before deletion
+            self.cursor.execute("SELECT isbn FROM books.bookMarc WHERE book_id = ?", (book_id,))
+            row = self.cursor.fetchone()
+            
+            if row is None:
+                return (False, "Book not found.")
+            
+            isbn = row.isbn
+
+            # Delete the book from both tables
             self.cursor.execute("DELETE FROM books.book WHERE book_id = ?", (book_id,))
+            self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ?", (book_id,))
+            
+            # Insert the deletion record into user.history with book_id as NULL
+            self.cursor.execute("""
+                INSERT INTO user.history (admin_id, isbn, book_id, timestamp)
+                VALUES (?, ?, NULL, ?)
+            """, (admin_id, isbn, datetime.now()))
+
             self.connection.commit()
             return (True, None)
         except pyodbc.Error as err:
@@ -279,6 +298,8 @@ class DBSession:
             return (False, str(err))
         except Exception as err:
             return (False, str(err))
+
+
 
     # --- SEARCH BOOK FUNCTION ------------------------------------------
     def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[int, str, str, int, Optional[str]], None, None]:

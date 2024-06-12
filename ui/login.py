@@ -62,6 +62,7 @@ class Login_UI(QMainWindow):
     def setup_connections(self):
         self.ui.loginBtn.clicked.connect(self.handle_login)
         self.ui.enterBtn.clicked.connect(self.handle_enter)
+        
 # ---------------------------------------------------------
 
 # ----- MAIN FUNCTION -------------------------------------
