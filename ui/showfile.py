@@ -1,5 +1,5 @@
 # -------IMPORTS------------------------------------------
-from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QStackedWidget, QWidget
+from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QStackedWidget, QWidget, QHeaderView
 
 import sys
 import os
@@ -41,16 +41,11 @@ class ShowFile_UI:
         self.ui.show_file_Book.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.book_page))
         
         
-    
-        
     def showFileBookMarc(self):
-        # Fetch data from the database
         data = list(self.db_session.showFileBookMarc())
 
-        # Assuming you have a QTableWidget named bookMarc_table in your UI
         self.ui.bookMarc_table.setRowCount(len(data))
 
-        # Set the column count based on the number of fields in BooksBookMarcData
         column_count = len(BooksBookMarcData.__annotations__)
         self.ui.bookMarc_table.setColumnCount(column_count)  
 
@@ -60,15 +55,14 @@ class ShowFile_UI:
                 self.ui.bookMarc_table.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
         
         self.ui.bookMarc_table.resizeColumnsToContents()
+        self.adjustColumnWidth(self.ui.bookMarc_table)
 
     def showFileBook(self):
-        # Fetch data from the database
+        
         data = list(self.db_session.showFileBook())
 
-        # Assuming you have a QTableWidget named book_table in your UI
         self.ui.book_table.setRowCount(len(data))
 
-        # Set the column count based on the number of fields in BooksBookData
         column_count = len(BooksBookData.__annotations__)
         self.ui.book_table.setColumnCount(column_count)  
 
@@ -78,8 +72,17 @@ class ShowFile_UI:
                 self.ui.book_table.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
         
         self.ui.book_table.resizeColumnsToContents()
+        self.adjustColumnWidth(self.ui.book_table)
 
-    
+    def adjustColumnWidth(self, table_widget: QTableWidget):
+        # Set the header to resize to fill the available space
+        header = table_widget.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
+        # Optionally, resize rows to fit content
+        table_widget.resizeRowsToContents()
+
+
     def updateBookMarcTable(self):
         self.ui.bookMarc_table.clearContents()
         self.showFileBookMarc()
