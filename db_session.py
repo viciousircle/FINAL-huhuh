@@ -272,24 +272,31 @@ class DBSession:
 
     def deleteBook(self, book_id: int, admin_id: int) -> ExecuteResult[None]:
         try:
-            # Retrieve the ISBN before deletion
-            self.cursor.execute("SELECT isbn FROM books.bookMarc WHERE book_id = ?", (book_id,))
+            # Retrieve the ISBN and warehouse_id from the books.book table before deletion
+            self.cursor.execute("""
+                SELECT BM.book_id, BM.isbn, B.warehouse_id
+                FROM books.bookMarc BM
+                JOIN books.book B ON BM.book_id = B.book_id
+                WHERE BM.book_id = ?
+            """, (book_id,))
             row = self.cursor.fetchone()
             
             if row is None:
                 return (False, "Book not found.")
             
-            isbn = row.isbn
+            book_id ,isbn, warehouse_id = row.book_id,row.isbn, row.warehouse_id
 
-            # Delete the book from both tables
-            self.cursor.execute("DELETE FROM books.book WHERE book_id = ?", (book_id,))
-            self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ?", (book_id,))
+            # Delete the book from books.book first
+            self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ?", (book_id, isbn))
             
-            # Insert the deletion record into user.history with book_id as NULL
+            # Delete the book from books.bookMarc
+            self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ? AND isbn = ?", (book_id, isbn))
+            
+            # Insert the deletion record into users.history with book_id as NULL
             self.cursor.execute("""
-                INSERT INTO user.history (admin_id, isbn, book_id, timestamp)
-                VALUES (?, ?, NULL, ?)
-            """, (admin_id, isbn, datetime.now()))
+                INSERT INTO users.history (admin_id, isbn, book_id, warehouse_id, timestamp)
+                VALUES (?, ?, ?, ?, ?)   
+            """, (admin_id, isbn, book_id, warehouse_id, datetime.now()))
 
             self.connection.commit()
             return (True, None)

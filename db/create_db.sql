@@ -41,13 +41,13 @@ GO
 
 -- Create the history_edit table for user edits
 CREATE TABLE users.history (
-    edit_id     INT PRIMARY KEY,
     admin_id    VARCHAR(20),
     book_id     INT,
     isbn        VARCHAR(25),
+    warehouse_id    INT,
     [timestamp] DATETIME,
     FOREIGN KEY (admin_id) REFERENCES users.account(admin_id),
-    FOREIGN KEY (book_id,isbn) REFERENCES books.bookMarc(book_id,isbn)
+    
 );
 GO
 

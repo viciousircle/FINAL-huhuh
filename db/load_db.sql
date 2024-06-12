@@ -43,12 +43,13 @@ INSERT INTO users.account (admin_id, [password], admin_name) VALUES
 GO
 
 -- Insert sample data into user.history
-INSERT INTO users.history (edit_id, admin_id, book_id, isbn, [timestamp]) VALUES
-(1, '1', 1, '9780743273565', '2023-01-01 09:00:00'),
-(2, '2', 2, '9780061120084', '2023-01-02 10:00:00'),
-(3, '3', 3, '9780451524935', '2023-01-03 11:00:00'),
-(4, '4', 4, '9781503290563', '2023-01-04 12:00:00'),
-(5, '5', 5, '9780316769488', '2023-01-05 13:00:00');
+INSERT INTO users.history (admin_id, book_id, isbn, warehouse_id, [timestamp]) VALUES
+('1', 1, '9780743273565', 1, '2023-01-01 09:00:00'),
+('2', 2, '9780061120084', 2, '2023-01-02 10:00:00'),
+('3', 3, '9780451524935', 3, '2023-01-03 11:00:00'),
+('4', 4, '9781503290563', 4, '2023-01-04 12:00:00'),
+('5', 5, '9780316769488', 5, '2023-01-05 13:00:00');
+
 
 
 -- Insert sample data into user.guest

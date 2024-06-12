@@ -94,6 +94,8 @@ class SearchBook_UI:
     
             search_results = list(self.db_session.searchBook(column_name, search_query))
             
+            print(search_results)
+            
             if search_results:
                 self.ui.search_table.setRowCount(len(search_results))
                 column_count = len(search_results[0]) 
@@ -242,6 +244,14 @@ class SearchBook_UI:
             
             self.ui.edit_stackedWidget.setCurrentWidget(self.ui.delete_page)
             
+            self.searchBookInformation()
+            
+            from ui.showfile import ShowFile_UI
+            showfile = ShowFile_UI(self.ui, self.db_session)
+            showfile.updateBookMarcTable()
+            showfile.updateBookTable()
+            
+            
 
 
         except Exception as e:
@@ -265,13 +275,13 @@ class SearchBook_UI:
                 return
             
             book_id = int(book_id_item.text())
+            admin_id = self.ui.admin_id.text()
             
             
             confirmation = QMessageBox.question(self.ui, 'Message', "Are you sure you want to delete this book?",
                                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if confirmation == QMessageBox.StandardButton.Yes:
                 
-                admin_id = self.ui.admin_id.text()
                 
                 success, message = self.db_session.deleteBook(book_id, admin_id)
                 
@@ -280,6 +290,15 @@ class SearchBook_UI:
                     return
                 
                 QMessageBox.information(self.ui, "Delete", "Book deleted successfully.")
+                
+                self.searchBookInformation()
+                
+                from ui.showfile import ShowFile_UI
+                showfile = ShowFile_UI(self.ui, self.db_session)
+                showfile.updateBookMarcTable()
+                showfile.updateBookTable()
+                
+                
                 
             elif confirmation == QMessageBox.StandardButton.No:
             # Re-enable the delete button

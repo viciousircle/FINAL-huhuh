@@ -13,10 +13,10 @@ class UsersAccountData:
 
 @dataclass
 class UsersHistoryData:
-    edit_id: Optional[int]
     admin_id: Optional[str]
     book_id: Optional[int]
     isbn: Optional[str]
+    warehouse_id: Optional[int]
     timestamp: Optional[datetime]
 
 @dataclass
