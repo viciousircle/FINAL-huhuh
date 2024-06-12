@@ -114,7 +114,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Status</string>
+          <string>Stage</string>
          </property>
         </column>
        </widget>

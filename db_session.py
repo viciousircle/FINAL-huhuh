@@ -4,7 +4,6 @@ import pyodbc
 from typing import Optional, Generator, Tuple
 from datetime import datetime
 from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
-# ---------------------------------------------------------
 
 # nhớ chỉnh lại cái username
 # -------CONNECT TO DATABASE------------------------------------------
