@@ -55,7 +55,7 @@ class SearchBook_UI:
         }
         
         self.initial_field_values = {}
-        
+                
         self.ui.search_table.cellClicked.connect(self.displayBookDetails)
         
         self.ui.edit_btn.clicked.connect(lambda: self.ui.edit_stackedWidget.setCurrentWidget(self.ui.save_page))
@@ -129,15 +129,10 @@ class SearchBook_UI:
             # Fetch the book details using the book ID
             bookMarcData, bookData = self.db_session.getBookById(book_id)
             
-                        
-            print(bookMarcData)
-            print(bookData)
             if bookMarcData is None or bookData is None:
                 QMessageBox.warning(self.ui, "Error", "Book details not found.")
                 return
             
-
-
             # Update UI components with the book details
 
             self.ui.input_titleEdit.setText(bookMarcData.title)
@@ -151,14 +146,14 @@ class SearchBook_UI:
             
             # Store the initial values of the input fields
             self.initial_field_values = {
-                'title': bookMarcData.title,
-                'author': bookMarcData.author,
-                'isbn': bookMarcData.isbn,
-                'public_year': bookMarcData.public_year,
-                'public_comp': bookMarcData.public_comp,
-                'warehouse_id': bookData.warehouse_id,
-                'quantity': bookData.quantity,
-                'stage': bookData.stage
+                'input_titleEdit': bookMarcData.title,
+                'input_authorEdit': bookMarcData.author,
+                'input_isbnEdit': bookMarcData.isbn,
+                'input_yearEdit': str(bookMarcData.public_year),
+                'input_compEdit': bookMarcData.public_comp,
+                'input_warehouse_idEdit': str(bookData.warehouse_id),
+                'input_quantityEdit': bookData.quantity,
+                'input_stageEdit': bookData.stage
             }
             
             self.old_bookMarcData = bookMarcData
@@ -169,42 +164,41 @@ class SearchBook_UI:
 
     def editButtonClicked(self):
         # Enable or disable input fields based on edit button state
-        edit_mode = self.ui.edit_btn.isChecked()
         for field_name, field_widget in self.input_fields.items():
-            # Enable or disable QLineEdit fields based on edit mode
             if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-                field_widget.setReadOnly(edit_mode)
-            # Enable or disable QSpinBox and QComboBox fields based on edit mode
-            elif isinstance(field_widget, (QComboBox)):
-                field_widget.setEnabled(not edit_mode)
-                
-        if edit_mode is False:
-            self.storeInitialBookDetails()
+                field_widget.setReadOnly(False)
+            elif isinstance(field_widget, QComboBox):
+                field_widget.setEnabled(True)
+
+        self.ui.save_btn.setEnabled(True)
+        self.ui.cancel_btn.setEnabled(True)
+        self.ui.edit_btn.setEnabled(False)
             
     def cancelButtonClicked(self):
-        # Restore the initial values of the input fields
-        for field_name, field_widget in self.input_fields.items():
-            if field_name in self.initial_field_values:
-                initial_value = self.initial_field_values[field_name]
-                if isinstance(field_widget, QLineEdit):
-                    field_widget.setText(initial_value)
-                elif isinstance(field_widget, QSpinBox):
-                    field_widget.setValue(initial_value)
+        if QMessageBox.question(self.ui, 'Message', "Are you sure you want to cancel and discard changes?",
+                                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
+            for field_name, field_widget in self.input_fields.items():
+                if field_name in self.initial_field_values:
+                    initial_value = self.initial_field_values[field_name]
+                    if isinstance(field_widget, QLineEdit):
+                        field_widget.setText(initial_value)
+                    elif isinstance(field_widget, QSpinBox):
+                        field_widget.setValue(int(initial_value))
+                    elif isinstance(field_widget, QComboBox):
+                        index = field_widget.findText(initial_value)
+                        if index != -1:
+                            field_widget.setCurrentIndex(index)
+
+            for field_widget in self.input_fields.values():
+                if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+                    field_widget.setReadOnly(True)
                 elif isinstance(field_widget, QComboBox):
-                    index = field_widget.findText(initial_value)
-                    if index != -1:
-                        field_widget.setCurrentIndex(index)
-            
-    def storeInitialBookDetails(self):
-        # Store the initial values of the input fields
-        for field_name, field_widget in self.input_fields.items():
-            if isinstance(field_widget, QLineEdit):
-                self.initial_field_values[field_name] = field_widget.text()
-            elif isinstance(field_widget, QSpinBox):
-                self.initial_field_values[field_name] = field_widget.value()
-            elif isinstance(field_widget, QComboBox):
-                self.initial_field_values[field_name] = field_widget.currentText()
-                
+                    field_widget.setEnabled(False)
+
+            self.ui.save_btn.setEnabled(False)
+            self.ui.cancel_btn.setEnabled(False)
+            self.ui.edit_btn.setEnabled(True)
+      
     def saveButtonClicked(self):
         try:
             updated_bookMarcData = BooksBookMarcData(
@@ -236,15 +230,12 @@ class SearchBook_UI:
                     field_widget.setReadOnly(True)
                 elif isinstance(field_widget, QComboBox):
                     field_widget.setEnabled(False)
-                    
-            # Reset buttons
-            self.ui.edit_button.setEnabled(True)
-            self.ui.save_button.setEnabled(False)
-            self.ui.cancel_button.setEnabled(False)
-            
-            # Show a success message
+
+            self.ui.save_btn.setEnabled(False)
+            self.ui.cancel_btn.setEnabled(False)
+            self.ui.edit_btn.setEnabled(True)
+
             QMessageBox.information(self.ui, "Save", "Changes saved successfully.")
-            
+
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
-    
