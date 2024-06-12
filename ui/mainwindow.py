@@ -34,6 +34,10 @@ class MainWindow_UI(QMainWindow):
         designer_files_path = Path(__file__).resolve().parent.joinpath("designer-files", self.DESIGNER_FILE)
         self.ui             = uic.loadUi(designer_files_path, self)
         
+        # Set fixed size of the window
+        self.setFixedSize(1400, 630)  # Replace with your desired width and height
+
+        
         # Connect modules
         self.navigation     = Navigation_UI(self.ui, self.db_session)
         self.addbook        = AddBook_UI(self.ui, self.db_session)
