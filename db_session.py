@@ -268,6 +268,18 @@ class DBSession:
         except Exception as err:
             return (False, str(err))
 
+    def deleteBook(self, book_id: int) -> ExecuteResult[None]:
+        try:
+            self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ?", (book_id,))
+            self.cursor.execute("DELETE FROM books.book WHERE book_id = ?", (book_id,))
+            self.connection.commit()
+            return (True, None)
+        except pyodbc.Error as err:
+            self.connection.rollback()
+            return (False, str(err))
+        except Exception as err:
+            return (False, str(err))
+
     # --- SEARCH BOOK FUNCTION ------------------------------------------
     def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[int, str, str, int, Optional[str]], None, None]:
         try:

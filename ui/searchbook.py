@@ -64,6 +64,7 @@ class SearchBook_UI:
         self.ui.edit_btn.clicked.connect(self.editButtonClicked)
         self.ui.cancel_btn.clicked.connect(self.cancelButtonClicked)
         self.ui.save_btn.clicked.connect(self.saveButtonClicked)
+        self.ui.delete_btn.clicked.connect(self.deleteButtonClicked)
         
         
     def searchBookInformation(self):
@@ -242,5 +243,42 @@ class SearchBook_UI:
             
 
 
+        except Exception as e:
+            QMessageBox.critical(self.ui, "Error", str(e))
+            
+            
+    def deleteButtonClicked(self):
+        try:
+            # Get the index of the selected row
+            selected_row = self.ui.search_table.currentRow()
+            
+            # Ensure a row is selected
+            if selected_row == -1:
+                QMessageBox.warning(self.ui, "Error", "No book selected for deletion.")
+                return
+            
+            # Get the book ID from the selected row
+            book_id_item = self.ui.search_table.item(selected_row, 0)
+            if book_id_item is None:
+                return
+            
+            book_id = int(book_id_item.text())
+            
+            confirmation = QMessageBox.question(self.ui, 'Message', "Are you sure you want to delete this book?",
+                                                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            if confirmation == QMessageBox.StandardButton.Yes:
+                success, message = self.db_session.deleteBook(book_id)
+                
+                if not success:
+                    QMessageBox.warning(self.ui, "Error", message)
+                    return
+                
+                QMessageBox.information(self.ui, "Delete", "Book deleted successfully.")
+                
+            elif confirmation == QMessageBox.StandardButton.No:
+            # Re-enable the delete button
+                self.ui.delete_btn.setDisabled(False)
+                
+                # chuaw xong doan nafy
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
