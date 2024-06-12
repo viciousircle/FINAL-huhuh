@@ -202,6 +202,7 @@ class DBSession:
 
     def updateBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:
+            print("Updating book")
             # Update BookMarcData if old data is provided and there are changes
             if old_bookMarcData is not None:
                 update_query = "UPDATE books.bookMarc SET "

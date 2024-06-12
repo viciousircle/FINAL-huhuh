@@ -63,6 +63,7 @@ class SearchBook_UI:
 
         self.ui.edit_btn.clicked.connect(self.editButtonClicked)
         self.ui.cancel_btn.clicked.connect(self.cancelButtonClicked)
+        self.ui.save_btn.clicked.connect(self.saveButtonClicked)
         
         
     def searchBookInformation(self):
@@ -215,7 +216,7 @@ class SearchBook_UI:
                 quantity=self.ui.input_quantityEdit.value(),
                 stage=self.ui.input_stageEdit.currentText(),
                 book_id=self.old_bookData.book_id,
-                isbn=self.input_isbnEdit.text()
+                isbn=self.ui.input_isbnEdit.text()
             )
             
             success, message = self.db_session.updateBook(updated_bookMarcData, updated_bookData, self.old_bookMarcData, self.old_bookData)
@@ -236,6 +237,10 @@ class SearchBook_UI:
             self.ui.edit_btn.setEnabled(True)
 
             QMessageBox.information(self.ui, "Save", "Changes saved successfully.")
+            
+            self.ui.edit_stackedWidget.setCurrentWidget(self.ui.delete_page)
+            
+
 
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
