@@ -95,23 +95,25 @@ class DBSession:
             raise err
         
     # --- ADD BOOK FUNCTION ------------------------------------------
-    def addBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
+    def addBook(self,book_id, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
         try:
             if bookMarcData:
-                self.cursor.execute(
-                    "INSERT INTO books.bookMarc (title, author, public_year, public_comp, isbn) VALUES (?, ?, ?, ?, ?)",
-                    (bookMarcData.title, bookMarcData.author, bookMarcData.public_year, bookMarcData.public_comp, bookMarcData.isbn)
-                )
-                self.cursor.execute("SELECT SCOPE_IDENTITY()")
-                book_id = self.cursor.fetchone()[0]
+                # If bookMarcData is provided, insert it into the bookMarc table
+                book_id = self.insertBookMarc(bookMarcData)
+                print("Book ID:", book_id)
             else:
-                self.cursor.execute("SELECT book_id FROM books.bookMarc WHERE isbn = ?", (bookData.isbn,))
-                book_id = self.cursor.fetchone()[0]
-
-            self.cursor.execute(
-                "INSERT INTO books.book (book_id, isbn, quantity, stage) VALUES (?, ?, ?, ?)",
-                (book_id, bookData.isbn, bookData.quantity, bookData.stage)
-            )
+                # If bookMarcData is not provided, check if the book exists in the bookMarc table using ISBN
+                existing_book, error = self.getBookByISBN(bookData.isbn)
+                if existing_book is None:
+                    # If the book doesn't exist, insert it into the bookMarc table to generate a book_id
+                    book_id = self.insertBookMarc(bookMarcData)
+                else:
+                    book_id = existing_book.book_id
+                
+            # Insert the book into the book table
+            self.insertBook(book_id, bookData)
+            print("Book inserted")
+            
             self.connection.commit()
             return (True, None)
         except pyodbc.Error as err:
@@ -121,6 +123,31 @@ class DBSession:
             self.connection.rollback()
             return (False, str(err))
 
+
+    def insertBookMarc(self, bookMarcData: BooksBookMarcData) -> int:
+        try:
+            self.cursor.execute(
+                "INSERT INTO books.bookMarc (title, author, public_year, public_comp, isbn) VALUES (?, ?, ?, ?, ?)",
+                (bookMarcData.title, bookMarcData.author, bookMarcData.public_year, bookMarcData.public_comp, bookMarcData.isbn)
+            )
+            self.connection.commit()
+            self.cursor.execute("SELECT SCOPE_IDENTITY()")
+            
+            book_id = self.cursor.fetchone()[0]
+            return book_id
+        except pyodbc.Error as err:
+            self.connection.rollback()
+            raise err
+        except Exception as err:
+            self.connection.rollback()
+            raise err
+
+    def insertBook(self, book_id: int, bookData: BooksBookData) -> None:
+        # Insert bookData into the book table
+        self.cursor.execute(
+            "INSERT INTO books.book (book_id, isbn, quantity, stage) VALUES (?, ?, ?, ?)",
+            (book_id, bookData.isbn, bookData.quantity, bookData.stage)
+        )          
                 
     # --- EDIT BOOK FUNCTION ------------------------------------------
     def getBookById(self, book_id: int) -> Optional[Tuple[BooksBookMarcData, BooksBookData]]:

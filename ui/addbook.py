@@ -1,6 +1,6 @@
 
 # ------ IMPORTS ------------------------------------------
-from PyQt6.QtWidgets import QPushButton, QMessageBox, QComboBox, QLineEdit, QDateEdit
+from PyQt6.QtWidgets import QPushButton, QMessageBox, QComboBox, QLineEdit, QDateEdit, QSpinBox
 from PyQt6.QtCore import QDate
 import sys
 import os
@@ -19,7 +19,7 @@ class AddBook_UI:
     input_authorAdd    : QLineEdit
     input_compAdd      : QLineEdit
     input_yearAdd      : QDateEdit
-    input_quantityAdd  : QLineEdit
+    input_quantityAdd  : QSpinBox
     input_stageAdd     : QComboBox
     
     submit_btn      : QPushButton
@@ -37,6 +37,8 @@ class AddBook_UI:
         self.ui.submit_btn.clicked.connect(self.addBookInformation)
         self.ui.enter_btn.clicked.connect(self.getBookInformation)
         
+        self.disableInputFields()
+        
         
     def getBookInformation(self):
         try:
@@ -47,19 +49,12 @@ class AddBook_UI:
                 return
 
             existing_book, error = self.db_session.getBookByISBN(isbn)
+            print(existing_book)
+            print(error)
 
             if existing_book:
-                title = existing_book.title
-                author = existing_book.author
-                public_year = existing_book.public_year
-                public_comp = existing_book.public_comp
-
-                self.ui.input_titleAdd.setText(title)
-                self.ui.input_authorAdd.setText(author)
-                self.ui.input_compAdd.setText(public_comp)
-                self.ui.input_yearAdd.setDate(QDate(public_year, 1, 1))
-
-                self.disableInputFields()  # Disable input fields after fetching book information
+                self.populateInputFields(existing_book)
+                self.disableInputFields()
 
             else:
                 self.clearInputFields()  # Clear other input fields if book not found
@@ -69,13 +64,10 @@ class AddBook_UI:
             QMessageBox.critical(self.ui, "Error", str(e))
             print(str(e))
 
-
-    
-    
     def addBookInformation(self):
         try:
             isbn = self.ui.input_isbnAdd.text().strip()
-            quantity = int(self.ui.input_quantityAdd.text().strip())
+            quantity = self.ui.input_quantityAdd.value() 
             stage = self.ui.input_stageAdd.currentText().strip()
 
             if not isbn:
@@ -86,15 +78,19 @@ class AddBook_UI:
                 QMessageBox.critical(self.ui, "Error", "Quantity must be greater than 0")
                 return
 
-            bookData = BooksBookData(
-                quantity=quantity,
-                stage=stage,
-                isbn=isbn
-            )
-
             existing_book, error = self.db_session.getBookByISBN(isbn)
 
-            if not existing_book:
+            if existing_book:
+                # Retrieve the book_id from existing_book (if it's correct)
+                book_id = existing_book.book_id
+                bookData = BooksBookData(
+                    quantity=quantity,
+                    stage=stage,
+                    isbn=isbn
+                )
+                result = self.db_session.addBook(book_id, None, bookData)
+                print(result)
+            else:
                 bookMarcData = BooksBookMarcData(
                     title=self.ui.input_titleAdd.text().strip(),
                     author=self.ui.input_authorAdd.text().strip(),
@@ -102,27 +98,33 @@ class AddBook_UI:
                     public_comp=self.ui.input_compAdd.text().strip(),
                     isbn=isbn
                 )
-
-                result = self.db_session.addBook(bookMarcData, bookData)
-
-            else:
-                result = self.db_session.addBook(None, bookData)
-
+                book_id = self.db_session.insertBookMarc(bookMarcData)
+                bookData = BooksBookData(
+                    quantity=quantity,
+                    stage=stage,
+                    isbn=isbn
+                )
+                result = self.db_session.addBook(book_id, bookMarcData, bookData)
+                print(result)
+            
             if result[0]:
                 QMessageBox.information(self.ui, "Success", "Book added successfully")
                 from ui import ShowFile_UI
                 self.showfile = ShowFile_UI(self.ui, self.db_session)
                 self.showfile.updateBookMarcTable()
                 self.showfile.updateBookTable()
-
                 self.clearInputFields()
-
             else:
                 QMessageBox.critical(self.ui, "Error", result[1])
+                print(result[1])
 
+        except AttributeError:
+            # Handle the case where existing_book is None
+            QMessageBox.critical(self.ui, "Error", "Book not found")
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
             print(str(e))
+
             
     def disableInputFields(self):
         # Disable input fields
@@ -143,8 +145,15 @@ class AddBook_UI:
         self.ui.input_titleAdd.clear()
         self.ui.input_authorAdd.clear()
         self.ui.input_compAdd.clear()
-        self.ui.input_yearAdd.clear()
+        self.ui.input_yearAdd.setDate(QDate())
         self.ui.input_quantityAdd.clear()
         self.ui.input_stageAdd.setCurrentIndex(0)
         # self.ui.input_isbnAdd.clear()
         self.disableInputFields()
+        
+    def populateInputFields(self, book):
+        # Populate input fields with book information
+        self.ui.input_titleAdd.setText(book.title)
+        self.ui.input_authorAdd.setText(book.author)
+        self.ui.input_compAdd.setText(book.public_comp)
+        self.ui.input_yearAdd.setDate(QDate(book.public_year, 1, 1))    
