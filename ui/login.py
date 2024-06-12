@@ -1,5 +1,5 @@
 # ----IMPORTS------------------------------------------
-from PyQt6.QtWidgets import QApplication, QMessageBox, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMessageBox, QMainWindow, QPushButton, QLineEdit
 from PyQt6 import uic
 
 import os
@@ -13,10 +13,26 @@ from db_session import DBSession
 # ---------LOGIN_UI CLASS--------------------------------
 class Login_UI(QMainWindow):
     
+    # Lists of objects in .ui file related to this module
+    guestBtn        : QPushButton
+    adminBtn        : QPushButton
+    
+    input_name      : QLineEdit
+    backBtn       : QPushButton
+    enterBtn      : QPushButton
+    
+    input_id        : QLineEdit
+    input_pass      : QLineEdit
+    
+    backBtnLogIn     : QPushButton
+    loginBtn      : QPushButton
+    
     DESIGNER_FILE: str = "login.ui"
     
     def __init__(self, db_session: DBSession)-> None:
         super().__init__()
+        
+        # for database session
         self.db_session     = db_session
         
         # for designer file
@@ -27,9 +43,12 @@ class Login_UI(QMainWindow):
         self.ui.adminBtn.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_admin))
         self.ui.guestBtn.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_guest))
         
-        # Move to welcome page when the buttons 'backBtn_1' and 'backBtn_4' are clicked
-        self.ui.backBtn_1.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_welcome))
-        self.ui.backBtn_4.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_welcome))
+        # Move to welcome page when the buttons 'backBtnLogIn' and 'backBtn' are clicked
+        self.ui.backBtnLogIn.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_welcome))
+        self.ui.backBtn.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_welcome))
+        
+        self.setup_connections()
+
     
         self.show()
         
@@ -69,9 +88,6 @@ class Login_UI(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     db_session_instance = DBSession()
-    login_window = Login_UI(db_session_instance)
-
-    
-    login_window.setup_connections()
+    login_window = Login_UI(db_session_instance)    
     login_window.show()
     sys.exit(app.exec())

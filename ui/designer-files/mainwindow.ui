@@ -1373,6 +1373,9 @@ padding: 0 10px 0 10px ;
       </item>
       <item>
        <widget class="QFrame" name="frame">
+        <property name="styleSheet">
+         <string notr="true">border: solid grey;</string>
+        </property>
         <layout class="QVBoxLayout" name="burger">
          <item>
           <widget class="QPushButton" name="home_btn">

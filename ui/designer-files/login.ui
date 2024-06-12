@@ -68,7 +68,7 @@
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="page_admin">
         <widget class="QFrame" name="frame">
@@ -207,7 +207,7 @@ padding: 0 10px 0 10px ;
            <string>Enter your password</string>
           </property>
          </widget>
-         <widget class="QPushButton" name="backBtn_1">
+         <widget class="QPushButton" name="backBtnLogIn">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -421,7 +421,7 @@ padding: 0 10px 0 10px ;
            <string>Enter your name </string>
           </property>
          </widget>
-         <widget class="QPushButton" name="backBtn_4">
+         <widget class="QPushButton" name="backBtn">
           <property name="geometry">
            <rect>
             <x>60</x>

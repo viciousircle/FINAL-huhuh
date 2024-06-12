@@ -4,12 +4,15 @@ import os
 from PyQt6.QtWidgets import  QPushButton, QMessageBox, QLabel
 from db_session import DBSession
 from typing import Optional
-from login import Login_UI
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from ui import Login_UI
+
 # ---------------------------------------------------------
 
 # ---------NAVIGATION_UI CLASS--------------------------------
 class Navigation_UI:
+    
     # List of objects in .ui file related to this module
     admin_id                : QLabel
     admin_name              : QLabel
@@ -22,7 +25,10 @@ class Navigation_UI:
     logout_btn              : QPushButton
     
     def __init__(self, ui, db_session: DBSession):
+        
+        # Linking the objects in the .ui file to the variables in this module
         self.ui         = ui
+        # Linking database session
         self.db_session = db_session
         
         # List of buttons in the navigation bar
@@ -61,6 +67,7 @@ class Navigation_UI:
     def logOut(self):
         
         self.ui.close()
+        
         
         self.login_window = Login_UI(self.db_session)
         self.login_window.show()
