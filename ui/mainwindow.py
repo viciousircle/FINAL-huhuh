@@ -36,12 +36,11 @@ class MainWindow_UI(QMainWindow):
         
         # Connect modules
         self.navigation     = Navigation_UI(self.ui, self.db_session)
-        # self.addbook        = AddBook_UI(self.ui, self.db_session)
+        self.addbook        = AddBook_UI(self.ui, self.db_session)
         self.searchbook     = SearchBook_UI(self.ui, self.db_session)
         self.showfile       = ShowFile_UI(self.ui, self.db_session)
         
         # Connect buttons to functions in the modules
-        # self.ui.submit_btn.clicked.connect(self.addbook.addBookInformation)
         self.ui.find_btn.clicked.connect(self.searchbook.searchBookInformation)
 
         

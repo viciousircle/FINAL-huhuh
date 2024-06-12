@@ -97,71 +97,31 @@ class DBSession:
     # --- ADD BOOK FUNCTION ------------------------------------------
     def addBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
         try:
-            # Check if the ISBN is already in the database
-            self.cursor.execute("SELECT * FROM books.bookMarc WHERE isbn = ?", (bookMarcData.isbn,))
-
-            existing_book = self.cursor.fetchone()
-            
-            if existing_book:
-                # If ISBN exists, get Book by ISBN
-                bookMarcData = BooksBookMarcData(
-                    title=existing_book[1],
-                    author=existing_book[2],
-                    public_year=existing_book[3],
-                    public_comp=existing_book[4],
-                    isbn=existing_book[5]
-                )
-                
-                book_id = existing_book[0]
-                
-                # Insert data into BookData table
+            if bookMarcData:
                 self.cursor.execute(
-                    "INSERT INTO books.book (book_id, isbn ,quantity, stage) VALUES (?, ?, ?)",
-                    (book_id, bookMarcData.isbn , bookData.quantity, bookData.stage)
+                    "INSERT INTO books.bookMarc (title, author, public_year, public_comp, isbn) VALUES (?, ?, ?, ?, ?)",
+                    (bookMarcData.title, bookMarcData.author, bookMarcData.public_year, bookMarcData.public_comp, bookMarcData.isbn)
                 )
-                self.connection.commit()
-                
-                return (True, None)
-            else:
-                # If ISBN does not exist, insert new Book
-                # Insert data into BookMarcData table
-                self.cursor.execute(
-                    "INSERT INTO books.bookMarc (title, author, isbn, public_year, public_comp) VALUES (?, ?, ?, ?, ?)",
-                    (bookMarcData.title, bookMarcData.author, bookMarcData.isbn, bookMarcData.public_year, bookMarcData.public_comp)
-                )
-
-                print("BookMarcData inserted")
-
-                # Get the last inserted book ID using SCOPE_IDENTITY()
                 self.cursor.execute("SELECT SCOPE_IDENTITY()")
                 book_id = self.cursor.fetchone()[0]
-                print("Book ID:", book_id)
-                
-                # Insert data into BookData table
-                self.cursor.execute(
-                    "INSERT INTO books.book (book_id, isbn ,quantity, stage) VALUES (?, ?, ?)",
-                    (book_id, bookMarcData.isbn , bookData.quantity, bookData.stage)
-                )
-                self.connection.commit()
-                print("BookData inserted")
+            else:
+                self.cursor.execute("SELECT book_id FROM books.bookMarc WHERE isbn = ?", (bookData.isbn,))
+                book_id = self.cursor.fetchone()[0]
 
-                # Get the last inserted warehouse ID using SCOPE_IDENTITY()
-                self.cursor.execute("SELECT SCOPE_IDENTITY()")
-                warehouse_id = self.cursor.fetchone()[0]
-                print("Warehouse ID:", warehouse_id)
-                return (True, None)
-            
+            self.cursor.execute(
+                "INSERT INTO books.book (book_id, isbn, quantity, stage) VALUES (?, ?, ?, ?)",
+                (book_id, bookData.isbn, bookData.quantity, bookData.stage)
+            )
+            self.connection.commit()
+            return (True, None)
         except pyodbc.Error as err:
             self.connection.rollback()
-            if "duplicate key" in str(err).lower():
-                return (False, "Duplicate book ID or warehouse ID detected.")
-            else:
-                return (False, str(err))
-
+            return (False, str(err))
         except Exception as err:
             self.connection.rollback()
             return (False, str(err))
-            
+
+                
     # --- EDIT BOOK FUNCTION ------------------------------------------
     def getBookById(self, book_id: int) -> Optional[Tuple[BooksBookMarcData, BooksBookData]]:
         try:
@@ -201,6 +161,33 @@ class DBSession:
             print("Error:", err)
             return None            
 
+
+    def getBookByISBN(self, isbn: str) -> Optional[Tuple[BooksBookMarcData, None]]:
+        try:
+            self.cursor.execute("SELECT * FROM books.bookMarc WHERE isbn = ?", (isbn,))
+            
+            row = self.cursor.fetchone()
+            if row:
+                bookMarcData = BooksBookMarcData(
+                    title=row[1],
+                    author=row[2],
+                    public_year=row[3],
+                    public_comp=row[4],
+                    isbn=row[5],
+                    book_id=row[0]
+                )
+                
+                return (bookMarcData, None)
+            else:
+                return (None,'Book not found')
+
+        except pyodbc.Error as err:
+            print(f"Database error: {err}")
+            return None
+        except Exception as err:
+            print(f"Error: {err}")
+            return None
+            
 
     def updateBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:

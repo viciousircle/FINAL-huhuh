@@ -71,7 +71,7 @@ if __name__ == '__main__':
     db_session_instance = DBSession()
     login_window = Login_UI(db_session_instance)
 
-    # login_window = Login_UI(Session)
+    
     login_window.setup_connections()
     login_window.show()
     sys.exit(app.exec())
