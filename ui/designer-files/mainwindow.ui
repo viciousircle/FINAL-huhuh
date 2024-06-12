@@ -50,7 +50,7 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>240</x>
           <y>10</y>
           <width>631</width>
           <height>481</height>
@@ -123,7 +123,7 @@
        <widget class="QTableWidget" name="bookMarc_table">
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>170</x>
           <y>10</y>
           <width>751</width>
           <height>471</height>
@@ -192,7 +192,7 @@
      <widget class="QPushButton" name="show_file_BookMarc">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>400</x>
         <y>10</y>
         <width>161</width>
         <height>31</height>
@@ -228,7 +228,7 @@ QPushButton:visited{
      <widget class="QPushButton" name="show_file_Book">
       <property name="geometry">
        <rect>
-        <x>220</x>
+        <x>580</x>
         <y>10</y>
         <width>131</width>
         <height>31</height>
@@ -584,7 +584,7 @@ QPushButton::after{
      <widget class="QFrame" name="body">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>80</x>
         <y>10</y>
         <width>1001</width>
         <height>531</height>
@@ -838,6 +838,9 @@ padding: 0 10px 0 10px ;
       <property name="midLineWidth">
        <number>2</number>
       </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
       <property name="dragEnabled">
        <bool>false</bool>
       </property>
@@ -849,6 +852,9 @@ padding: 0 10px 0 10px ;
       </attribute>
       <attribute name="horizontalHeaderHighlightSections">
        <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
       </attribute>
      </widget>
      <widget class="QFrame" name="frame">
@@ -877,7 +883,7 @@ padding: 0 10px 0 10px ;
         <rect>
          <x>40</x>
          <y>70</y>
-         <width>361</width>
+         <width>381</width>
          <height>371</height>
         </rect>
        </property>
@@ -898,6 +904,12 @@ padding: 0 10px 0 10px ;
          <widget class="QLineEdit" name="input_titleEdit">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
           </property>
           <property name="readOnly">
            <bool>true</bool>
@@ -921,6 +933,12 @@ padding: 0 10px 0 10px ;
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="styleSheet">
+           <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+          </property>
           <property name="readOnly">
            <bool>true</bool>
           </property>
@@ -942,6 +960,12 @@ padding: 0 10px 0 10px ;
          <widget class="QLineEdit" name="input_compEdit">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
           </property>
           <property name="readOnly">
            <bool>true</bool>
@@ -965,6 +989,12 @@ padding: 0 10px 0 10px ;
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="styleSheet">
+           <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+          </property>
           <property name="readOnly">
            <bool>true</bool>
           </property>
@@ -987,6 +1017,12 @@ padding: 0 10px 0 10px ;
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="styleSheet">
+           <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+          </property>
           <property name="readOnly">
            <bool>true</bool>
           </property>
@@ -1008,6 +1044,12 @@ padding: 0 10px 0 10px ;
          <widget class="QComboBox" name="input_stageEdit">
           <property name="enabled">
            <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
           </property>
           <property name="editable">
            <bool>false</bool>
@@ -1247,6 +1289,12 @@ padding: 0 10px 0 10px ;
           <height>31</height>
          </rect>
         </property>
+        <property name="styleSheet">
+         <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -1280,6 +1328,12 @@ padding: 0 10px 0 10px ;
           <width>121</width>
           <height>31</height>
          </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>

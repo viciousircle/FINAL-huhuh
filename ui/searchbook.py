@@ -1,5 +1,7 @@
 # ------IMPORTS------------------------------------------
-from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit,QSpinBox,QStackedWidget
+from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit,QSpinBox,QStackedWidget,QHeaderView
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -91,29 +93,38 @@ class SearchBook_UI:
             filter_criteria = self.ui.input_filterSearch.currentText()
             column_name     = column_mapping[filter_criteria]
             search_query    = self.ui.input_findSearch.text().strip()
-    
+
             search_results = list(self.db_session.searchBook(column_name, search_query))
-            
+
             print(search_results)
-            
+
             if search_results:
                 self.ui.search_table.setRowCount(len(search_results))
                 column_count = len(search_results[0]) 
                 self.ui.search_table.setColumnCount(column_count)
-                
+
                 # Set the header labels
                 if filter_criteria in ["Book ID", "Title", "ISBN", "Warehouse ID", ""]:
                     header_labels = ['Book ID', 'Title', 'ISBN', 'Warehouse ID']
                 else:
                     header_labels = ['Book ID', 'Title', 'ISBN', 'Warehouse ID', filter_criteria]
-                    
-                self.ui.search_table.setHorizontalHeaderLabels(header_labels)
+
+                # Set column headers and make them bold
+                for col_idx, header in enumerate(header_labels):
+                    item = QTableWidgetItem(header)
+                    font = item.font()
+                    font.setBold(True)
+                    item.setFont(font)
+                    self.ui.search_table.setHorizontalHeaderItem(col_idx, item)
 
                 for row_idx, row_data in enumerate(search_results):
                     for col_idx, value in enumerate(row_data):
-                        self.ui.search_table.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+                        item = QTableWidgetItem(str(value))
+                        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)  # Center align the text
+                        self.ui.search_table.setItem(row_idx, col_idx, item)
 
                 self.ui.search_table.resizeColumnsToContents()
+                self.adjustColumnWidths(self.ui.search_table)
             else:
                 QMessageBox.warning(self.ui, "Search", "No results found.")
         except Exception as e:
@@ -307,3 +318,12 @@ class SearchBook_UI:
                 # chuaw xong doan nafy
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
+
+
+    def adjustColumnWidths(self, table_widget: QTableWidget):
+        # Set the header to resize to fill the available space
+        header = table_widget.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
+        # Optionally, resize rows to fit content
+        table_widget.resizeRowsToContents()
