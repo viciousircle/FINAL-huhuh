@@ -78,31 +78,30 @@ class SearchBook_UI:
             self.ui.search_table.setRowCount(0)
 
             column_mapping = {
-                "Book ID"       : "book_id",
-                "Warehouse ID"  : "warehouse_id",
-                "Title"         : "title",
-                "Author"        : "author",
-                "Public Year"   : "public_year",
+                "Book ID": "book_id",
+                "Warehouse ID": "warehouse_id",
+                "Title": "title",
+                "Author": "author",
+                "Public Year": "public_year",
                 "Public Company": "public_comp",
-                "ISBN"          : "isbn",
-                "Quantity"      : "quantity",
-                "Stage"         : "stage",
-                "All"           : None,
-                ""              : None
+                "ISBN": "isbn",
+                "Quantity": "quantity",
+                "Stage": "stage",
+                "All": None,
+                "": None
             }
 
             filter_criteria = self.ui.input_filterSearch.currentText()
-            column_name     = column_mapping[filter_criteria]
-            search_query    = self.ui.input_findSearch.text().strip()
+            column_name = column_mapping[filter_criteria]
+            search_query = self.ui.input_findSearch.text().strip()
 
-            search_results  = list(self.db_session.searchBook(column_name, search_query))
-            
+            search_results = list(self.db_session.searchBook(column_name, search_query))
+
             print("Found", len(search_results), "results.")
 
             if search_results:
-                
                 self.ui.search_table.setRowCount(len(search_results))
-                column_count = len(search_results[0]) 
+                column_count = len(search_results[0])
                 self.ui.search_table.setColumnCount(column_count)
 
                 # Set the header labels
@@ -130,7 +129,9 @@ class SearchBook_UI:
             else:
                 QMessageBox.warning(self.ui, "Search", "No results found.")
         except Exception as e:
+            print("Error searching book information:", e)
             QMessageBox.critical(self.ui, "Error", str(e))
+
 
     def displayBookDetails(self, row, column):
         try:

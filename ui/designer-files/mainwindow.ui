@@ -720,7 +720,7 @@ padding: 5 10px 5 10px ;
          </item>
          <item>
           <property name="text">
-           <string>IBSN</string>
+           <string>ISBN</string>
           </property>
          </item>
          <item>
@@ -884,7 +884,7 @@ padding: 0 10px 0 10px ;
          <x>40</x>
          <y>70</y>
          <width>381</width>
-         <height>415</height>
+         <height>351</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_9">
