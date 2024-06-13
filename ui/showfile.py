@@ -26,7 +26,9 @@ class ShowFile_UI:
     book_table              : QTableWidget
     
     def __init__(self, ui, db_session: DBSession):
+        # Connect objects in the .ui file to the variables in this module
         self.ui         = ui
+        # Connect database session
         self.db_session = db_session
         
         self.buttons_open = [
@@ -35,8 +37,8 @@ class ShowFile_UI:
         ]
         
         # Link database to the table files
-        self.showFileBookMarc()
-        self.showFileBook()
+        self.ui.show_file_BookMarc.clicked.connect(self.showFileBookMarc)
+        self.ui.show_file_Book.clicked.connect(self.showFileBook)
         
         # Show file_page
         self.ui.show_file_BookMarc.clicked.connect(lambda: self.ui.files_stackedWidget.setCurrentWidget(self.ui.bookMarc_page))
@@ -44,6 +46,7 @@ class ShowFile_UI:
         
         
     def showFileBookMarc(self):
+        print("Show File BookMarc.....")
         data = list(self.db_session.showFileBookMarc())
 
         self.ui.bookMarc_table.setRowCount(len(data))
@@ -62,15 +65,17 @@ class ShowFile_UI:
 
         for row_idx, book_marc_data in enumerate(data):
             for col_idx, field_name in enumerate(BooksBookMarcData.__annotations__):
-                value = getattr(book_marc_data, field_name)
-                item = QTableWidgetItem(str(value))
+                value   = getattr(book_marc_data, field_name)
+                item    = QTableWidgetItem(str(value))
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.ui.bookMarc_table.setItem(row_idx, col_idx, item)
 
         self.ui.bookMarc_table.resizeColumnsToContents()
         self.adjustColumnWidths(self.ui.bookMarc_table)
+        print("Done Show File BookMarc.....")
 
     def showFileBook(self):
+        print("Show File Book.....")
         data = list(self.db_session.showFileBook())
 
         self.ui.book_table.setRowCount(len(data))
@@ -89,13 +94,14 @@ class ShowFile_UI:
 
         for row_idx, book_data in enumerate(data):
             for col_idx, field_name in enumerate(BooksBookData.__annotations__):
-                value = getattr(book_data, field_name)
-                item = QTableWidgetItem(str(value))
+                value   = getattr(book_data, field_name)
+                item    = QTableWidgetItem(str(value))
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.ui.book_table.setItem(row_idx, col_idx, item)
 
         self.ui.book_table.resizeColumnsToContents()
         self.adjustColumnWidths(self.ui.book_table)
+        print("Done Show File Book.....")
     
     def adjustColumnWidths(self, table_widget: QTableWidget):
         # Set the header to resize to fill the available space
@@ -105,11 +111,14 @@ class ShowFile_UI:
         # Optionally, resize rows to fit content
         table_widget.resizeRowsToContents()
 
-
     def updateBookMarcTable(self):
+        print("Update BookMarc Table.....")
         self.ui.bookMarc_table.clearContents()
         self.showFileBookMarc()
+        print("Done Update BookMarc Table.....")
     
     def updateBookTable(self):
+        print("Update Book Table.....")
         self.ui.book_table.clearContents()
         self.showFileBook()
+        print("Done Update Book Table.....")

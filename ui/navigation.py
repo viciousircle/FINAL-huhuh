@@ -73,6 +73,7 @@ class Navigation_UI:
         self.login_window.show()
     
     def navigationButtonClicked(self, button):
+        print(f"Button navigation clicked: {button.text()}")
         if self.lastClickedNavButton is not None:
             self.lastClickedNavButton.setStyleSheet("""
                 QPushButton{

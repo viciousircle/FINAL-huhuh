@@ -17,7 +17,6 @@ connection_string = f"""
     DATABASE={DATABASE_NAME};
     Trusted_Connection = yes;
 """
-# ---------------------------------------------------------------   
 
 # -------DBSESSION CLASS------------------------------------------
 class DBSession:
@@ -27,7 +26,7 @@ class DBSession:
     
     connection  = pyodbc.connect(connection_string)
     cursor      = connection.cursor()
-    print("DBSession initialized")
+    print("DBSession initialized....................")
 
     def __init__(self) -> None:
         pass
@@ -35,10 +34,12 @@ class DBSession:
     # --- LOG IN FUNCTION ------------------------------------------
     def logIn(self, admin_id: str, password: str) -> Optional[UsersAccountData]:
         try:
+            print("Logging in....")
             query = "SELECT * FROM users.account WHERE admin_id = ? AND password = ?"
             self.cursor.execute(query, (admin_id, password))
             row = self.cursor.fetchone()
             if row:
+                print("Login successful")
                 return UsersAccountData(*row)
             else:
                 print("Login failed")
@@ -50,7 +51,6 @@ class DBSession:
             print("Unexpected error:", err)  
             raise err
 
-    
     
     def getAdmin(self, admin_id: int) -> Optional[UsersAccountData]:
         try:
@@ -82,6 +82,7 @@ class DBSession:
             for row in self.cursor.fetchall():
                 yield BooksBookMarcData(*row)
         except Exception as err:
+            print("Error:", err)
             raise err
         
     def showFileBook(self) -> Generator[BooksBookData, None, None]:
@@ -91,6 +92,7 @@ class DBSession:
             for row in self.cursor.fetchall():
                 yield BooksBookData(*row)
         except Exception as err:
+            print("Error:", err)
             raise err
         
     # --- ADD BOOK FUNCTION ------------------------------------------
