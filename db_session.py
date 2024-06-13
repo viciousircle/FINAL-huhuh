@@ -161,9 +161,7 @@ class DBSession:
             """
             self.cursor.execute(query, (book_id,))
             row = self.cursor.fetchone()
-            print("Row:", row)
             if row:
-                print("Book found")
                 bookMarcData = BooksBookMarcData(
                     title=row[1],
                     author=row[2],
@@ -179,9 +177,6 @@ class DBSession:
                     book_id=row[0],
                     isbn=row[3]
                 )
-                print("Book found")
-                print(bookMarcData)
-                print(bookData)
                 return (bookMarcData, bookData)
             else:
                 return None

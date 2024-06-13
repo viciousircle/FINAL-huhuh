@@ -72,6 +72,7 @@ class SearchBook_UI:
         
     def searchBookInformation(self):
         try:
+            print("Searching book information...")
             # Clear previous search results from the table
             self.ui.search_table.clearContents()
             self.ui.search_table.setRowCount(0)
@@ -94,11 +95,12 @@ class SearchBook_UI:
             column_name     = column_mapping[filter_criteria]
             search_query    = self.ui.input_findSearch.text().strip()
 
-            search_results = list(self.db_session.searchBook(column_name, search_query))
-
-            print(search_results)
+            search_results  = list(self.db_session.searchBook(column_name, search_query))
+            
+            print("Found", len(search_results), "results.")
 
             if search_results:
+                
                 self.ui.search_table.setRowCount(len(search_results))
                 column_count = len(search_results[0]) 
                 self.ui.search_table.setColumnCount(column_count)
@@ -132,25 +134,22 @@ class SearchBook_UI:
 
     def displayBookDetails(self, row, column):
         try:
-            # Get the book ID from the selected row
+            print("Displaying book details...")
             book_id_item = self.ui.search_table.item(row, 0)  
-            # Assuming book_id is in the first column
-            
+
             if book_id_item is None:
                 return
             
             book_id = int(book_id_item.text())
-            print(book_id)
+            print("Selected book ID:", book_id)
 
-            # Fetch the book details using the book ID
             bookMarcData, bookData = self.db_session.getBookById(book_id)
             
             if bookMarcData is None or bookData is None:
+                print("Book details not found.")
                 QMessageBox.warning(self.ui, "Error", "Book details not found.")
                 return
             
-            # Update UI components with the book details
-
             self.ui.input_titleEdit.setText(bookMarcData.title)
             self.ui.input_authorEdit.setText(bookMarcData.author)
             self.ui.input_isbnEdit.setText(bookMarcData.isbn)
@@ -160,20 +159,21 @@ class SearchBook_UI:
             self.ui.input_quantityEdit.setValue(bookData.quantity)
             self.ui.input_stageEdit.setCurrentText(bookData.stage)
             
-            # Store the initial values of the input fields
+            print("Book details displayed successfully.")
+            
             self.initial_field_values = {
-                'input_titleEdit': bookMarcData.title,
-                'input_authorEdit': bookMarcData.author,
-                'input_isbnEdit': bookMarcData.isbn,
-                'input_yearEdit': str(bookMarcData.public_year),
-                'input_compEdit': bookMarcData.public_comp,
+                'input_titleEdit'       : bookMarcData.title,
+                'input_authorEdit'      : bookMarcData.author,
+                'input_isbnEdit'        : bookMarcData.isbn,
+                'input_yearEdit'        : str(bookMarcData.public_year),
+                'input_compEdit'        : bookMarcData.public_comp,
                 'input_warehouse_idEdit': str(bookData.warehouse_id),
-                'input_quantityEdit': bookData.quantity,
-                'input_stageEdit': bookData.stage
+                'input_quantityEdit'    : bookData.quantity,
+                'input_stageEdit'       : bookData.stage
             }
             
-            self.old_bookMarcData = bookMarcData
-            self.old_bookData = bookData
+            self.old_bookMarcData   = bookMarcData
+            self.old_bookData       = bookData
 
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
