@@ -57,8 +57,7 @@ class MainWindow_UI(QMainWindow):
         for button in self.showfile.buttons_open:
             button.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
             
-        for button in self.searchbook.buttons_edit:
-            button.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
+        self.searchbook.ui.edit_btn.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
         
         # Set home page as default page
         self.navigation.navigationButtonClicked(self.ui.home_btn)

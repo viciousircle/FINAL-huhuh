@@ -306,7 +306,7 @@ class DBSession:
             self.cursor.execute("""
                 INSERT INTO users.history (admin_id, isbn, book_id, warehouse_id, timestamp)
                 VALUES (?, ?, ?, ?, ?)   
-            """, (admin_id, isbn, book_id, warehouse_id, datetime.now()))
+            """, (admin_id, isbn, None, warehouse_id, datetime.now()))
 
             self.connection.commit()
             return (True, None)
