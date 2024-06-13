@@ -19,12 +19,13 @@ GO
 
 DROP DATABASE LMS;
 GO
-DROP TABLE users.account;
 GO
 DROP TABLE users.history;
 GO
 DROP TABLE users.guest;
 GO
+DROP TABLE users.account;
+
 DROP TABLE books.bookMarc;
 GO
 DROP TABLE books.book;

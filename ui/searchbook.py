@@ -1,6 +1,6 @@
 # ------IMPORTS------------------------------------------
-from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit,QSpinBox,QStackedWidget,QHeaderView
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit,QSpinBox,QStackedWidget,QHeaderView,QDateEdit 
+from PyQt6.QtCore import Qt,QDate
 from PyQt6.QtGui import QFont, QColor, QIntValidator
 import sys
 import os
@@ -68,6 +68,7 @@ class SearchBook_UI:
         # Set maximum value for input_quantityEdit (adjust the maximum as needed)
         self.ui.input_quantityEdit.setMaximum(999999)  # Example: allow up to 999999
         
+
         # Connect button signals and table interactions
         self.connectSignals()
         
@@ -264,8 +265,78 @@ class SearchBook_UI:
             QMessageBox.critical(self.ui, "Error", str(e))
 
             
+    # def cancelButtonClicked(self):
+    #     try:
+    #         if QMessageBox.question(self.ui, 'Message', "Are you sure you want to cancel and discard changes?",
+    #                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
+                
+    #             self.ui.search_table.setDisabled(False)
+    #             self.ui.input_findSearch.setDisabled(False)
+    #             self.ui.input_filterSearch.setDisabled(False)
+    #             self.ui.find_btn.setDisabled(False)
+                
+    #             # Clear the row selection and highlighting
+    #             self.ui.search_table.clearSelection()
+                
+    #             # Iterate through all rows to clear any highlighted rows
+    #             for row_idx in range(self.ui.search_table.rowCount()):
+    #                 for col_idx in range(self.ui.search_table.columnCount()):
+    #                     item = self.ui.search_table.item(row_idx, col_idx)
+    #                     if item:
+    #                         item.setBackground(QColor(Qt.GlobalColor.white))  # Set background color back to white
+                
+    #             for field_name, field_widget in self.input_fields.items():
+    #                 if field_name in self.initial_field_values:
+    #                     initial_value = self.initial_field_values[field_name]
+    #                     if isinstance(field_widget, QLineEdit):
+    #                         field_widget.setText(initial_value)
+    #                     elif isinstance(field_widget, QSpinBox):
+    #                         field_widget.setValue(int(initial_value))
+    #                     elif isinstance(field_widget, QComboBox):
+    #                         index = field_widget.findText(initial_value)
+    #                         if index != -1:
+    #                             field_widget.setCurrentIndex(index)
+
+    #             for field_widget in self.input_fields.values():
+    #                 if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+    #                     field_widget.setReadOnly(True)
+    #                 elif isinstance(field_widget, QComboBox):
+    #                     field_widget.setEnabled(False)
+
+    #             self.ui.save_btn.setEnabled(False)
+    #             self.ui.cancel_btn.setEnabled(False)
+    #             self.ui.edit_btn.setEnabled(True)
+      
+    #     except Exception as e:
+    #         QMessageBox.critical(self.ui, "Error", str(e))
+    
     def cancelButtonClicked(self):
         try:
+            current_field_values = {
+                'input_titleEdit': self.ui.input_titleEdit.text(),
+                'input_authorEdit': self.ui.input_authorEdit.text(),
+                'input_isbnEdit': self.ui.input_isbnEdit.text(),
+                'input_yearEdit': str(self.ui.input_yearEdit.text()),
+                'input_compEdit': self.ui.input_compEdit.text(),
+                'input_warehouse_idEdit': str(self.ui.input_warehouse_idEdit.text()),
+                'input_quantityEdit': self.ui.input_quantityEdit.value(),
+                'input_stageEdit': self.ui.input_stageEdit.currentText()
+            }
+
+            # Check if any changes have been made
+            changes_made = False
+            for field_name, initial_value in self.initial_field_values.items():
+                if current_field_values[field_name] != initial_value:
+                    changes_made = True
+                    break
+                
+            print("Changes made:", changes_made)
+
+            if not changes_made:
+                print("No changes were made.")
+                QMessageBox.information(self.ui, 'Message', "No changes were made.")
+                return
+
             if QMessageBox.question(self.ui, 'Message', "Are you sure you want to cancel and discard changes?",
                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
                 
@@ -305,9 +376,10 @@ class SearchBook_UI:
                 self.ui.save_btn.setEnabled(False)
                 self.ui.cancel_btn.setEnabled(False)
                 self.ui.edit_btn.setEnabled(True)
-      
+        
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
+
 
     def saveButtonClicked(self):
         try:
@@ -366,6 +438,7 @@ class SearchBook_UI:
 
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
+            
     def deleteButtonClicked(self):
         try:
             # Get the index of the selected row
