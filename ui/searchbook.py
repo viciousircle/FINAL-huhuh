@@ -262,7 +262,6 @@ class SearchBook_UI:
             QMessageBox.critical(self.ui, "Error", str(e))
 
             
-    
     def cancelButtonClicked(self):
         try:
             current_field_values = {
@@ -282,32 +281,18 @@ class SearchBook_UI:
                 if current_field_values[field_name] != initial_value:
                     changes_made = True
                     break
-                
+
             print("Changes made:", changes_made)
 
             if not changes_made:
                 print("No changes were made.")
                 QMessageBox.information(self.ui, 'Message', "No changes were made.")
+                self.resetUIAfterCancel()
                 return
 
             if QMessageBox.question(self.ui, 'Message', "Are you sure you want to cancel and discard changes?",
                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
-                
-                self.ui.search_table.setDisabled(False)
-                self.ui.input_findSearch.setDisabled(False)
-                self.ui.input_filterSearch.setDisabled(False)
-                self.ui.find_btn.setDisabled(False)
-                
-                # Clear the row selection and highlighting
-                self.ui.search_table.clearSelection()
-                
-                # Iterate through all rows to clear any highlighted rows
-                for row_idx in range(self.ui.search_table.rowCount()):
-                    for col_idx in range(self.ui.search_table.columnCount()):
-                        item = self.ui.search_table.item(row_idx, col_idx)
-                        if item:
-                            item.setBackground(QColor(Qt.GlobalColor.white))  # Set background color back to white
-                
+                self.resetUIAfterCancel()
                 for field_name, field_widget in self.input_fields.items():
                     if field_name in self.initial_field_values:
                         initial_value = self.initial_field_values[field_name]
@@ -326,11 +311,30 @@ class SearchBook_UI:
                     elif isinstance(field_widget, QComboBox):
                         field_widget.setEnabled(False)
 
-
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
 
+    def resetUIAfterCancel(self):
+        self.ui.search_table.setDisabled(False)
+        self.ui.input_findSearch.setDisabled(False)
+        self.ui.input_filterSearch.setDisabled(False)
+        self.ui.find_btn.setDisabled(False)
 
+        # Clear the row selection and highlighting
+        self.ui.search_table.clearSelection()
+
+        # Iterate through all rows to clear any highlighted rows
+        for row_idx in range(self.ui.search_table.rowCount()):
+            for col_idx in range(self.ui.search_table.columnCount()):
+                item = self.ui.search_table.item(row_idx, col_idx)
+                if item:
+                    item.setBackground(QColor(Qt.GlobalColor.white))  # Set background color back to white
+
+        # Hide buttons
+        self.ui.save_btn.hide()
+        self.ui.cancel_btn.hide()
+        self.ui.delete_btn.hide()
+        self.ui.edit_btn.setEnabled(False)
 
     def saveButtonClicked(self):
         try:
@@ -407,6 +411,10 @@ class SearchBook_UI:
                 self.ui.cancel_btn.hide()
                 self.ui.delete_btn.hide()
                 
+                self.ui.input_findSearch.setDisabled(False)
+                self.ui.input_filterSearch.setDisabled(False)
+                self.ui.find_btn.setDisabled(False)
+                
                 
                 self.searchBookInformation()
                 
@@ -419,7 +427,7 @@ class SearchBook_UI:
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
 
-            
+    
     def deleteButtonClicked(self):
         try:
             # Get the index of the selected row
@@ -455,6 +463,21 @@ class SearchBook_UI:
                 showfile = ShowFile_UI(self.ui, self.db_session)
                 showfile.updateBookMarcTable()
                 showfile.updateBookTable()
+                
+                self.ui.save_btn.hide()
+                self.ui.cancel_btn.hide()
+                self.ui.delete_btn.hide()
+                
+                self.ui.search_table.setDisabled(False)
+
+                # Disable the input fields after deletion
+                for field_widget in self.input_fields.values():
+                    if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+                        field_widget.setReadOnly(True)
+                    elif isinstance(field_widget, QComboBox):
+                        field_widget.setEnabled(False)
+                        
+                
 
             elif confirmation == QMessageBox.StandardButton.No:
                 # Re-enable the delete button
@@ -463,6 +486,7 @@ class SearchBook_UI:
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
 
+    
     def adjustColumnWidths(self, table_widget: QTableWidget):
         # Set the header to resize to fill the available space
         header = table_widget.horizontalHeader()
