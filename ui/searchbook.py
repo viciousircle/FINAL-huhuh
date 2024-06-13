@@ -1,7 +1,7 @@
 # ------IMPORTS------------------------------------------
 from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit,QSpinBox,QStackedWidget,QHeaderView
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QColor, QIntValidator
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -46,6 +46,11 @@ class SearchBook_UI:
             self.ui.cancel_btn
         ]
         
+        for button in self.buttons_edit:
+            button.setDisabled(True)
+            
+            
+        
         self.detail_fields = [
             self.ui.input_warehouse_idEdit,
             self.ui.input_titleEdit,
@@ -57,6 +62,14 @@ class SearchBook_UI:
             self.ui.input_stageEdit
         ]
 
+        # Set validator for input_yearEdit to only accept integers within a reasonable year range
+        self.ui.input_yearEdit.setValidator(QIntValidator(1000, 9999))
+        
+        # Set maximum value for input_quantityEdit (adjust the maximum as needed)
+        self.ui.input_quantityEdit.setMaximum(999999)  # Example: allow up to 999999
+        
+        # Connect button signals and table interactions
+        self.connectSignals()
         
         self.input_fields = {
             "input_titleEdit": self.ui.input_titleEdit,
@@ -70,21 +83,32 @@ class SearchBook_UI:
         
         self.initial_field_values = {}
                 
-        self.ui.search_table.cellClicked.connect(self.displayBookDetails)
         
+        # self.ui.edit_btn.clicked.connect(lambda: self.ui.edit_stackedWidget.setCurrentWidget(self.ui.save_page))
+        # self.ui.cancel_btn.clicked.connect(lambda: self.ui.edit_stackedWidget.setCurrentWidget(self.ui.delete_page))
+
+        # self.ui.edit_btn.clicked.connect(self.editButtonClicked)
+        # self.ui.cancel_btn.clicked.connect(self.cancelButtonClicked)
+        # self.ui.save_btn.clicked.connect(self.saveButtonClicked)
+        # self.ui.delete_btn.clicked.connect(self.deleteButtonClicked)
+        
+    def connectSignals(self):
+        # Connect signals for buttons and table interactions
+        self.ui.search_table.cellClicked.connect(self.displayBookDetails)
         self.ui.edit_btn.clicked.connect(lambda: self.ui.edit_stackedWidget.setCurrentWidget(self.ui.save_page))
         self.ui.cancel_btn.clicked.connect(lambda: self.ui.edit_stackedWidget.setCurrentWidget(self.ui.delete_page))
-
         self.ui.edit_btn.clicked.connect(self.editButtonClicked)
         self.ui.cancel_btn.clicked.connect(self.cancelButtonClicked)
         self.ui.save_btn.clicked.connect(self.saveButtonClicked)
         self.ui.delete_btn.clicked.connect(self.deleteButtonClicked)
         
-        
     def searchBookInformation(self):
         try:
             print("Searching book information...")
             # Clear previous search results from the table
+            
+            for button in self.buttons_edit:
+                button.setEnabled(False)
             
             search_query = self.ui.input_findSearch.text().strip()
             
@@ -195,59 +219,96 @@ class SearchBook_UI:
             
             self.old_bookMarcData   = bookMarcData
             self.old_bookData       = bookData
+            
+            for button in self.buttons_edit:
+                button.setEnabled(True)
 
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
 
     def editButtonClicked(self):
-        
-        self.ui.search_table.setDisabled(True)
-        self.ui.input_findSearch.setDisabled(True)
-        self.ui.input_filterSearch.setDisabled(True)
-        self.ui.find_btn.setDisabled(True)
-        
-        # Enable or disable input fields based on edit button state
-        for field_name, field_widget in self.input_fields.items():
-            if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-                field_widget.setReadOnly(False)
-            elif isinstance(field_widget, QComboBox):
-                field_widget.setEnabled(True)
+        try:
+            self.ui.search_table.setDisabled(True)
+            self.ui.input_findSearch.setDisabled(True)
+            self.ui.input_filterSearch.setDisabled(True)
+            self.ui.find_btn.setDisabled(True)
+            
+            # Clear previous selections
+            self.ui.search_table.clearSelection()
+            
+            # Get the selected row
+            selected_row = self.ui.search_table.currentRow()
+            
+            if selected_row == -1:
+                return
+            
+            # Highlight all cells in the selected row
+            column_count = self.ui.search_table.columnCount()
+            for col_idx in range(column_count):
+                item = self.ui.search_table.item(selected_row, col_idx)
+                if item:
+                    item.setBackground(QColor("#FFFF00"))  # Set the background color (example: yellow)
+            
+            # Enable or disable input fields based on edit button state
+            for field_name, field_widget in self.input_fields.items():
+                if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+                    field_widget.setReadOnly(False)
+                elif isinstance(field_widget, QComboBox):
+                    field_widget.setEnabled(True)
 
-        self.ui.save_btn.setEnabled(True)
-        self.ui.cancel_btn.setEnabled(True)
-        self.ui.edit_btn.setEnabled(False)
+            self.ui.save_btn.setEnabled(True)
+            self.ui.cancel_btn.setEnabled(True)
+            self.ui.edit_btn.setEnabled(False)
+            
+        except Exception as e:
+            QMessageBox.critical(self.ui, "Error", str(e))
+
             
     def cancelButtonClicked(self):
-        if QMessageBox.question(self.ui, 'Message', "Are you sure you want to cancel and discard changes?",
-                                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
-            
-            self.ui.search_table.setDisabled(False)
-            self.ui.input_findSearch.setDisabled(False)
-            self.ui.input_filterSearch.setDisabled(False)
-            self.ui.find_btn.setDisabled(False)
-            
-            for field_name, field_widget in self.input_fields.items():
-                if field_name in self.initial_field_values:
-                    initial_value = self.initial_field_values[field_name]
-                    if isinstance(field_widget, QLineEdit):
-                        field_widget.setText(initial_value)
-                    elif isinstance(field_widget, QSpinBox):
-                        field_widget.setValue(int(initial_value))
+        try:
+            if QMessageBox.question(self.ui, 'Message', "Are you sure you want to cancel and discard changes?",
+                                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
+                
+                self.ui.search_table.setDisabled(False)
+                self.ui.input_findSearch.setDisabled(False)
+                self.ui.input_filterSearch.setDisabled(False)
+                self.ui.find_btn.setDisabled(False)
+                
+                # Clear the row selection and highlighting
+                self.ui.search_table.clearSelection()
+                
+                # Iterate through all rows to clear any highlighted rows
+                for row_idx in range(self.ui.search_table.rowCount()):
+                    for col_idx in range(self.ui.search_table.columnCount()):
+                        item = self.ui.search_table.item(row_idx, col_idx)
+                        if item:
+                            item.setBackground(QColor(Qt.GlobalColor.white))  # Set background color back to white
+                
+                for field_name, field_widget in self.input_fields.items():
+                    if field_name in self.initial_field_values:
+                        initial_value = self.initial_field_values[field_name]
+                        if isinstance(field_widget, QLineEdit):
+                            field_widget.setText(initial_value)
+                        elif isinstance(field_widget, QSpinBox):
+                            field_widget.setValue(int(initial_value))
+                        elif isinstance(field_widget, QComboBox):
+                            index = field_widget.findText(initial_value)
+                            if index != -1:
+                                field_widget.setCurrentIndex(index)
+
+                for field_widget in self.input_fields.values():
+                    if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+                        field_widget.setReadOnly(True)
                     elif isinstance(field_widget, QComboBox):
-                        index = field_widget.findText(initial_value)
-                        if index != -1:
-                            field_widget.setCurrentIndex(index)
+                        field_widget.setEnabled(False)
 
-            for field_widget in self.input_fields.values():
-                if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-                    field_widget.setReadOnly(True)
-                elif isinstance(field_widget, QComboBox):
-                    field_widget.setEnabled(False)
-
-            self.ui.save_btn.setEnabled(False)
-            self.ui.cancel_btn.setEnabled(False)
-            self.ui.edit_btn.setEnabled(True)
+                self.ui.save_btn.setEnabled(False)
+                self.ui.cancel_btn.setEnabled(False)
+                self.ui.edit_btn.setEnabled(True)
       
+        except Exception as e:
+            QMessageBox.critical(self.ui, "Error", str(e))
+
     def saveButtonClicked(self):
         try:
             updated_bookMarcData = BooksBookMarcData(
@@ -267,47 +328,44 @@ class SearchBook_UI:
                 isbn=self.ui.input_isbnEdit.text()
             )
 
-            success, message = self.db_session.updateBook(updated_bookMarcData, updated_bookData, self.old_bookMarcData, self.old_bookData)
+            # Ask for confirmation before saving
+            confirm_save = QMessageBox.question(self.ui, "Save Changes", "Are you sure you want to save the changes?",
+                                                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                                QMessageBox.StandardButton.No)
 
-            if not success:
-                QMessageBox.warning(self.ui, "Error", message)
-                return
+            if confirm_save == QMessageBox.StandardButton.Yes:
+                success, message = self.db_session.updateBook(updated_bookMarcData, updated_bookData, self.old_bookMarcData, self.old_bookData)
 
-            # Disable the input fields after saving the changes
-            for field_widget in self.input_fields.values():
-                if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-                    field_widget.setReadOnly(True)
-                elif isinstance(field_widget, QComboBox):
-                    field_widget.setEnabled(False)
+                if not success:
+                    QMessageBox.warning(self.ui, "Error", message)
+                    return
 
-            self.ui.save_btn.setEnabled(False)
-            self.ui.cancel_btn.setEnabled(False)
-            self.ui.edit_btn.setEnabled(True)
+                # Disable the input fields after saving the changes
+                for field_widget in self.input_fields.values():
+                    if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+                        field_widget.setReadOnly(True)
+                    elif isinstance(field_widget, QComboBox):
+                        field_widget.setEnabled(False)
 
+                self.ui.save_btn.setEnabled(False)
+                self.ui.cancel_btn.setEnabled(False)
+                self.ui.edit_btn.setEnabled(True)
 
-            QMessageBox.information(self.ui, "Save", "Changes saved successfully.")
-            # Enable search_table
-            self.ui.search_table.setDisabled(False)
-            self.ui.search_table.clearContents()
+                QMessageBox.information(self.ui, "Save Changes", "Changes saved successfully.")
 
-            self.ui.edit_stackedWidget.setCurrentWidget(self.ui.delete_page)
+                # Enable search_table
+                self.ui.search_table.setDisabled(False)
+                self.ui.search_table.clearContents()
 
-            self.searchBookInformation()
+                self.searchBookInformation()
 
-            from ui.showfile import ShowFile_UI
-            showfile = ShowFile_UI(self.ui, self.db_session)
-            showfile.updateBookMarcTable()
-            showfile.updateBookTable()
+                from ui.showfile import ShowFile_UI
+                showfile = ShowFile_UI(self.ui, self.db_session)
+                showfile.updateBookMarcTable()
+                showfile.updateBookTable()
 
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
-            
-
-
-        except Exception as e:
-            QMessageBox.critical(self.ui, "Error", str(e))
-            
-            
     def deleteButtonClicked(self):
         try:
             # Get the index of the selected row
@@ -350,7 +408,6 @@ class SearchBook_UI:
 
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
-
 
     def adjustColumnWidths(self, table_widget: QTableWidget):
         # Set the header to resize to fill the available space
