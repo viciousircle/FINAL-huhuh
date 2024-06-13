@@ -46,6 +46,18 @@ class SearchBook_UI:
             self.ui.cancel_btn
         ]
         
+        self.detail_fields = [
+            self.ui.input_warehouse_idEdit,
+            self.ui.input_titleEdit,
+            self.ui.input_authorEdit,
+            self.ui.input_isbnEdit,
+            self.ui.input_compEdit,
+            self.ui.input_yearEdit,
+            self.ui.input_quantityEdit,
+            self.ui.input_stageEdit
+        ]
+
+        
         self.input_fields = {
             "input_titleEdit": self.ui.input_titleEdit,
             "input_authorEdit": self.ui.input_authorEdit,
@@ -69,13 +81,23 @@ class SearchBook_UI:
         self.ui.delete_btn.clicked.connect(self.deleteButtonClicked)
         
         
-        
     def searchBookInformation(self):
         try:
             print("Searching book information...")
             # Clear previous search results from the table
+            
+            search_query = self.ui.input_findSearch.text().strip()
+            
             self.ui.search_table.clearContents()
             self.ui.search_table.setRowCount(0)
+            # Clear details from the edit page
+            self.clearDetailFields()
+            
+            if search_query == "":
+                print("No search query entered.")
+                QMessageBox.warning(self.ui, "Search", "Please enter a search query.")
+                self.ui.input_filterSearch.setCurrentIndex(-1)
+                return
 
             column_mapping = {
                 "Book ID": "book_id",
@@ -93,7 +115,6 @@ class SearchBook_UI:
 
             filter_criteria = self.ui.input_filterSearch.currentText()
             column_name = column_mapping[filter_criteria]
-            search_query = self.ui.input_findSearch.text().strip()
 
             search_results = list(self.db_session.searchBook(column_name, search_query))
 
@@ -328,3 +349,13 @@ class SearchBook_UI:
 
         # Optionally, resize rows to fit content
         table_widget.resizeRowsToContents()
+        
+    def clearDetailFields(self):
+        """Clear the book detail input fields."""
+        for field in self.detail_fields:
+            if isinstance(field, QLineEdit):
+                field.clear()
+            elif isinstance(field, QSpinBox):
+                field.setValue(0)
+            elif isinstance(field, QComboBox):
+                field.setCurrentIndex(-1)
