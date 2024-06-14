@@ -128,7 +128,9 @@ class AddBook_UI:
                     stage=stage,
                     isbn=isbn
                 )
-                result = self.db_session.addBook(book_id, None, bookData)
+                
+                admin_id = self.ui.admin_id.text()  # Replace with the actual admin ID or fetch dynamically
+                result = self.db_session.addBook(admin_id,book_id, None, bookData)
             else:
                 # Book does not exist, insert new metadata and operational data
                 bookMarcData = BooksBookMarcData(

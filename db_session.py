@@ -219,6 +219,39 @@ class DBSession:
         except Exception as err:
             print(f"Error: {err}")
             return None
+           
+    def getBookByIdAndWarehouseId(self, book_id: int, warehouse_id: int) -> Optional[Tuple[BooksBookMarcData, BooksBookData]]:
+        try:
+            query = """
+                SELECT BM.book_id, BM.title, BM.author, BM.isbn, BM.public_year, BM.public_comp, BD.warehouse_id, BD.quantity, BD.stage
+                FROM books.bookMarc BM
+                JOIN books.book BD ON BM.book_id = BD.book_id
+                WHERE BM.book_id = ? AND BD.warehouse_id = ?
+            """
+            self.cursor.execute(query, (book_id, warehouse_id))
+            row = self.cursor.fetchone()
+            if row:
+                bookMarcData = BooksBookMarcData(
+                    title=row[1],
+                    author=row[2],
+                    isbn=row[3],
+                    public_year=row[4],
+                    public_comp=row[5],
+                    book_id=row[0]
+                )
+                bookData = BooksBookData(
+                    warehouse_id=row[6],
+                    quantity=row[7],
+                    stage=row[8],
+                    book_id=row[0],
+                    isbn=row[3]
+                )
+                return (bookMarcData, bookData)
+            else:
+                return None
+        except Exception as err:
+            print("Error:", err)
+            return None
             
     def updateBook(self, admin_id: int, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:
@@ -269,44 +302,48 @@ class DBSession:
 
         return (True, None)
 
-    def deleteBook(self, book_id: int, admin_id: int) -> ExecuteResult[None]:
+    def deleteBook(self, warehouse_id, book_id: int, admin_id: int) -> tuple[bool, str]:
         try:
-            # Retrieve the ISBN and warehouse_id from the books.book table before deletion
+            # Retrieve the ISBN and warehouse_ids from the books.book table before deletion
             self.cursor.execute("""
                 SELECT BM.book_id, BM.isbn, B.warehouse_id
                 FROM books.bookMarc BM
                 JOIN books.book B ON BM.book_id = B.book_id
                 WHERE BM.book_id = ?
             """, (book_id,))
-            row = self.cursor.fetchone()
+            rows = self.cursor.fetchall()
             
-            if row is None:
-                return (False, "Book not found.")
-            
-            book_id ,isbn, warehouse_id = row.book_id,row.isbn, row.warehouse_id
+            if not rows:
+                return False, "Book not found."
 
-            # Delete the book from books.book first
-            self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ?", (book_id, isbn))
-            
-            # Delete the book from books.bookMarc
-            self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ? AND isbn = ?", (book_id, isbn))
-            
-            # Insert the deletion record into users.history with book_id as NULL
+            # Determine the number of distinct warehouse_ids associated with the book_id
+            warehouse_ids = {row.warehouse_id for row in rows}
+
+            if len(warehouse_ids) > 1:
+                # More than one warehouse_id, delete only from books.book
+                self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ? AND warehouse_id = ?", (book_id, rows[0].isbn, warehouse_id))
+                warehouse_id = None  # Set warehouse_id to None for history record
+            else:
+                # Only one warehouse_id, delete from both books.book and books.bookMarc
+                self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ?", (book_id, rows[0].isbn))
+                self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ? AND isbn = ?", (book_id, rows[0].isbn))
+                warehouse_id = rows[0].warehouse_id  # Use the existing warehouse_id for history record
+
+            # Insert the deletion record into users.history
             self.cursor.execute("""
                 INSERT INTO users.history (admin_id, isbn, book_id, warehouse_id, timestamp)
                 VALUES (?, ?, ?, ?, ?)   
-            """, (admin_id, isbn, None, warehouse_id, datetime.now()))
+            """, (admin_id, rows[0].isbn, None, warehouse_id, datetime.now()))
 
             self.connection.commit()
-            return (True, None)
+            return True, None
+
         except pyodbc.Error as err:
             self.connection.rollback()
-            return (False, str(err))
+            return False, str(err)
+
         except Exception as err:
-            return (False, str(err))
-
-
-
+            return False, str(err)
     # --- SEARCH BOOK FUNCTION ------------------------------------------
     def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[int, str, str, int, Optional[str]], None, None]:
         try:

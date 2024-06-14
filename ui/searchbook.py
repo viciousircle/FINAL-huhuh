@@ -185,11 +185,22 @@ class SearchBook_UI:
             book_id = int(book_id_item.text())
             print("Selected book ID:", book_id)
 
-            bookMarcData, bookData = self.db_session.getBookById(book_id)
+            # Retrieve the warehouse ID from the selected row
+            warehouse_id_item = self.ui.search_table.item(row, 3)  # Adjust column index as per your table setup
+
+            if warehouse_id_item is None:
+                print("Warehouse ID not found for the selected book.")
+                QMessageBox.warning(self.ui, "Error", "Warehouse ID not found for the selected book.")
+                return
+
+            warehouse_id = int(warehouse_id_item.text())
+            print("Selected warehouse ID:", warehouse_id)
+
+            # Retrieve book details for the selected book ID and warehouse ID
+            bookMarcData, bookData = self.db_session.getBookByIdAndWarehouseId(book_id, warehouse_id)
             
             if bookMarcData is None or bookData is None:
                 print("Book details not found.")
-                
                 QMessageBox.warning(self.ui, "Error", "Book details not found.")
                 return
             
@@ -198,31 +209,35 @@ class SearchBook_UI:
             self.ui.input_isbnEdit.setText(bookMarcData.isbn)
             self.ui.input_yearEdit.setText(str(bookMarcData.public_year))
             self.ui.input_compEdit.setText(bookMarcData.public_comp)
-            self.ui.input_warehouse_idEdit.setText(str(bookData.warehouse_id))
+            
+            # Set the warehouse ID edit field
+            self.ui.input_warehouse_idEdit.setText(str(warehouse_id))
+            
             self.ui.input_quantityEdit.setValue(bookData.quantity)
             self.ui.input_stageEdit.setCurrentText(bookData.stage)
             
             print("Book details displayed successfully.")
             
             self.initial_field_values = {
-                'input_titleEdit'       : bookMarcData.title,
-                'input_authorEdit'      : bookMarcData.author,
-                'input_isbnEdit'        : bookMarcData.isbn,
-                'input_yearEdit'        : str(bookMarcData.public_year),
-                'input_compEdit'        : bookMarcData.public_comp,
-                'input_warehouse_idEdit': str(bookData.warehouse_id),
-                'input_quantityEdit'    : bookData.quantity,
-                'input_stageEdit'       : bookData.stage
+                'input_titleEdit': bookMarcData.title,
+                'input_authorEdit': bookMarcData.author,
+                'input_isbnEdit': bookMarcData.isbn,
+                'input_yearEdit': str(bookMarcData.public_year),
+                'input_compEdit': bookMarcData.public_comp,
+                'input_warehouse_idEdit': str(warehouse_id),
+                'input_quantityEdit': bookData.quantity,
+                'input_stageEdit': bookData.stage
             }
             
-            self.old_bookMarcData   = bookMarcData
-            self.old_bookData       = bookData
+            self.old_bookMarcData = bookMarcData
+            self.old_bookData = bookData
             
             for button in self.buttons_edit:
                 button.setEnabled(True)
 
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
+
 
     def editButtonClicked(self):
         try:
@@ -514,8 +529,8 @@ class SearchBook_UI:
                                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             
             if confirmation == QMessageBox.StandardButton.Yes:
-                
-                success, message = self.db_session.deleteBook(book_id, admin_id)
+                warehouse_id = self.ui.input_warehouse_idEdit.text()
+                success, message = self.db_session.deleteBook(warehouse_id,book_id, admin_id)
 
                 if not success:
                     
