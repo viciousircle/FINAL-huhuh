@@ -429,7 +429,10 @@ class SearchBook_UI:
                                                 QMessageBox.StandardButton.No)
 
             if confirm_save == QMessageBox.StandardButton.Yes:
-                success, message = self.db_session.updateBook(updated_bookMarcData, updated_bookData, self.old_bookMarcData, self.old_bookData)
+                
+                admin_id = self.ui.admin_id.text()                
+                
+                success, message = self.db_session.updateBook(admin_id,updated_bookMarcData, updated_bookData, self.old_bookMarcData, self.old_bookData)
 
                 if not success:
                     print("Error saving changes:", message)

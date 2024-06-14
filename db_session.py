@@ -96,34 +96,41 @@ class DBSession:
             raise err
         
     # --- ADD BOOK FUNCTION ------------------------------------------
-    def addBook(self,book_id, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
+    def addBook(self, admin_id: int, book_id: Optional[int], bookMarcData: Optional[BooksBookMarcData], bookData: BooksBookData) -> ExecuteResult[None]:
         try:
-            if bookMarcData:
-                # If bookMarcData is provided, insert it into the bookMarc table
-                book_id = self.insertBookMarc(bookMarcData)
+            print("Adding book")
+
+            # Check if the book with the given ISBN already exists in the BookMarc table
+            existing_book, error = self.getBookByISBN(bookData.isbn)
+
+            if existing_book:
+                # If the book exists in BookMarc, use its book_id to insert into Book table
+                book_id = existing_book.book_id
                 print("Book ID:", book_id)
             else:
-                # If bookMarcData is not provided, check if the book exists in the bookMarc table using ISBN
-                existing_book, error = self.getBookByISBN(bookData.isbn)
-                if existing_book is None:
-                    # If the book doesn't exist, insert it into the bookMarc table to generate a book_id
-                    book_id = self.insertBookMarc(bookMarcData)
-                else:
-                    book_id = existing_book.book_id
-                
-            # Insert the book into the book table
+                # If the book doesn't exist in BookMarc, insert it and get the generated book_id
+                book_id = self.insertBookMarc(bookMarcData)
+                print("Book ID:", book_id)
+
+            # Insert the book into the Book table using bookData
             self.insertBook(book_id, bookData)
-            print("Book inserted")
-            
+            print("Book inserted successfully")
+
+            # Log the addition in history
+            self.logHistory(admin_id, book_id, bookData.isbn, bookData.warehouse_id, datetime.now())
+
             self.connection.commit()
             return (True, None)
+        
         except pyodbc.Error as err:
             self.connection.rollback()
+            print("Database error:", err)
             return (False, str(err))
+        
         except Exception as err:
             self.connection.rollback()
+            print("Unexpected error:", err)
             return (False, str(err))
-
 
     def insertBookMarc(self, bookMarcData: BooksBookMarcData) -> int:
         try:
@@ -138,9 +145,11 @@ class DBSession:
             return book_id
         except pyodbc.Error as err:
             self.connection.rollback()
+            print("Database error:", err)
             raise err
         except Exception as err:
             self.connection.rollback()
+            print("Unexpected error:", err)
             raise err
 
     def insertBook(self, book_id: int, bookData: BooksBookData) -> None:
@@ -211,10 +220,8 @@ class DBSession:
             print(f"Error: {err}")
             return None
             
-
-    def updateBook(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
+    def updateBook(self, admin_id: int, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:
-            print("Updating book")
             # Update BookMarcData if old data is provided and there are changes
             if old_bookMarcData is not None:
                 update_query = "UPDATE books.bookMarc SET "
@@ -251,34 +258,16 @@ class DBSession:
                     self.cursor.execute(update_query, params)
                     self.connection.commit()
 
-            # Update BookData if old data is provided and there are changes
-            if old_bookData is not None:
-                update_query = "UPDATE books.book SET "
-                params = []
+                    # Log the update in history
+                    self.logHistory(admin_id, old_bookMarcData.book_id if old_bookMarcData else None, old_bookMarcData.isbn if old_bookMarcData else None, old_bookData.warehouse_id if old_bookData else None, datetime.now())
 
-                if bookData.quantity != old_bookData.quantity:
-                    update_query += "quantity = ?, "
-                    params.append(bookData.quantity)
-                if bookData.stage != old_bookData.stage:
-                    update_query += "stage = ?, "
-                    params.append(bookData.stage)
-
-                if update_query.endswith(", "):
-                    update_query = update_query[:-2]  # Remove the trailing comma and space
-                    update_query += " WHERE book_id = ?"
-                    params.append(old_bookMarcData.book_id)
-
-                    self.cursor.execute(update_query, params)
-                    self.connection.commit()
-                    
-            print("Book updated")
-            return (True, None)
-        
         except pyodbc.Error as err:
             self.connection.rollback()
             return (False, str(err))
         except Exception as err:
             return (False, str(err))
+
+        return (True, None)
 
     def deleteBook(self, book_id: int, admin_id: int) -> ExecuteResult[None]:
         try:
@@ -400,6 +389,21 @@ class DBSession:
         except Exception as err:
             raise err
     
+    
+    def logHistory(self, admin_id: int, book_id: Optional[int], isbn: Optional[str], warehouse_id: Optional[int], timestamp: datetime):
+        try:
+            self.cursor.execute("""
+                INSERT INTO users.history (admin_id, book_id, isbn, warehouse_id, timestamp)
+                VALUES (?, ?, ?, ?, ?)
+            """, (admin_id, book_id, isbn, warehouse_id, timestamp))
+            self.connection.commit()
+
+        except pyodbc.Error as err:
+            self.connection.rollback()
+            raise err
+        except Exception as err:
+            raise err   
+
     # --- SHOW USERS FUNCTION ------------------------------------------
     def showGuest(self) -> Generator[UsersGuestData, None, None]:
         try:
