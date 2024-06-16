@@ -306,7 +306,7 @@ class SearchBook_UI:
             if not self.areChangesMade(current_field_values):
                 
                 self.showMessageBox("Message", "No changes were made.", QMessageBox.Icon.Information)
-                self.resetUIAfterCancel()
+                self.resetUI()
                 self.disableDetailFields()
 
                 return
@@ -314,7 +314,7 @@ class SearchBook_UI:
             if QMessageBox.question(self.ui, 'Message', "Are you sure you want to cancel and discard changes?",
                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
                 
-                self.resetUIAfterCancel()
+                self.resetUI()
                 self.disableDetailFields()
                 
                 for field_name, field_widget in self.input_fields.items():
@@ -371,7 +371,7 @@ class SearchBook_UI:
             elif isinstance(field_widget, QComboBox):
                 field_widget.setEnabled(True)
 
-    def resetUIAfterCancel(self):
+    def resetUI(self):
         
         self.ui.search_table.setDisabled(False)
         self.ui.input_findSearch.setDisabled(False)
@@ -395,8 +395,6 @@ class SearchBook_UI:
         try:
             
             current_field_values = self.getCurrentFieldValues()
-
-            # Check if any changes have been made
         
             if not self.areChangesMade(current_field_values):
                 
@@ -404,7 +402,6 @@ class SearchBook_UI:
 
                 return
             
-            # Ask for confirmation before saving
             confirm_save = QMessageBox.question(self.ui, "Save Changes", "Are you sure you want to save the changes?",
                                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                                                 QMessageBox.StandardButton.No)
@@ -422,24 +419,10 @@ class SearchBook_UI:
                     self.showMessageBox("Error", message, QMessageBox.Icon.Critical)        
                     return
 
-                # Disable the input fields after saving the changes
                 self.disableDetailFields()
-
-                # Hide the save, cancel, and delete buttons
-
-
                 self.showMessageBox("Save Changes", "Changes saved successfully.", QMessageBox.Icon.Information)
-
-                # # Enable search_table
-                # self.hideButtons(True)
                 
-                # self.ui.search_table.clearContents()
-                # self.ui.search_table.setDisabled(False)
-                # self.ui.input_findSearch.setDisabled(False)
-                # self.ui.input_filterSearch.setDisabled(False)
-                # self.ui.find_btn.setDisabled(False)
-                
-                self.resetUIAfterCancel()
+                self.resetUI()
                 self.searchBookInformation(clear=False)
                 
 
@@ -448,11 +431,8 @@ class SearchBook_UI:
                 showfile.updateBookMarcTable()
                 showfile.updateBookTable()
                 
-                print("Changes saved successfully.")
                 
-            elif confirm_save == QMessageBox.StandardButton.No:
-                print("Changes not saved.")
-                
+            elif confirm_save == QMessageBox.StandardButton.No:                
                 return
 
         except Exception as e:
@@ -481,24 +461,17 @@ class SearchBook_UI:
     
     def deleteButtonClicked(self):
         try:
-            print("Deleting book...")   
             
-            # Get the index of the selected row
             selected_row = self.ui.search_table.currentRow()
-
-            # Ensure a row is selected
             if selected_row == -1:
-                
-                QMessageBox.warning(self.ui, "Error", "No book selected for deletion.")
-                
+                self.showMessageBox("Error", "Please select a book to delete.", QMessageBox.Icon.Warning)
                 return
 
-            # Get the book ID from the selected row
             book_id_item = self.ui.search_table.item(selected_row, 0)
-            if book_id_item is None:
-                return
-
             book_id     = int(book_id_item.text())
+            if book_id is None:
+                return
+            
             admin_id    = self.ui.admin_id.text()
 
             confirmation = QMessageBox.question(self.ui, 'Message', "Are you sure you want to delete this book?",
@@ -506,55 +479,38 @@ class SearchBook_UI:
             
             if confirmation == QMessageBox.StandardButton.Yes:
                 warehouse_id = self.ui.input_warehouse_idEdit.text()
-                success, message = self.db_session.deleteBook(warehouse_id,book_id, admin_id)
 
+                success, message = self.db_session.deleteBook(warehouse_id,book_id, admin_id)
                 if not success:
-                    
-                    QMessageBox.warning(self.ui, "Error", message)
-                    
+                    print("Error deleting book:", message)
+                    self.showMessageBox("Error", message, QMessageBox.Icon.Critical)                    
                     return
 
-                QMessageBox.information(self.ui, "Delete", "Book deleted successfully.")
+                self.showMessageBox("Delete Book", "Book deleted successfully.", QMessageBox.Icon.Information)
 
                 self.searchBookInformation()
+                self.disableDetailFields()
+                self.hideButtons(True)
+                self.ui.input_findSearch.setDisabled(False)
+                self.ui.input_filterSearch.setDisabled(False)
+                self.ui.search_table.setDisabled(False)
+                self.ui.find_btn.setDisabled(False)
 
                 from ui.showfile import ShowFile_UI
                 showfile = ShowFile_UI(self.ui, self.db_session)
                 showfile.updateBookMarcTable()
                 showfile.updateBookTable()
                 
-                self.ui.edit_btn.hide()
-                self.ui.save_btn.hide()
-                self.ui.cancel_btn.hide()
-                self.ui.delete_btn.hide()
-                
-
-                self.ui.input_findSearch.setDisabled(False)
-                self.ui.input_filterSearch.setDisabled(False)
-                self.ui.search_table.setDisabled(False)
-                self.ui.find_btn.setDisabled(False)
-
-
-                # Disable the input fields after deletion
-                self.disableDetailFields()
-                print("Book deleted successfully.")
-
             elif confirmation == QMessageBox.StandardButton.No:
-                # Re-enable the delete button
-                self.ui.edit_btn.setEnabled(True)
-                
-                print("Book deletion cancelled.")
+                return                
 
         except Exception as e:
             print("Error deleting book:", e)
-            
-            QMessageBox.critical(self.ui, "Error", str(e))
-
+            self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
     
     def adjustColumnWidths(self, table):
         table.resizeColumnsToContents()
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-
         
     def clearDetailFields(self):
         """Clear the book detail input fields."""
