@@ -36,6 +36,44 @@ class AddBook_UI:
         self.setupFields()
         self.disableInputFields(full=True)
 
+        self.hideDetails()
+
+        self.ui.submit_btn.hide()
+        self.ui.clear_btn.hide()
+
+    def hideDetails(self):
+        # Hide the labels and input fields for book details
+        self.ui.title.hide()
+        self.ui.author.hide()
+        self.ui.public_comp.hide()
+        self.ui.public_year.hide()
+        self.ui.quantity.hide()
+        self.ui.stage.hide()
+
+        self.ui.input_titleAdd.hide()
+        self.ui.input_authorAdd.hide()
+        self.ui.input_compAdd.hide()
+        self.ui.input_yearAdd.hide()
+        self.ui.input_quantityAdd.hide()
+        self.ui.input_stageAdd.hide()
+
+
+    def showDetails(self):
+        # Show the labels and input fields for book details
+        self.ui.title.show()
+        self.ui.author.show()
+        self.ui.public_comp.show()
+        self.ui.public_year.show()
+        self.ui.quantity.show()
+        self.ui.stage.show()
+
+        self.ui.input_titleAdd.show()
+        self.ui.input_authorAdd.show()
+        self.ui.input_compAdd.show()
+        self.ui.input_yearAdd.show()
+        self.ui.input_quantityAdd.show()
+        self.ui.input_stageAdd.show()
+
 
     def connectSignals(self):
         self.ui.enter_btn.clicked.connect(self.enterButtonClicked)
@@ -114,20 +152,24 @@ class AddBook_UI:
             else:
                 self.ui.messageAdd.setText("This is a new ISBN. Please enter book details to add a new book.")
                 self.enableInputFields()  
+
+            self.showDetails()
+            self.ui.submit_btn.show()
+            self.ui.clear_btn.show()
+            self.ui.enter_btn.hide()
+            self.ui.input_isbnAdd.setEnabled(False)   
                 
         except Exception as e:
             self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
             print(str(e))
 
-
     def submitButtonClicked(self):
         # Check if all fields are empty before proceeding
         if self.checkIfAllFieldsEmpty():
-            QMessageBox.information(self.ui, "Warning", "Please fill in the required fields before submitting.")
+            self.showMessageBox("Warning", "All input fields are empty.", QMessageBox.Icon.Warning)
             return
 
         try:
-            print("Adding book information...")
             
             isbn = self.ui.input_isbnAdd.text().strip()
             quantity = self.ui.input_quantityAdd.value()
@@ -142,6 +184,9 @@ class AddBook_UI:
 
             if quantity <= 0:
                 QMessageBox.critical(self.ui, "Error", "Quantity must be greater than 0")
+                return
+            if stage == "":
+                QMessageBox.critical(self.ui, "Error", "Stage must be selected")
                 return
 
             # Show confirmation message
