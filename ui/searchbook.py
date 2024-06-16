@@ -247,6 +247,7 @@ class SearchBook_UI:
             self.ui.input_findSearch.setDisabled(True)
             self.ui.input_filterSearch.setDisabled(True)
             self.ui.find_btn.setDisabled(True)
+            # self.ui.edit_btn.setEnabled(False)
             
             # Clear previous selections
             self.ui.search_table.clearSelection()
@@ -281,6 +282,8 @@ class SearchBook_UI:
             self.ui.save_btn.show()
             self.ui.cancel_btn.show()
             self.ui.delete_btn.show()
+            self.ui.edit_btn.hide()
+
             
             print("Book details are now editable.")
             
@@ -369,7 +372,8 @@ class SearchBook_UI:
 
     def resetUIAfterCancel(self):
         
-        self.ui.edit_btn.setEnabled(True)
+        # self.ui.edit_btn.setEnabled(True)
+        self.ui.edit_btn.show()
         self.ui.search_table.setDisabled(False)
         self.ui.input_findSearch.setDisabled(False)
         self.ui.input_filterSearch.setDisabled(False)
