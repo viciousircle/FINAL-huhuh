@@ -96,6 +96,7 @@ class Navigation_UI:
         button.setDisabled(True)
         
         self.lastClickedNavButton = button
+
     
     
     
