@@ -1,7 +1,7 @@
 # ------IMPORTS------------------------------------------
 from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit,QSpinBox,QStackedWidget,QHeaderView,QDateEdit 
-from PyQt6.QtCore import Qt,QDate
-from PyQt6.QtGui import QFont, QColor, QIntValidator
+from PyQt6.QtCore import Qt,QDate, QRegularExpression
+from PyQt6.QtGui import QFont, QColor, QIntValidator, QRegularExpressionValidator
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -39,20 +39,19 @@ class SearchBook_UI:
         # Connect to the database session
         self.ui         = ui
         self.db_session = db_session
-        
-        # Set up the page buttons
-        self.buttons_edit = [
-            self.ui.edit_btn,
-            self.ui.delete_btn,
-            self.ui.save_btn,
-            self.ui.cancel_btn
-        ]
+
+        self.connectSignals()
+        self.initialize()
         
         
-        self.ui.edit_btn.hide()    
-        self.ui.save_btn.hide()
-        self.ui.cancel_btn.hide()
-        self.ui.delete_btn.hide()
+
+    def initialize(self):
+        self.hideButtons(True)
+        self.setupFields()
+        self.initial_field_values = {}
+
+
+    def setupFields(self):
             
         # Set up the input fields
         self.detail_fields = [
@@ -66,13 +65,15 @@ class SearchBook_UI:
             self.ui.input_stageEdit
         ]
 
+        self.ui.input_isbnEdit.setMaxLength(13)
+        isbn_validator = QRegularExpressionValidator(QRegularExpression(r'^\d{1,13}$'), self.ui.input_isbnEdit)
+        self.ui.input_isbnEdit.setValidator(isbn_validator)
+        self.ui.input_titleEdit.setMaxLength(100)
+        self.ui.input_authorEdit.setMaxLength(100)
+        self.ui.input_compEdit.setMaxLength(100)
         self.ui.input_yearEdit.setValidator(QIntValidator(1000, 9999))
         self.ui.input_quantityEdit.setMaximum(999999)  
-        
 
-        # Connect button signals and table interactions
-        self.connectSignals()
-        
         self.input_fields = {
             "input_titleEdit": self.ui.input_titleEdit,
             "input_authorEdit": self.ui.input_authorEdit,
@@ -83,8 +84,25 @@ class SearchBook_UI:
             "input_stageEdit": self.ui.input_stageEdit
         }
         
-        self.initial_field_values = {}
-                
+    def hideButtons(self, check):
+
+        self.buttons_edit = [
+            self.ui.edit_btn,
+            self.ui.delete_btn,
+            self.ui.save_btn,
+            self.ui.cancel_btn
+        ]
+
+        if check == False:
+            for button in self.buttons_edit:
+                if button == self.ui.edit_btn:
+                    button.show()
+                else:
+                    button.hide()
+        else:
+            for button in self.buttons_edit:
+                button.hide()
+
     def connectSignals(self):
         self.ui.search_table.cellClicked.connect(self.displayBookDetails)
         self.ui.edit_btn.clicked.connect(self.editButtonClicked)
@@ -95,248 +113,210 @@ class SearchBook_UI:
         
     def searchBookInformation(self):
         try:
-            print("Searching book information...")
             
-            # Before searching, clear the table and detail fields
-            self.ui.search_table.clearContents()
-            self.ui.search_table.setRowCount(0)
-            self.clearDetailFields()
+            self.clearTableAndDetailFields()
             
             search_query = self.ui.input_findSearch.text().strip()
             
-            if search_query == "":
-                print("No search query entered.")
+            if not search_query:
+
+                self.showMessageBox("Search", "Please enter a search query.", QMessageBox.Icon.Warning)
                 
-                QMessageBox.warning(self.ui, "Search", "Please enter a search query.")
-                # Reset UI elements
                 self.ui.input_filterSearch.setCurrentIndex(-1)
-                self.ui.edit_btn.hide()
-                self.ui.save_btn.hide()
-                self.ui.cancel_btn.hide()
-                self.ui.delete_btn.hide()
-                
-                # Show message box for empty search query
-                print(2)
+                self.hideButtons(True)
+
                 return
             
             # Continue with normal search process
-            column_mapping = {
-                "Book ID"       : "book_id",
-                "Warehouse ID"  : "warehouse_id",
-                "Title"         : "title",
-                "Author"        : "author",
-                "Public Year"   : "public_year",
-                "Public Company": "public_comp",
-                "ISBN"          : "isbn",
-                "Quantity"      : "quantity",
-                "Stage"         : "stage",
-                "All"           : None,
-                ""              : None
-            }
-
+            
             filter_criteria = self.ui.input_filterSearch.currentText()
-            column_name     = column_mapping.get(filter_criteria, None)
+            column_name     = self.getColumnFromFilter(filter_criteria)
 
             search_results = list(self.db_session.searchBook(column_name, search_query))
 
-            print("Found", len(search_results), "results.")
-
             if search_results:
-                # Display search results in the table
-                self.ui.search_table.setRowCount(len(search_results))
-                column_count = len(search_results[0]) if search_results else 0
-                self.ui.search_table.setColumnCount(column_count)
-
-                # Prepare header labels based on filter criteria
-                if filter_criteria in ["Book ID", "Title", "ISBN", "Warehouse ID", ""]:
-                    header_labels = ['Book ID', 'Title', 'ISBN', 'Warehouse ID']
-                else:
-                    header_labels = ['Book ID', 'Title', 'ISBN', 'Warehouse ID', filter_criteria]
-
-                # Set headers in the table
-                for col_idx, header in enumerate(header_labels):
-                    item = QTableWidgetItem(header)
-                    font = item.font()
-                    font.setBold(True)
-                    item.setFont(font)
-                    self.ui.search_table.setHorizontalHeaderItem(col_idx, item)
-
-                # Populate table with search results
-                for row_idx, row_data in enumerate(search_results):
-                    for col_idx, value in enumerate(row_data):
-                        item = QTableWidgetItem(str(value))
-                        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                        self.ui.search_table.setItem(row_idx, col_idx, item)
-
-                # Resize columns to fit content
-                self.ui.search_table.resizeColumnsToContents()
-                self.adjustColumnWidths(self.ui.search_table)
+                self.populateTableWithResults(search_results, filter_criteria)
                 
             else:
-                print("No results found.")
-                QMessageBox.warning(self.ui, "Search", "No results found.")
+                self.showMessageBox("Search", "No results found.", QMessageBox.Icon.Warning)
                 
         except Exception as e:
             print("Error searching book information:", e)
-            QMessageBox.critical(self.ui, "Error", str(e))
+            self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
+
+    def populateTableWithResults(self, search_results, filter_criteria):
+        # Display search results in the table
+        self.ui.search_table.setRowCount(len(search_results))
+        column_count = len(search_results[0]) if search_results else 0
+        self.ui.search_table.setColumnCount(column_count)
+        header_labels = self.getHeaderLabels(filter_criteria)
+        self.setTableHeaders(header_labels)
+        self.fillTableWithData(search_results)
+        self.adjustColumnWidths(self.ui.search_table)
+
+    def getHeaderLabels(self, filter_criteria: str) -> list[str]:
+        if filter_criteria in ["Book ID", "Title", "ISBN", "Warehouse ID", ""]:
+            return ['Book ID', 'Title', 'ISBN', 'Warehouse ID']
+        else:
+            return ['Book ID', 'Title', 'ISBN', 'Warehouse ID', filter_criteria]
+        
+    def setTableHeaders(self, header_labels: list[str]):
+        for col_idx, header in enumerate(header_labels):
+            item = QTableWidgetItem(header)
+            font = item.font()
+            font.setBold(True)
+            item.setFont(font)
+            self.ui.search_table.setHorizontalHeaderItem(col_idx, item)
+
+    def fillTableWithData(self, search_results: list[tuple]):
+        for row_idx, row_data in enumerate(search_results):
+            for col_idx, value in enumerate(row_data):
+                item = QTableWidgetItem(str(value))
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.ui.search_table.setItem(row_idx, col_idx, item)
+
+    def getColumnFromFilter(self, filter_criteria: str) -> str:
+        column_mapping = {
+            "Book ID"       : "book_id",
+            "Warehouse ID"  : "warehouse_id",
+            "Title"         : "title",
+            "Author"        : "author",
+            "Public Year"   : "public_year",
+            "Public Company": "public_comp",
+            "ISBN"          : "isbn",
+            "Quantity"      : "quantity",
+            "Stage"         : "stage",
+            "All"           : None,
+            ""              : None
+        }
+
+        return column_mapping.get(filter_criteria, None)
+
+    def clearTableAndDetailFields(self):
+        self.ui.search_table.clearContents()
+        self.ui.search_table.setRowCount(0)
+        self.clearDetailFields()
+
+    def showMessageBox(self, title: str, message: str, icon: QMessageBox.Icon):
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle(title)
+        msg_box.setText(message)
+        msg_box.setIcon(icon)
+        msg_box.exec()
 
     def displayBookDetails(self, row, column):
         try:
-            print("Displaying book details...")
             book_id_item = self.ui.search_table.item(row, 0)  
 
             if book_id_item is None:
                 return
             
             book_id = int(book_id_item.text())
-            print("Selected book ID:", book_id)
-
-            # Retrieve the warehouse ID from the selected row
-            warehouse_id_item = self.ui.search_table.item(row, 3)  # Adjust column index as per your table setup
+            warehouse_id_item = self.ui.search_table.item(row, 3)  
 
             if warehouse_id_item is None:
-                print("Warehouse ID not found for the selected book.")
-                QMessageBox.warning(self.ui, "Error", "Warehouse ID not found for the selected book.")
+                self.showMessageBox("Error", "Warehouse ID not found.", QMessageBox.Icon.Warning)
                 return
 
             warehouse_id = int(warehouse_id_item.text())
-            print("Selected warehouse ID:", warehouse_id)
 
-            # Retrieve book details for the selected book ID and warehouse ID
             bookMarcData, bookData = self.db_session.getBookByIdAndWarehouseId(book_id, warehouse_id)
             
             if bookMarcData is None or bookData is None:
-                print("Book details not found.")
-                QMessageBox.warning(self.ui, "Error", "Book details not found.")
+                self.showMessageBox("Error", "Book not found.", QMessageBox.Icon.Warning)
                 return
             
-            self.ui.input_titleEdit.setText(bookMarcData.title)
-            self.ui.input_authorEdit.setText(bookMarcData.author)
-            self.ui.input_isbnEdit.setText(bookMarcData.isbn)
-            self.ui.input_yearEdit.setText(str(bookMarcData.public_year))
-            self.ui.input_compEdit.setText(bookMarcData.public_comp)
-            
-            # Set the warehouse ID edit field
-            self.ui.input_warehouse_idEdit.setText(str(warehouse_id))
-            
-            self.ui.input_quantityEdit.setValue(bookData.quantity)
-            self.ui.input_stageEdit.setCurrentText(bookData.stage)
-            
-            print("Book details displayed successfully.")
-            
-            self.initial_field_values = {
-                'input_titleEdit': bookMarcData.title,
-                'input_authorEdit': bookMarcData.author,
-                'input_isbnEdit': bookMarcData.isbn,
-                'input_yearEdit': str(bookMarcData.public_year),
-                'input_compEdit': bookMarcData.public_comp,
-                'input_warehouse_idEdit': str(warehouse_id),
-                'input_quantityEdit': bookData.quantity,
-                'input_stageEdit': bookData.stage
-            }
-            
-            self.old_bookMarcData = bookMarcData
-            self.old_bookData = bookData
-            
-            self.ui.edit_btn.show()
-            self.ui.save_btn.hide()
-            self.ui.cancel_btn.hide()
-            self.ui.delete_btn.hide()
+            self.setDataFields(bookMarcData, bookData, warehouse_id)
 
+            self.hideButtons(False)
 
         except Exception as e:
-            QMessageBox.critical(self.ui, "Error", str(e))
+            self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
 
+    def setDataFields(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, warehouse_id: int):
+
+        self.ui.input_titleEdit.setText(bookMarcData.title)
+        self.ui.input_authorEdit.setText(bookMarcData.author)
+        self.ui.input_isbnEdit.setText(bookMarcData.isbn)
+        self.ui.input_yearEdit.setText(str(bookMarcData.public_year))
+        self.ui.input_compEdit.setText(bookMarcData.public_comp)
+        self.ui.input_warehouse_idEdit.setText(str(warehouse_id))
+        self.ui.input_quantityEdit.setValue(bookData.quantity)
+        self.ui.input_stageEdit.setCurrentText(bookData.stage)
+    
+        self.initial_field_values = {
+            'input_titleEdit': bookMarcData.title,
+            'input_authorEdit': bookMarcData.author,
+            'input_isbnEdit': bookMarcData.isbn,
+            'input_yearEdit': str(bookMarcData.public_year),
+            'input_compEdit': bookMarcData.public_comp,
+            'input_warehouse_idEdit': str(warehouse_id),
+            'input_quantityEdit': bookData.quantity,
+            'input_stageEdit': bookData.stage
+        }
+
+        self.old_bookMarcData = bookMarcData
+        self.old_bookData = bookData
 
     def editButtonClicked(self):
         try:
-            print("Editing book details...")
-            # Disable the search table and input fields
-
-            # self.ui.edit_btn.setEnabled(False)
-            
-            # Clear previous selections
             self.ui.search_table.clearSelection()
             
-            # Get the selected row
             selected_row = self.ui.search_table.currentRow()
             
             if selected_row == -1:
                 return
             
-            # Highlight all cells in the selected row
-            column_count = self.ui.search_table.columnCount()
-            
-            for col_idx in range(column_count):
-                
-                item = self.ui.search_table.item(selected_row, col_idx)
-                
-                if item:
-                    
-                    item.setBackground(QColor("#FFFF00"))  # Set background color to yellow
-            
-            # Enable the input fields for editing
-            for field_name, field_widget in self.input_fields.items():
-                
-                if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-                    
-                    field_widget.setReadOnly(False)
-                elif isinstance(field_widget, QComboBox):
-                    field_widget.setEnabled(True)
-                    
-            # Show the save, cancel, and delete buttons
-            self.ui.save_btn.show()
-            self.ui.cancel_btn.show()
-            self.ui.delete_btn.show()
-            self.ui.edit_btn.hide()
-            self.ui.search_table.setDisabled(True)
-            self.ui.input_findSearch.setDisabled(True)
-            self.ui.input_filterSearch.setDisabled(True)
-            self.ui.find_btn.setDisabled(True)
-            
-            print("Book details are now editable.")
+            self.highlightSelectedRow(selected_row)
+            self.enableInputFieldsForEditing()
+            self.showEditOptions()
             
         except Exception as e:
             print("Error editing book details:", e)
             
-            QMessageBox.critical(self.ui, "Error", str(e))
+            self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
 
+    def highlightSelectedRow(self, selected_row):
+        column_count = self.ui.search_table.columnCount()
+            
+        for col_idx in range(column_count):
+            
+            item = self.ui.search_table.item(selected_row, col_idx)
+            
+            if item:
+                
+                item.setBackground(QColor("#FFFF00"))  # Set background color to yellow
+
+    def enableInputFieldsForEditing(self):
+        for field_name, field_widget in self.input_fields.items():
+                
+            if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+
+                field_widget.setReadOnly(False)
+            elif isinstance(field_widget, QComboBox):
+                field_widget.setEnabled(True)
+
+    def showEditOptions(self):
+        self.ui.edit_btn.hide()
+        self.ui.save_btn.show()
+        self.ui.cancel_btn.show()
+        self.ui.delete_btn.show()
+        self.ui.search_table.setDisabled(True)
+        self.ui.input_findSearch.setDisabled(True)
+        self.ui.input_filterSearch.setDisabled(True)
+        self.ui.find_btn.setDisabled(True)
             
     def cancelButtonClicked(self):
         try:
             print("Cancelling changes...")
+
+            current_field_values = self.getCurrentFieldValues()
             
-            # Store the current field values
-            current_field_values = {
-                'input_titleEdit'           : self.ui.input_titleEdit.text(),
-                'input_authorEdit'          : self.ui.input_authorEdit.text(),
-                'input_isbnEdit'            : self.ui.input_isbnEdit.text(),
-                'input_yearEdit'            : self.ui.input_yearEdit.text(),  # No need for str() conversion
-                'input_compEdit'            : self.ui.input_compEdit.text(),
-                'input_warehouse_idEdit'    : self.ui.input_warehouse_idEdit.text(),  # No need for str() conversion
-                'input_quantityEdit'        : self.ui.input_quantityEdit.value(),
-                'input_stageEdit'           : self.ui.input_stageEdit.currentText()
-            }
-
-            # Check if any changes have been made
-            changes_made = False
-            
-            for field_name, initial_value in self.initial_field_values.items():
-                current_value = current_field_values[field_name]
-                
-                if isinstance(initial_value, int) and isinstance(current_value, str):
-                    current_value = str(current_value)  # Ensure same type for comparison
-                
-                if current_value != initial_value:
-                    changes_made = True
-                    break
-
-            print("Changes made:", changes_made)
-
-            if not changes_made:
+            if not self.areChangesMade(current_field_values):
                 print("No changes were made.")
                 
-                QMessageBox.information(self.ui, 'Message', "No changes were made.")
+                self.showMessageBox("Message", "No changes were made.", QMessageBox.Icon.Information)
+
                 
                 self.resetUIAfterCancel()
 
@@ -346,15 +326,7 @@ class SearchBook_UI:
                         
                     elif isinstance(field_widget, QComboBox):
                         field_widget.setEnabled(False)
-                # self.ui.edit_btn.show()
-                # self.ui.save_btn.hide()
-                # self.ui.cancel_btn.hide()
-                # self.ui.delete_btn.hide()
 
-                # self.ui.search_table.setDisabled(False)
-                # self.ui.input_findSearch.setDisabled(False)
-                # self.ui.input_filterSearch.setDisabled(False)
-                
                 
                 return
 
@@ -394,16 +366,31 @@ class SearchBook_UI:
             
             QMessageBox.critical(self.ui, "Error", str(e))
 
+    def getCurrentFieldValues(self):
+        current_field_values = {
+                'input_titleEdit'           : self.ui.input_titleEdit.text(),
+                'input_authorEdit'          : self.ui.input_authorEdit.text(),
+                'input_isbnEdit'            : self.ui.input_isbnEdit.text(),
+                'input_yearEdit'            : self.ui.input_yearEdit.text(),  # No need for str() conversion
+                'input_compEdit'            : self.ui.input_compEdit.text(),
+                'input_warehouse_idEdit'    : self.ui.input_warehouse_idEdit.text(),  # No need for str() conversion
+                'input_quantityEdit'        : self.ui.input_quantityEdit.value(),
+                'input_stageEdit'           : self.ui.input_stageEdit.currentText()
+        }
+        return current_field_values
+
+    def areChangesMade(self, current_field_values):
+        return current_field_values != self.initial_field_values
+
+
 
     def resetUIAfterCancel(self):
         
-        self.ui.edit_btn.show()
         self.ui.search_table.setDisabled(False)
         self.ui.input_findSearch.setDisabled(False)
         self.ui.input_filterSearch.setDisabled(False)
         self.ui.find_btn.setDisabled(False)
 
-        # Clear the row selection and highlighting
         self.ui.search_table.clearSelection()
 
         # Iterate through all rows to clear any highlighted rows
@@ -415,11 +402,7 @@ class SearchBook_UI:
                 if item:
                     item.setBackground(QColor(Qt.GlobalColor.white))  # Set background color back to white
 
-        # Hide buttons
-        self.ui.save_btn.hide()
-        self.ui.cancel_btn.hide()
-        self.ui.delete_btn.hide()
-        # self.ui.edit_btn.setEnabled(False)
+        self.hideButtons(False)
 
     def saveButtonClicked(self):
         try:
@@ -618,13 +601,10 @@ class SearchBook_UI:
             QMessageBox.critical(self.ui, "Error", str(e))
 
     
-    def adjustColumnWidths(self, table_widget: QTableWidget):
-        # Set the header to resize to fill the available space
-        header = table_widget.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+    def adjustColumnWidths(self, table):
+        table.resizeColumnsToContents()
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
-        # Optionally, resize rows to fit content
-        table_widget.resizeRowsToContents()
         
     def clearDetailFields(self):
         """Clear the book detail input fields."""
