@@ -7,9 +7,10 @@ from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksB
 
 # nhớ chỉnh lại cái username
 # -------CONNECT TO DATABASE------------------------------------------
-DRIVER_NAME = "SQL Server"
-SERVER_NAME = "DESKTOP-BS6RK24\\SQLEXPRESS"
-DATABASE_NAME = "LMS"
+DRIVER_NAME = "sql"  # Adjust the driver name if necessary
+SERVER_NAME = "8d7c731e1269"  # Replace with your actual SQL Server hostname or IP
+DATABASE_NAME = "LMS"  # Replace with your actual database name
+
 
 connection_string = f"""
     DRIVER={DRIVER_NAME};
