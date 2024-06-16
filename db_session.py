@@ -11,13 +11,16 @@ DRIVER_NAME = "sql"  # Adjust the driver name if necessary
 SERVER_NAME = "8d7c731e1269"  # Replace with your actual SQL Server hostname or IP
 DATABASE_NAME = "LMS"  # Replace with your actual database name
 
+connection_string = (
+    "DRIVER={ODBC Driver 17 for SQL Server};"
+    "SERVER=127.0.0.1,1433;"
+    "DATABASE=LMS;"
+    "UID=SA;"
+    "PWD=MyStrongPass123;"
+    "Timeout=30;"
+)
 
-connection_string = f"""
-    DRIVER={DRIVER_NAME};
-    SERVER={SERVER_NAME};
-    DATABASE={DATABASE_NAME};
-    Trusted_Connection = yes;
-"""
+
 
 # -------DBSESSION CLASS------------------------------------------
 class DBSession:
