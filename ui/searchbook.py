@@ -48,9 +48,8 @@ class SearchBook_UI:
             self.ui.cancel_btn
         ]
         
-        for button in self.buttons_edit:
-            button.setDisabled(True)
-            
+        
+        self.ui.edit_btn.hide()    
         self.ui.save_btn.hide()
         self.ui.cancel_btn.hide()
         self.ui.delete_btn.hide()
@@ -92,14 +91,11 @@ class SearchBook_UI:
         self.ui.cancel_btn.clicked.connect(self.cancelButtonClicked)
         self.ui.save_btn.clicked.connect(self.saveButtonClicked)
         self.ui.delete_btn.clicked.connect(self.deleteButtonClicked)
+        self.ui.find_btn.pressed.connect(self.searchBookInformation)
         
     def searchBookInformation(self):
         try:
             print("Searching book information...")
-            
-            # Before searching, disable the edit buttons
-            for button in self.buttons_edit:
-                button.setEnabled(False)
             
             # Before searching, clear the table and detail fields
             self.ui.search_table.clearContents()
@@ -112,11 +108,18 @@ class SearchBook_UI:
                 print("No search query entered.")
                 
                 QMessageBox.warning(self.ui, "Search", "Please enter a search query.")
-                
+                # Reset UI elements
                 self.ui.input_filterSearch.setCurrentIndex(-1)
+                self.ui.edit_btn.hide()
+                self.ui.save_btn.hide()
+                self.ui.cancel_btn.hide()
+                self.ui.delete_btn.hide()
                 
+                # Show message box for empty search query
+                print(2)
                 return
-
+            
+            # Continue with normal search process
             column_mapping = {
                 "Book ID"       : "book_id",
                 "Warehouse ID"  : "warehouse_id",
@@ -132,24 +135,25 @@ class SearchBook_UI:
             }
 
             filter_criteria = self.ui.input_filterSearch.currentText()
-            column_name     = column_mapping[filter_criteria]
+            column_name     = column_mapping.get(filter_criteria, None)
 
             search_results = list(self.db_session.searchBook(column_name, search_query))
 
             print("Found", len(search_results), "results.")
 
             if search_results:
-                
-                # Set up the table to display the search results
+                # Display search results in the table
                 self.ui.search_table.setRowCount(len(search_results))
-                column_count = len(search_results[0])
+                column_count = len(search_results[0]) if search_results else 0
                 self.ui.search_table.setColumnCount(column_count)
 
+                # Prepare header labels based on filter criteria
                 if filter_criteria in ["Book ID", "Title", "ISBN", "Warehouse ID", ""]:
                     header_labels = ['Book ID', 'Title', 'ISBN', 'Warehouse ID']
                 else:
                     header_labels = ['Book ID', 'Title', 'ISBN', 'Warehouse ID', filter_criteria]
 
+                # Set headers in the table
                 for col_idx, header in enumerate(header_labels):
                     item = QTableWidgetItem(header)
                     font = item.font()
@@ -157,12 +161,14 @@ class SearchBook_UI:
                     item.setFont(font)
                     self.ui.search_table.setHorizontalHeaderItem(col_idx, item)
 
+                # Populate table with search results
                 for row_idx, row_data in enumerate(search_results):
                     for col_idx, value in enumerate(row_data):
                         item = QTableWidgetItem(str(value))
-                        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
+                        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                         self.ui.search_table.setItem(row_idx, col_idx, item)
 
+                # Resize columns to fit content
                 self.ui.search_table.resizeColumnsToContents()
                 self.adjustColumnWidths(self.ui.search_table)
                 
@@ -232,8 +238,11 @@ class SearchBook_UI:
             self.old_bookMarcData = bookMarcData
             self.old_bookData = bookData
             
-            for button in self.buttons_edit:
-                button.setEnabled(True)
+            self.ui.edit_btn.show()
+            self.ui.save_btn.hide()
+            self.ui.cancel_btn.hide()
+            self.ui.delete_btn.hide()
+
 
         except Exception as e:
             QMessageBox.critical(self.ui, "Error", str(e))
@@ -243,10 +252,7 @@ class SearchBook_UI:
         try:
             print("Editing book details...")
             # Disable the search table and input fields
-            self.ui.search_table.setDisabled(True)
-            self.ui.input_findSearch.setDisabled(True)
-            self.ui.input_filterSearch.setDisabled(True)
-            self.ui.find_btn.setDisabled(True)
+
             # self.ui.edit_btn.setEnabled(False)
             
             # Clear previous selections
@@ -283,7 +289,7 @@ class SearchBook_UI:
             self.ui.cancel_btn.show()
             self.ui.delete_btn.show()
             self.ui.edit_btn.hide()
-
+            self.ui.search_table.setDisabled(True)
             
             print("Book details are now editable.")
             
@@ -470,15 +476,12 @@ class SearchBook_UI:
                     elif isinstance(field_widget, QComboBox):
                         field_widget.setEnabled(False)
 
-                # Disable the save and cancel buttons
-                # self.ui.save_btn.setEnabled(False)
-                # self.ui.cancel_btn.setEnabled(False)
-                # self.ui.edit_btn.setEnabled(True)
+                # Hide the save, cancel, and delete buttons
                 self.ui.edit_btn.show()
                 self.ui.save_btn.hide()
                 self.ui.cancel_btn.hide()
                 self.ui.delete_btn.hide()
-                
+
 
                 QMessageBox.information(self.ui, "Save Changes", "Changes saved successfully.")
 
@@ -557,6 +560,7 @@ class SearchBook_UI:
                 showfile.updateBookMarcTable()
                 showfile.updateBookTable()
                 
+                self.ui.edit_btn.show()
                 self.ui.save_btn.hide()
                 self.ui.cancel_btn.hide()
                 self.ui.delete_btn.hide()
