@@ -175,20 +175,9 @@ class AddBook_UI:
             quantity = self.ui.input_quantityAdd.value()
             stage = self.ui.input_stageAdd.currentText().strip()
 
-            if not isbn:
-                QMessageBox.critical(self.ui, "Error", "ISBN is required")
-                return
-            if len(isbn) != 13:
-                QMessageBox.critical(self.ui, "Error", "ISBN must be 13 characters long")
-                return
+            self.checkEmptyFields()
 
-            if quantity <= 0:
-                QMessageBox.critical(self.ui, "Error", "Quantity must be greater than 0")
-                return
-            if stage == "":
-                QMessageBox.critical(self.ui, "Error", "Stage must be selected")
-                return
-
+            
             # Show confirmation message
             reply = QMessageBox.question(
                 self.ui, 'Confirmation',
@@ -197,46 +186,28 @@ class AddBook_UI:
             )
             
             if reply == QMessageBox.StandardButton.No:
-                return  # User clicked No, abort operation
+                return  
             
             existing_book, error = self.db_session.getBookByISBN(isbn)
             
+            admin_id = self.ui.admin_id.text()
             if existing_book:
-                # Book already exists in the database, update its operational data
                 book_id = existing_book.book_id
-                bookData = BooksBookData(
-                    quantity=quantity,
-                    stage=stage,
-                    isbn=isbn
-                )
-                
-                admin_id = self.ui.admin_id.text()  # Replace with the actual admin ID or fetch dynamically
+                bookData = self.createSubmitBookData()
+
                 result = self.db_session.addBook(admin_id,book_id, None, bookData)
+
             else:
-                # Book does not exist, insert new metadata and operational data
-                bookMarcData = BooksBookMarcData(
-                    title=self.ui.input_titleAdd.text().strip(),
-                    author=self.ui.input_authorAdd.text().strip(),
-                    public_year=self.ui.input_yearAdd.date().year(),
-                    public_comp=self.ui.input_compAdd.text().strip(),
-                    isbn=isbn
-                )
-                bookData = BooksBookData(
-                    quantity=quantity,
-                    stage=stage,
-                    isbn=isbn
-                )
                 book_id = self.db_session.insertBookMarc(bookMarcData)
+                bookMarcData = self.createSubmitBookMarcData()
+                bookData = self.createSubmitBookData()
+
                 result = self.db_session.addBook(book_id, bookMarcData, bookData)
                 
-                # Log the addition in history
-                admin_id = 1  # Replace with the actual admin ID or fetch dynamically
-                if result[0]:
-                    self.db_session.logHistory(admin_id, book_id, isbn, None, datetime.now())
-            
             if result[0]:
-                # Show success message
-                QMessageBox.information(self.ui, "Success", "Book added successfully")
+                self.db_session.logHistory(admin_id, book_id, isbn, None, datetime.now())
+
+                self.showMessageBox("Success", "Book added successfully", QMessageBox.Icon.Information)
                 self.clearFieldsAndDisable()
             else:
                 QMessageBox.critical(self.ui, "Error", result[1])
@@ -248,9 +219,44 @@ class AddBook_UI:
             QMessageBox.critical(self.ui, "Error", str(e))
             print(str(e))
 
+    def createSubmitBookMarcData(self):
+        return BooksBookMarcData(
+            title=self.ui.input_titleAdd.text().strip(),
+            author=self.ui.input_authorAdd.text().strip(),
+            public_year=self.ui.input_yearAdd.date().year(),
+            public_comp=self.ui.input_compAdd.text().strip(),
+            isbn=self.ui.input_isbnAdd.text().strip()
+        )
+    
+    def createSubmitBookData(self):
+        return BooksBookData(
+            quantity=self.ui.input_quantityAdd.value(),
+            stage=self.ui.input_stageAdd.currentText().strip(),
+            isbn=self.ui.input_isbnAdd.text().strip()
+        )
+    
+    def checkEmptyFields(self):
+        if self.ui.input_titleAdd.text().strip() == "":
+            self.showMessageBox("Error", "Title is required", QMessageBox.Icon.Critical)
+            return
+        if self.ui.input_authorAdd.text().strip() == "":
+            self.showMessageBox("Error", "Author is required", QMessageBox.Icon.Critical)
+            return
+        if self.ui.input_compAdd.text().strip() == "":
+            self.showMessageBox("Error", "Publisher is required", QMessageBox.Icon.Critical)
+            return
+        if self.ui.input_yearAdd.text().strip() == "":
+            self.showMessageBox("Error", "Publication year is required", QMessageBox.Icon.Critical)
+            return
+        if self.ui.input_quantityAdd.value() == 0:
+            self.showMessageBox("Error", "Quantity is required", QMessageBox.Icon.Critical)
+            return
+        if self.ui.input_stageAdd.currentIndex() == -1:
+            self.showMessageBox("Error", "Stage is required", QMessageBox.Icon.Critical)
+            return
+        
     
     def clearFieldsAndDisable(self):
-        # Clear all input fields and disable relevant buttons
         self.ui.input_isbnAdd.clear()
         self.ui.input_titleAdd.clear()
         self.ui.input_authorAdd.clear()
