@@ -372,7 +372,6 @@ class SearchBook_UI:
 
     def resetUIAfterCancel(self):
         
-        # self.ui.edit_btn.setEnabled(True)
         self.ui.edit_btn.show()
         self.ui.search_table.setDisabled(False)
         self.ui.input_findSearch.setDisabled(False)
@@ -472,9 +471,14 @@ class SearchBook_UI:
                         field_widget.setEnabled(False)
 
                 # Disable the save and cancel buttons
-                self.ui.save_btn.setEnabled(False)
-                self.ui.cancel_btn.setEnabled(False)
-                self.ui.edit_btn.setEnabled(True)
+                # self.ui.save_btn.setEnabled(False)
+                # self.ui.cancel_btn.setEnabled(False)
+                # self.ui.edit_btn.setEnabled(True)
+                self.ui.edit_btn.show()
+                self.ui.save_btn.hide()
+                self.ui.cancel_btn.hide()
+                self.ui.delete_btn.hide()
+                
 
                 QMessageBox.information(self.ui, "Save Changes", "Changes saved successfully.")
 
