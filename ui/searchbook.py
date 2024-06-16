@@ -299,9 +299,9 @@ class SearchBook_UI:
                 'input_titleEdit'           : self.ui.input_titleEdit.text(),
                 'input_authorEdit'          : self.ui.input_authorEdit.text(),
                 'input_isbnEdit'            : self.ui.input_isbnEdit.text(),
-                'input_yearEdit'            : str(self.ui.input_yearEdit.text()),
+                'input_yearEdit'            : self.ui.input_yearEdit.text(),  # No need for str() conversion
                 'input_compEdit'            : self.ui.input_compEdit.text(),
-                'input_warehouse_idEdit'    : str(self.ui.input_warehouse_idEdit.text()),
+                'input_warehouse_idEdit'    : self.ui.input_warehouse_idEdit.text(),  # No need for str() conversion
                 'input_quantityEdit'        : self.ui.input_quantityEdit.value(),
                 'input_stageEdit'           : self.ui.input_stageEdit.currentText()
             }
@@ -310,11 +310,13 @@ class SearchBook_UI:
             changes_made = False
             
             for field_name, initial_value in self.initial_field_values.items():
+                current_value = current_field_values[field_name]
                 
-                if current_field_values[field_name] != initial_value:
-                    
+                if isinstance(initial_value, int) and isinstance(current_value, str):
+                    current_value = str(current_value)  # Ensure same type for comparison
+                
+                if current_value != initial_value:
                     changes_made = True
-                    
                     break
 
             print("Changes made:", changes_made)
@@ -324,7 +326,7 @@ class SearchBook_UI:
                 
                 QMessageBox.information(self.ui, 'Message', "No changes were made.")
                 
-                self.resetUIAfterCancel()
+                # self.resetUIAfterCancel()
                 
                 return
 
@@ -334,9 +336,7 @@ class SearchBook_UI:
                 self.resetUIAfterCancel()
                 
                 for field_name, field_widget in self.input_fields.items():
-                    
                     if field_name in self.initial_field_values:
-                        
                         initial_value = self.initial_field_values[field_name]
                         
                         if isinstance(field_widget, QLineEdit):
@@ -352,7 +352,6 @@ class SearchBook_UI:
                                 field_widget.setCurrentIndex(index)
 
                 for field_widget in self.input_fields.values():
-                    
                     if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
                         field_widget.setReadOnly(True)
                         
@@ -365,6 +364,7 @@ class SearchBook_UI:
             print("Error cancelling changes:", e)
             
             QMessageBox.critical(self.ui, "Error", str(e))
+
 
     def resetUIAfterCancel(self):
         

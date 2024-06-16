@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: white;
+color: black;</string>
+  </property>
   <widget class="QWidget" name="mainwindow">
    <widget class="QStackedWidget" name="main_stackedWidget">
     <property name="geometry">
@@ -1711,7 +1715,7 @@ QPushButton:hover{
      <x>0</x>
      <y>0</y>
      <width>1379</width>
-     <height>25</height>
+     <height>36</height>
     </rect>
    </property>
   </widget>
