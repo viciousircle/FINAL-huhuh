@@ -50,7 +50,6 @@ class SearchBook_UI:
         self.setupFields()
         self.initial_field_values = {}
 
-
     def setupFields(self):
             
         # Set up the input fields
@@ -268,7 +267,7 @@ class SearchBook_UI:
                 return
             
             self.highlightSelectedRow(selected_row)
-            self.enableInputFieldsForEditing()
+            self.enableDetailFields()
             self.showEditOptions()
             
         except Exception as e:
@@ -287,14 +286,6 @@ class SearchBook_UI:
                 
                 item.setBackground(QColor("#FFFF00"))  # Set background color to yellow
 
-    def enableInputFieldsForEditing(self):
-        for field_name, field_widget in self.input_fields.items():
-                
-            if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-
-                field_widget.setReadOnly(False)
-            elif isinstance(field_widget, QComboBox):
-                field_widget.setEnabled(True)
 
     def showEditOptions(self):
         self.ui.edit_btn.hide()
@@ -313,28 +304,18 @@ class SearchBook_UI:
             current_field_values = self.getCurrentFieldValues()
             
             if not self.areChangesMade(current_field_values):
-                print("No changes were made.")
                 
                 self.showMessageBox("Message", "No changes were made.", QMessageBox.Icon.Information)
-
-                
                 self.resetUIAfterCancel()
+                self.disableDetailFields()
 
-                for field_widget in self.input_fields.values():
-                    if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-                        field_widget.setReadOnly(True)
-                        
-                    elif isinstance(field_widget, QComboBox):
-                        field_widget.setEnabled(False)
-
-                
                 return
 
             if QMessageBox.question(self.ui, 'Message', "Are you sure you want to cancel and discard changes?",
                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
                 
                 self.resetUIAfterCancel()
-                # self.ui.edit_btn.setEnabled(True)
+                self.disableDetailFields()
                 
                 for field_name, field_widget in self.input_fields.items():
                     if field_name in self.initial_field_values:
@@ -352,19 +333,11 @@ class SearchBook_UI:
                             if index != -1:
                                 field_widget.setCurrentIndex(index)
 
-                for field_widget in self.input_fields.values():
-                    if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-                        field_widget.setReadOnly(True)
                         
-                    elif isinstance(field_widget, QComboBox):
-                        field_widget.setEnabled(False)
-                        
-            print("Changes discarded successfully.")
 
         except Exception as e:
             print("Error cancelling changes:", e)
-            
-            QMessageBox.critical(self.ui, "Error", str(e))
+            self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
 
     def getCurrentFieldValues(self):
         current_field_values = {
@@ -382,7 +355,21 @@ class SearchBook_UI:
     def areChangesMade(self, current_field_values):
         return current_field_values != self.initial_field_values
 
+    def disableDetailFields(self):
+        for field_widget in self.input_fields.values():
+            if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+                field_widget.setReadOnly(True)
 
+            elif isinstance(field_widget, QComboBox):
+                field_widget.setEnabled(False)
+
+    def enableDetailFields(self):
+        for field_widget in self.input_fields.values():
+            if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+                field_widget.setReadOnly(False)
+
+            elif isinstance(field_widget, QComboBox):
+                field_widget.setEnabled(True)
 
     def resetUIAfterCancel(self):
         
@@ -406,32 +393,15 @@ class SearchBook_UI:
 
     def saveButtonClicked(self):
         try:
-            print("Saving changes...")
             
-            current_field_values = {
-                'input_titleEdit'           : self.ui.input_titleEdit.text(),
-                'input_authorEdit'          : self.ui.input_authorEdit.text(),
-                'input_isbnEdit'            : self.ui.input_isbnEdit.text(),
-                'input_yearEdit'            : str(self.ui.input_yearEdit.text()),
-                'input_compEdit'            : self.ui.input_compEdit.text(),
-                'input_warehouse_idEdit'    : str(self.ui.input_warehouse_idEdit.text()),
-                'input_quantityEdit'        : self.ui.input_quantityEdit.value(),
-                'input_stageEdit'           : self.ui.input_stageEdit.currentText()
-            }
+            current_field_values = self.getCurrentFieldValues()
 
             # Check if any changes have been made
-            changes_made = False
-            for field_name, initial_value in self.initial_field_values.items():
-                if current_field_values[field_name] != initial_value:
-                    
-                    changes_made = True
-                    
-                    break
-
-            if not changes_made:
-                print("No changes were made.")
+        
+            if not self.areChangesMade(current_field_values):
                 
-                QMessageBox.information(self.ui, 'Message', "You need to edit the fields to make changes.")
+                self.showMessageBox("Message", "You need to edit the fields to make changes.", QMessageBox.Icon.Information)
+
                 return
 
             updated_bookMarcData = BooksBookMarcData(
@@ -470,13 +440,7 @@ class SearchBook_UI:
                     return
 
                 # Disable the input fields after saving the changes
-                for field_widget in self.input_fields.values():
-                    
-                    if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-                        field_widget.setReadOnly(True)
-                        
-                    elif isinstance(field_widget, QComboBox):
-                        field_widget.setEnabled(False)
+                self.disableDetailFields()
 
                 # Hide the save, cancel, and delete buttons
                 self.ui.edit_btn.hide()
@@ -580,13 +544,7 @@ class SearchBook_UI:
 
 
                 # Disable the input fields after deletion
-                for field_widget in self.input_fields.values():
-                    if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-                        field_widget.setReadOnly(True)
-                        
-                    elif isinstance(field_widget, QComboBox):
-                        field_widget.setEnabled(False)
-                        
+                self.disableDetailFields()
                 print("Book deleted successfully.")
 
             elif confirmation == QMessageBox.StandardButton.No:
