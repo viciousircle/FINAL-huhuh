@@ -334,6 +334,7 @@ class SearchBook_UI:
                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
                 
                 self.resetUIAfterCancel()
+                # self.ui.edit_btn.setEnabled(True)
                 
                 for field_name, field_widget in self.input_fields.items():
                     if field_name in self.initial_field_values:
@@ -368,6 +369,7 @@ class SearchBook_UI:
 
     def resetUIAfterCancel(self):
         
+        self.ui.edit_btn.setEnabled(True)
         self.ui.search_table.setDisabled(False)
         self.ui.input_findSearch.setDisabled(False)
         self.ui.input_filterSearch.setDisabled(False)
@@ -389,7 +391,7 @@ class SearchBook_UI:
         self.ui.save_btn.hide()
         self.ui.cancel_btn.hide()
         self.ui.delete_btn.hide()
-        self.ui.edit_btn.setEnabled(False)
+        # self.ui.edit_btn.setEnabled(False)
 
     def saveButtonClicked(self):
         try:
