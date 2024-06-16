@@ -290,6 +290,9 @@ class SearchBook_UI:
             self.ui.delete_btn.show()
             self.ui.edit_btn.hide()
             self.ui.search_table.setDisabled(True)
+            self.ui.input_findSearch.setDisabled(True)
+            self.ui.input_filterSearch.setDisabled(True)
+            self.ui.find_btn.setDisabled(True)
             
             print("Book details are now editable.")
             
@@ -335,7 +338,23 @@ class SearchBook_UI:
                 
                 QMessageBox.information(self.ui, 'Message', "No changes were made.")
                 
-                # self.resetUIAfterCancel()
+                self.resetUIAfterCancel()
+
+                for field_widget in self.input_fields.values():
+                    if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
+                        field_widget.setReadOnly(True)
+                        
+                    elif isinstance(field_widget, QComboBox):
+                        field_widget.setEnabled(False)
+                # self.ui.edit_btn.show()
+                # self.ui.save_btn.hide()
+                # self.ui.cancel_btn.hide()
+                # self.ui.delete_btn.hide()
+
+                # self.ui.search_table.setDisabled(False)
+                # self.ui.input_findSearch.setDisabled(False)
+                # self.ui.input_filterSearch.setDisabled(False)
+                
                 
                 return
 
@@ -477,7 +496,7 @@ class SearchBook_UI:
                         field_widget.setEnabled(False)
 
                 # Hide the save, cancel, and delete buttons
-                self.ui.edit_btn.show()
+                self.ui.edit_btn.hide()
                 self.ui.save_btn.hide()
                 self.ui.cancel_btn.hide()
                 self.ui.delete_btn.hide()
@@ -488,11 +507,11 @@ class SearchBook_UI:
                 # Enable search_table
                 self.ui.search_table.setDisabled(False)
                 self.ui.search_table.clearContents()
-                self.ui.edit_btn.setEnabled(False)
+                # self.ui.edit_btn.setEnabled(False)
                 
-                self.ui.save_btn.hide()
-                self.ui.cancel_btn.hide()
-                self.ui.delete_btn.hide()
+                # self.ui.save_btn.hide()
+                # self.ui.cancel_btn.hide()
+                # self.ui.delete_btn.hide()
                 
                 self.ui.input_findSearch.setDisabled(False)
                 self.ui.input_filterSearch.setDisabled(False)
@@ -509,6 +528,10 @@ class SearchBook_UI:
                 
                 print("Changes saved successfully.")
                 
+            elif confirm_save == QMessageBox.StandardButton.No:
+                print("Changes not saved.")
+                
+                return
 
         except Exception as e:
             print("Error saving changes:", e)
@@ -518,7 +541,7 @@ class SearchBook_UI:
     
     def deleteButtonClicked(self):
         try:
-            print("Deleting book...")
+            print("Deleting book...")   
             
             # Get the index of the selected row
             selected_row = self.ui.search_table.currentRow()
@@ -560,12 +583,18 @@ class SearchBook_UI:
                 showfile.updateBookMarcTable()
                 showfile.updateBookTable()
                 
-                self.ui.edit_btn.show()
+                self.ui.edit_btn.hide()
                 self.ui.save_btn.hide()
                 self.ui.cancel_btn.hide()
                 self.ui.delete_btn.hide()
                 
+                # self.ui.search_table.setDisabled(False)
+
+                self.ui.input_findSearch.setDisabled(False)
+                self.ui.input_filterSearch.setDisabled(False)
                 self.ui.search_table.setDisabled(False)
+                self.ui.find_btn.setDisabled(False)
+
 
                 # Disable the input fields after deletion
                 for field_widget in self.input_fields.values():
