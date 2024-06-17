@@ -102,29 +102,21 @@ class DBSession:
     # --- ADD BOOK FUNCTION ------------------------------------------
     def addBook(self, admin_id: int,isbn, bookMarcData: Optional[BooksBookMarcData], bookData: BooksBookData) -> ExecuteResult[None]:
         try:
-            print("Adding book")
-            print(4)
-            # Check if the book with the given ISBN already exists in the BookMarc table
+
             existing_book, error = self.getBookByISBN(isbn)
-            print(error)
-            print("Existing book:", existing_book)
 
             if existing_book:
-                # If the book exists in BookMarc, use its book_id to insert into Book table
                 book_id = existing_book.book_id
-                print("Book ID:", book_id)
+                print(book_id)
             else:
-                # If the book doesn't exist in BookMarc, insert it and get the generated book_id
                 book_id = self.insertBookMarc(bookMarcData)
-                print(3)
-                print("Book ID:", book_id)
+                print(book_id)
 
-            # Insert the book into the Book table using bookData
+            print("Added book marc")
             self.insertBook(book_id, bookData)
-            print("Book inserted successfully")
 
             # Log the addition in history
-            self.logHistory(admin_id, book_id, bookData.isbn, bookData.warehouse_id, datetime.now())
+            # self.logHistory(admin_id, book_id, bookData.isbn, bookData.warehouse_id, datetime.now())
 
             self.connection.commit()
             return (True, None)
@@ -138,7 +130,7 @@ class DBSession:
             self.connection.rollback()
             print(6)
             return (False, str(err))
-
+        
     def insertBookMarc(self, bookMarcData: BooksBookMarcData) -> int:
         try:
             self.cursor.execute(
@@ -146,10 +138,11 @@ class DBSession:
                 (bookMarcData.title, bookMarcData.author, bookMarcData.public_year, bookMarcData.public_comp, bookMarcData.isbn)
             )
             self.connection.commit()
-            self.cursor.execute("SELECT SCOPE_IDENTITY()")
-            
+            self.cursor.execute("SELECT book_id FROM books.bookMarc WHERE isbn = ?", bookMarcData.isbn)
             book_id = self.cursor.fetchone()[0]
             return book_id
+
+            
         except pyodbc.Error as err:
             self.connection.rollback()
             print("Database error:", err)

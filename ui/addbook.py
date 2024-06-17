@@ -38,6 +38,7 @@ class AddBook_UI:
         
         self.textChanged()
         self.ui.enter_btn.clicked.connect(self.enterButtonClicked)
+        self.ui.submit_btn.clicked.connect(self.submitButtonClicked)
     
     def initialize(self):
         # self.isbn_details_entered = False
@@ -113,6 +114,15 @@ class AddBook_UI:
     def textChanged(self):
         
         self.ui.input_isbnAdd.textChanged.connect(self.validateISBN)
+
+        # self.ui.input_isbnAdd.textChanged.connect(self.checkInputFieldsEmpty)
+        self.ui.input_titleAdd.textChanged.connect(self.checkInputFieldsEmpty)
+        self.ui.input_authorAdd.textChanged.connect(self.checkInputFieldsEmpty)
+        self.ui.input_compAdd.textChanged.connect(self.checkInputFieldsEmpty)
+        self.ui.input_yearAdd.textChanged.connect(self.checkInputFieldsEmpty)
+        self.ui.input_quantityAdd.valueChanged.connect(self.checkInputFieldsEmpty)
+        self.ui.input_stageAdd.currentIndexChanged.connect(self.checkInputFieldsEmpty)
+
     
     def validateISBN(self, text: str):
 
@@ -173,12 +183,12 @@ class AddBook_UI:
                 self.setPlaceholderText(self.ui.input_authorAdd, "Enter the author")
                 self.setPlaceholderText(self.ui.input_compAdd, "Enter the publisher")
                 self.setPlaceholderText(self.ui.input_yearAdd, "Enter the publication year")
-                
+
 
                 # self.ui.input_isbnAdd.mousePressEvent = self.ensureChangeISBN()
                 
             
-            self.showSubmitButtons()
+            self.hideSubmitButtons(all=True)
             # self.isbn_details_entered = True
 
         except Exception as e:
@@ -253,6 +263,95 @@ class AddBook_UI:
 
     def setPlaceholderText(self, field: QLineEdit, text: str):
         field.setPlaceholderText(text)
+
+    def submitButtonClicked(self):
+        try:
+            empty = self.showErrorEmptyFields()
+            if empty == True:
+                return
+            
+            reply = QMessageBox.question(self.ui, "Submit Book", "Do you want to submit the book?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
+            if reply == QMessageBox.StandardButton.Yes:
+                self.submitBook()
+            else:
+                return
+
+        except Exception as e:
+            print(e)
+            self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
+            return
+        
+    def submitBook(self):
+        admin_id = self.ui.admin_id.text()
+        isbn = self.ui.input_isbnAdd.text().strip()
+        existing_book, error = self.db_session.getBookByISBN(isbn)
+        if existing_book:
+            bookData = BooksBookData(
+                isbn = isbn,
+                quantity = self.ui.input_quantityAdd.value(),
+                stage = self.ui.input_stageAdd.currentText()
+            )
+            result = self.db_session.addBook(admin_id,isbn, None, bookData)
+        
+        else:
+            bookMarcData = BooksBookMarcData(
+                isbn = isbn,
+                title = self.ui.input_titleAdd.text().strip(),
+                author = self.ui.input_authorAdd.text().strip(),
+                public_comp = self.ui.input_compAdd.text().strip(),
+                public_year = self.ui.input_yearAdd.text().strip()
+            )
+            bookData = BooksBookData(
+                isbn = isbn,
+                quantity = self.ui.input_quantityAdd.value(),
+                stage = self.ui.input_stageAdd.currentText().strip()
+            )
+            result = self.db_session.addBook(admin_id,isbn,bookMarcData, bookData)
+        
+        if result[0]:
+                self.showMessageBox("Success", "Book added successfully", QMessageBox.Icon.Information)
+        else:
+            self.showMessageBox("Error", f"Error: {result[1]}", QMessageBox.Icon.Critical)
+
+    def checkInputFieldsEmpty(self):
+        all_empty = (
+            not self.ui.input_titleAdd.text().strip() and
+            not self.ui.input_authorAdd.text().strip() and
+            not self.ui.input_compAdd.text().strip() and
+            not self.ui.input_yearAdd.text().strip() and
+            self.ui.input_quantityAdd.text() == 0 and
+            self.ui.input_stageAdd.currentText() == -1
+        )
+
+        if not all_empty:
+            self.showSubmitButtons()
+        else:
+            self.hideSubmitButtons(False)
+            self.showNotification("You need to enter all the fields to submit the book")
+            # Dang sai doan nay
+
+    def showErrorEmptyFields(self):
+
+        if not self.ui.input_titleAdd.text().strip():
+            self.showMessageBox("Error", "Please enter the title", QMessageBox.Icon.Warning)
+            return True
+        elif not self.ui.input_authorAdd.text().strip():
+            self.showMessageBox("Error", "Please enter the author", QMessageBox.Icon.Warning)
+            return True
+        elif not self.ui.input_compAdd.text().strip():
+            self.showMessageBox("Error", "Please enter the publisher", QMessageBox.Icon.Warning)
+            return True
+        elif not self.ui.input_yearAdd.text().strip():
+            self.showMessageBox("Error", "Please enter the publication year", QMessageBox.Icon.Warning)
+            return True
+        elif self.ui.input_quantityAdd.value() == 0:
+            self.showMessageBox("Error", "Please enter the quantity", QMessageBox.Icon.Warning)
+            return True
+        elif self.ui.input_stageAdd.currentIndex()==-1:
+            self.showMessageBox("Error", "Please select the stage", QMessageBox.Icon.Warning)
+            return True
+
 
     
 
