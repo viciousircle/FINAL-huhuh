@@ -312,8 +312,9 @@ class AddBook_UI:
 
     def refreshFields(self):
         for field in self.input_fields.values():
-            field.clear()
-            field.setStyleSheet("border: 2px solid black;")
+            if field != self.ui.input_stageAdd:
+                field.clear()
+                field.setStyleSheet("border: 2px solid black;")
         self.ui.messageAdd.clear()
         self.hideSubmitButtons(all=True)
         self.hideInputFields()
@@ -359,7 +360,18 @@ class AddBook_UI:
             self.showMessageBox("Error", "Please select the stage", QMessageBox.Icon.Warning)
             return True
 
+    def cancelButtonClicked(self):
+        try:
+            reply = QMessageBox.question(self.ui, "Cancel", "Are you sure you want to cancel?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
 
+            if reply == QMessageBox.StandardButton.Yes:
+                self.refreshFields()
+            else:
+                return
+            
+        except Exception as e:
+            self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
+            return
     
 
 
