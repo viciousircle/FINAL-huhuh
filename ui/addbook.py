@@ -39,6 +39,7 @@ class AddBook_UI:
         self.textChanged()
         self.ui.enter_btn.clicked.connect(self.enterButtonClicked)
         self.ui.submit_btn.clicked.connect(self.submitButtonClicked)
+        self.ui.cancel_btnAdd.clicked.connect(self.cancelButtonClicked)
     
     def initialize(self):
         # self.isbn_details_entered = False
