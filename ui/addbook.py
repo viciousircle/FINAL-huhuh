@@ -164,60 +164,63 @@ class AddBook_UI:
             print(str(e))
 
     def submitButtonClicked(self):
-        # Check if all fields are empty before proceeding
-        if self.checkIfAllFieldsEmpty():
-            self.showMessageBox("Warning", "All input fields are empty.", QMessageBox.Icon.Warning)
-            return
-
         try:
-            
+            # Check if all fields are empty before proceeding
+            if self.checkIfAllFieldsEmpty():
+                self.showMessageBox("Warning", "All input fields are empty.", QMessageBox.Icon.Warning)
+                return
+
             isbn = self.ui.input_isbnAdd.text().strip()
-            quantity = self.ui.input_quantityAdd.value()
-            stage = self.ui.input_stageAdd.currentText().strip()
+            print(f"ISBN: {isbn}")  # Debug statement
 
-            self.checkEmptyFields()
+            check = self.checkEmptyFields()
+            print(f"Check Empty Fields: {check}")  # Debug statement
 
-            
+            if not check:
+                return
+
             # Show confirmation message
             reply = QMessageBox.question(
                 self.ui, 'Confirmation',
                 "Are you sure you want to submit?",
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
             )
-            
+
+            print(f"User reply: {reply}")  # Debug statement
+
             if reply == QMessageBox.StandardButton.No:
-                return  
-            
-            existing_book, error = self.db_session.getBookByISBN(isbn)
-            
-            admin_id = self.ui.admin_id.text()
-            if existing_book:
-                book_id = existing_book.book_id
-                bookData = self.createSubmitBookData()
-
-                result = self.db_session.addBook(admin_id,book_id, None, bookData)
-
+                return
             else:
-                book_id = self.db_session.insertBookMarc(bookMarcData)
-                bookMarcData = self.createSubmitBookMarcData()
-                bookData = self.createSubmitBookData()
+                existing_book, error = self.db_session.getBookByISBN(isbn)
+                print(f"Existing Book: {existing_book}, Error: {error}")  # Debug statement
 
-                result = self.db_session.addBook(book_id, bookMarcData, bookData)
-                
-            if result[0]:
-                self.db_session.logHistory(admin_id, book_id, isbn, None, datetime.now())
+                admin_id = self.ui.admin_id.text()
+                print(f"Admin ID: {admin_id}")  # Debug statement
 
-                self.showMessageBox("Success", "Book added successfully", QMessageBox.Icon.Information)
-                self.clearFieldsAndDisable()
-            else:
-                QMessageBox.critical(self.ui, "Error", result[1])
-                print(result[1])
+                if existing_book:
+                    print("Book ID: ", existing_book.book_id)
+                    bookData = self.createSubmitBookData()
+                    print(f"Book Data: {bookData}")  # Debug statement
+                    self.db_session.insertBook(bookData)
+                    self.showMessageBox("Success", "Book added successfully", QMessageBox.Icon.Information)
+                else:
+                    bookMarcData = self.createSubmitBookMarcData()
+                    print(f"Book Marc Data: {bookMarcData}")  # Debug statement
+                    bookData = self.createSubmitBookData()
+                    print(f"Book Data: {bookData}")  # Debug statement
+                    self.db_session.insertBookMarc(bookMarcData)
+                    self.db_session.insertBook(bookData)
+                    self.showMessageBox("Success", "Book added successfully", QMessageBox.Icon.Information)
 
-        except AttributeError:
-            QMessageBox.critical(self.ui, "Error", "Book not found")
+                return
+
+        except AttributeError as attr_err:
+            print("AttributeError", attr_err)
+            QMessageBox.critical(self.ui, "Error", "An attribute error occurred: " + str(attr_err))
         except Exception as e:
-            QMessageBox.critical(self.ui, "Error", str(e))
             print(str(e))
+            QMessageBox.critical(self.ui, "Error", str(e))
+
 
     def createSubmitBookMarcData(self):
         return BooksBookMarcData(
@@ -225,7 +228,7 @@ class AddBook_UI:
             author=self.ui.input_authorAdd.text().strip(),
             public_year=self.ui.input_yearAdd.date().year(),
             public_comp=self.ui.input_compAdd.text().strip(),
-            isbn=self.ui.input_isbnAdd.text().strip()
+            isbn=self.ui.input_isbnAdd.text().strip(),
         )
     
     def createSubmitBookData(self):
@@ -238,22 +241,22 @@ class AddBook_UI:
     def checkEmptyFields(self):
         if self.ui.input_titleAdd.text().strip() == "":
             self.showMessageBox("Error", "Title is required", QMessageBox.Icon.Critical)
-            return
+            return False
         if self.ui.input_authorAdd.text().strip() == "":
             self.showMessageBox("Error", "Author is required", QMessageBox.Icon.Critical)
-            return
+            return False
         if self.ui.input_compAdd.text().strip() == "":
             self.showMessageBox("Error", "Publisher is required", QMessageBox.Icon.Critical)
-            return
+            return False
         if self.ui.input_yearAdd.text().strip() == "":
             self.showMessageBox("Error", "Publication year is required", QMessageBox.Icon.Critical)
-            return
+            return False
         if self.ui.input_quantityAdd.value() == 0:
             self.showMessageBox("Error", "Quantity is required", QMessageBox.Icon.Critical)
-            return
+            return False
         if self.ui.input_stageAdd.currentIndex() == -1:
             self.showMessageBox("Error", "Stage is required", QMessageBox.Icon.Critical)
-            return
+            return False
         
     
     def clearFieldsAndDisable(self):

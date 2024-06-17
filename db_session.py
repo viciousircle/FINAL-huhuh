@@ -100,12 +100,14 @@ class DBSession:
             raise err
         
     # --- ADD BOOK FUNCTION ------------------------------------------
-    def addBook(self, admin_id: int, book_id: Optional[int], bookMarcData: Optional[BooksBookMarcData], bookData: BooksBookData) -> ExecuteResult[None]:
+    def addBook(self, admin_id: int,isbn, bookMarcData: Optional[BooksBookMarcData], bookData: BooksBookData) -> ExecuteResult[None]:
         try:
             print("Adding book")
-
+            print(4)
             # Check if the book with the given ISBN already exists in the BookMarc table
-            existing_book, error = self.getBookByISBN(bookData.isbn)
+            existing_book, error = self.getBookByISBN(isbn)
+            print(error)
+            print("Existing book:", existing_book)
 
             if existing_book:
                 # If the book exists in BookMarc, use its book_id to insert into Book table
@@ -114,6 +116,7 @@ class DBSession:
             else:
                 # If the book doesn't exist in BookMarc, insert it and get the generated book_id
                 book_id = self.insertBookMarc(bookMarcData)
+                print(3)
                 print("Book ID:", book_id)
 
             # Insert the book into the Book table using bookData
@@ -128,12 +131,12 @@ class DBSession:
         
         except pyodbc.Error as err:
             self.connection.rollback()
-            print("Database error:", err)
+            print(5)
             return (False, str(err))
         
         except Exception as err:
             self.connection.rollback()
-            print("Unexpected error:", err)
+            print(6)
             return (False, str(err))
 
     def insertBookMarc(self, bookMarcData: BooksBookMarcData) -> int:
@@ -215,7 +218,9 @@ class DBSession:
                 
                 return (bookMarcData, None)
             else:
+                print(2)
                 return (None,'Book not found')
+            
 
         except pyodbc.Error as err:
             print(f"Database error: {err}")

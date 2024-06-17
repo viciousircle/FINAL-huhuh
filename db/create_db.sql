@@ -1,11 +1,11 @@
 SELECT @@ServerName;
 USE master;
 -- Create the LMS database
-CREATE DATABASE LMS2;
+CREATE DATABASE LMS;
 GO
 
 -- Use the LMS database
-USE LMS2;
+USE LMS;
 GO
 
 
@@ -34,8 +34,7 @@ CREATE TABLE users.history (
     isbn        VARCHAR(25),
     warehouse_id    INT,
     [timestamp] DATETIME,
-    FOREIGN KEY (admin_id) REFERENCES users.account(admin_id),
-    
+    FOREIGN KEY (admin_id) REFERENCES users.account(admin_id)
 );
 GO
 
