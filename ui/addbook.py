@@ -113,9 +113,7 @@ class AddBook_UI:
         msg.exec()
         
     def textChanged(self):
-        
         self.ui.input_isbnAdd.textChanged.connect(self.validateISBN)
-
         # self.ui.input_isbnAdd.textChanged.connect(self.checkInputFieldsEmpty)
         self.ui.input_titleAdd.textChanged.connect(self.checkInputFieldsEmpty)
         self.ui.input_authorAdd.textChanged.connect(self.checkInputFieldsEmpty)
@@ -123,6 +121,18 @@ class AddBook_UI:
         self.ui.input_yearAdd.textChanged.connect(self.checkInputFieldsEmpty)
         self.ui.input_quantityAdd.valueChanged.connect(self.checkInputFieldsEmpty)
         self.ui.input_stageAdd.currentIndexChanged.connect(self.checkInputFieldsEmpty)
+        
+        # self.ui.input_isbnAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
+        self.ui.input_titleAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
+        self.ui.input_authorAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
+        self.ui.input_compAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
+        self.ui.input_yearAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
+        self.ui.input_quantityAdd.valueChanged.connect(self.checkAllInputFieldsEmpty)
+        self.ui.input_stageAdd.currentIndexChanged.connect(self.checkAllInputFieldsEmpty)
+        
+
+
+
 
     
     def validateISBN(self, text: str):
@@ -262,6 +272,11 @@ class AddBook_UI:
 
     def submitButtonClicked(self):
         try:
+            # all_empty = self.checkAllInputFieldsEmpty()
+            # if all_empty == True:
+            #     self.showMessageBox("Error", "Please enter all the fields to submit the book", QMessageBox.Icon.Warning)
+            #     return
+
             empty = self.showErrorEmptyFields()
             if empty == True:
                 return
@@ -324,7 +339,7 @@ class AddBook_UI:
 
 
     def checkInputFieldsEmpty(self):
-        all_empty = (
+        empty = (
             not self.ui.input_titleAdd.text().strip() and
             not self.ui.input_authorAdd.text().strip() and
             not self.ui.input_compAdd.text().strip() and
@@ -333,7 +348,7 @@ class AddBook_UI:
             self.ui.input_stageAdd.currentText() == -1
         )
 
-        if not all_empty:
+        if not empty:
             self.showSubmitButtons()
         else:
             self.hideSubmitButtons(False)
@@ -363,6 +378,11 @@ class AddBook_UI:
 
     def cancelButtonClicked(self):
         try:
+            # empty = self.checkAllInputFieldsEmpty()
+            # if empty == True:
+            #     self.showMessageBox("Error", "All fields are empty", QMessageBox.Icon.Warning)
+            #     return
+
             reply = QMessageBox.question(self.ui, "Cancel", "Are you sure you want to cancel?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
 
             if reply == QMessageBox.StandardButton.Yes:
@@ -374,8 +394,23 @@ class AddBook_UI:
             self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
             return
     
+    def checkAllInputFieldsEmpty(self):
+        all_empty = (
+            self.ui.input_titleAdd.text().strip() == "" and
+            self.ui.input_authorAdd.text().strip() == "" and
+            self.ui.input_compAdd.text().strip() == "" and
+            self.ui.input_yearAdd.text().strip() == "" and
+            self.ui.input_quantityAdd.value() == 0 and
+            self.ui.input_stageAdd.currentIndex() == -1
+        )
+        if all_empty:
+            self.hideSubmitButtons(True)
+            return True
+
+            
 
 
+        
 
     
     
