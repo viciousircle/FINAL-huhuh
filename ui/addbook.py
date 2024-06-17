@@ -205,8 +205,7 @@ class AddBook_UI:
         else:
             return
 
-
-        
+ 
     def showBookDetail(self, existing_book: BooksBookMarcData):
         try:
             if existing_book:
@@ -255,11 +254,7 @@ class AddBook_UI:
             color: green;
         """)
             
-    def refreshFields(self):
-        for field in self.input_fields.values():
-            if field != self.ui.input_isbnAdd:
-                field.clear()
-                field.setStyleSheet("border: 2px solid black;")
+
 
     def setPlaceholderText(self, field: QLineEdit, text: str):
         field.setPlaceholderText(text)
@@ -274,6 +269,7 @@ class AddBook_UI:
 
             if reply == QMessageBox.StandardButton.Yes:
                 self.submitBook()
+                self.refreshFields()
             else:
                 return
 
@@ -313,6 +309,17 @@ class AddBook_UI:
                 self.showMessageBox("Success", "Book added successfully", QMessageBox.Icon.Information)
         else:
             self.showMessageBox("Error", f"Error: {result[1]}", QMessageBox.Icon.Critical)
+
+    def refreshFields(self):
+        for field in self.input_fields.values():
+            field.clear()
+            field.setStyleSheet("border: 2px solid black;")
+        self.ui.messageAdd.clear()
+        self.hideSubmitButtons(all=True)
+        self.hideInputFields()
+        self.ui.input_isbnAdd.setReadOnly(False)
+        self.ui.input_stageAdd.setCurrentIndex(-1)
+
 
     def checkInputFieldsEmpty(self):
         all_empty = (
