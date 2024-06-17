@@ -31,7 +31,7 @@ color: black;</string>
      <string/>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="open_page">
      <widget class="QStackedWidget" name="files_stackedWidget">
@@ -479,6 +479,9 @@ color: rgb(0, 0, 0);
 padding: 0px 10px 0px 10px ;
 </string>
           </property>
+          <property name="placeholderText">
+           <string>Enter ISBN - 13</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -540,6 +543,9 @@ QPushButton::after{
       </widget>
      </widget>
      <widget class="QPushButton" name="submit_btn">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>790</x>
@@ -552,6 +558,9 @@ QPushButton::after{
        <font>
         <bold>true</bold>
        </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton{
@@ -575,7 +584,7 @@ QPushButton::after{
        <string>Submit</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="clear_btn">
+     <widget class="QPushButton" name="cancel_btnAdd">
       <property name="geometry">
        <rect>
         <x>790</x>
@@ -608,7 +617,7 @@ QPushButton::after{
 </string>
       </property>
       <property name="text">
-       <string>Clear</string>
+       <string>Cancel</string>
       </property>
      </widget>
     </widget>

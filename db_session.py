@@ -218,7 +218,6 @@ class DBSession:
                 
                 return (bookMarcData, None)
             else:
-                print(2)
                 return (None,'Book not found')
             
 

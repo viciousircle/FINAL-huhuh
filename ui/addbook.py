@@ -11,8 +11,8 @@ from lms_types import BooksBookMarcData, BooksBookData
 
 class AddBook_UI:
     # List of objects in .ui file related to this module
-    input_isbnAdd      : QLineEdit
     messageAdd         : QLineEdit
+    input_isbnAdd      : QLineEdit
     input_titleAdd     : QLineEdit
     input_authorAdd    : QLineEdit
     input_compAdd      : QLineEdit
@@ -20,7 +20,7 @@ class AddBook_UI:
     input_quantityAdd  : QSpinBox
     input_stageAdd     : QComboBox
     submit_btn         : QPushButton
-    clear_btn          : QPushButton
+    cancel_btnAdd          : QPushButton
     enter_btn          : QPushButton
     
     def __init__(self, ui, db_session: DBSession):
@@ -28,28 +28,32 @@ class AddBook_UI:
         self.db_session = db_session
 
         self.connectSignals()
+        self.setupFields()
         self.initialize()
 
-        # self.checkInputFields()???????
 
+        
+    
+    def connectSignals(self):
+        
+        self.textChanged()
+        self.ui.enter_btn.clicked.connect(self.enterButtonClicked)
+    
     def initialize(self):
-        self.setupFields()
-        self.disableInputFields(full=True)
+        # self.isbn_details_entered = False
+        self.hideSubmitButtons(True)
+        self.hideInputFields()
 
-        self.hideDetails()
-
+    def hideSubmitButtons(self, all: bool):
         self.ui.submit_btn.hide()
-        self.ui.clear_btn.hide()
+        self.ui.cancel_btnAdd.hide()
+        if all:
+            self.ui.enter_btn.hide()
+        else:
+            self.ui.enter_btn.show()
 
-    def hideDetails(self):
-        # Hide the labels and input fields for book details
-        self.ui.title.hide()
-        self.ui.author.hide()
-        self.ui.public_comp.hide()
-        self.ui.public_year.hide()
-        self.ui.quantity.hide()
-        self.ui.stage.hide()
-
+    def hideInputFields(self):
+        
         self.ui.input_titleAdd.hide()
         self.ui.input_authorAdd.hide()
         self.ui.input_compAdd.hide()
@@ -57,63 +61,23 @@ class AddBook_UI:
         self.ui.input_quantityAdd.hide()
         self.ui.input_stageAdd.hide()
 
-
-    def showDetails(self):
-        # Show the labels and input fields for book details
-        self.ui.title.show()
-        self.ui.author.show()
-        self.ui.public_comp.show()
-        self.ui.public_year.show()
-        self.ui.quantity.show()
-        self.ui.stage.show()
-
-        self.ui.input_titleAdd.show()
-        self.ui.input_authorAdd.show()
-        self.ui.input_compAdd.show()
-        self.ui.input_yearAdd.show()
-        self.ui.input_quantityAdd.show()
-        self.ui.input_stageAdd.show()
-
-
-    def connectSignals(self):
-        self.ui.enter_btn.clicked.connect(self.enterButtonClicked)
-        self.ui.submit_btn.clicked.connect(self.submitButtonClicked)
-        self.ui.clear_btn.clicked.connect(self.clearButtonClicked)
-
-        # Connect signals to check method
-        self.ui.input_isbnAdd.textChanged.connect(self.checkInputFields)
-        self.ui.input_titleAdd.textChanged.connect(self.checkInputFields)
-        self.ui.input_authorAdd.textChanged.connect(self.checkInputFields)
-        self.ui.input_compAdd.textChanged.connect(self.checkInputFields)
-        self.ui.input_yearAdd.textChanged.connect(self.checkInputFields)
-        self.ui.input_quantityAdd.valueChanged.connect(self.checkInputFields)
-        self.ui.input_stageAdd.currentIndexChanged.connect(self.checkInputFields)
-
-        # Connect signals for validation
-        self.ui.input_isbnAdd.textChanged.connect(self.validateISBN)
-        self.ui.input_quantityAdd.valueChanged.connect(self.validateQuantity)
+        self.ui.title.hide()
+        self.ui.author.hide()
+        self.ui.public_comp.hide()
+        self.ui.public_year.hide()
+        self.ui.quantity.hide()
+        self.ui.stage.hide()
 
     def setupFields(self):
             
         # Set up the input fields
         self.detail_fields = [
+            self.ui.input_isbnAdd,
             self.ui.input_titleAdd,
             self.ui.input_authorAdd,
-            self.ui.input_isbnAdd,
             self.ui.input_compAdd,
-            self.ui.input_yearAdd,
-            self.ui.input_quantityAdd,
-            self.ui.input_stageAdd
+            self.ui.input_yearAdd
         ]
-
-        self.ui.input_isbnAdd.setMaxLength(13)
-        isbn_validator = QRegularExpressionValidator(QRegularExpression(r'^\d{1,13}$'), self.ui.input_isbnAdd)
-        self.ui.input_isbnAdd.setValidator(isbn_validator)
-        self.ui.input_titleAdd.setMaxLength(100)
-        self.ui.input_authorAdd.setMaxLength(100)
-        self.ui.input_compAdd.setMaxLength(100)
-        self.ui.input_yearAdd.setValidator(QIntValidator(1000, 9999))
-        self.ui.input_quantityAdd.setMaximum(999999)  
 
         self.input_fields = {
             "input_titleAdd": self.ui.input_titleAdd,
@@ -124,268 +88,175 @@ class AddBook_UI:
             "input_quantityAdd": self.ui.input_quantityAdd,
             "input_stageAdd": self.ui.input_stageAdd
         }
+
+        self.ui.input_isbnAdd.setMaxLength(13)
+        isbn_validator = QRegularExpressionValidator(QRegularExpression(r'^\d{1,13}$'), self.ui.input_isbnAdd)
+        self.ui.input_isbnAdd.setValidator(isbn_validator)
+
+        self.ui.input_titleAdd.setMaxLength(100)
+        self.ui.input_authorAdd.setMaxLength(100)
+        self.ui.input_compAdd.setMaxLength(100)
+        self.ui.input_yearAdd.setValidator(QIntValidator(1000, 9999))
+        self.ui.input_quantityAdd.setMaximum(999999)  
+
+    def showNotification(self, message: str):
+        self.ui.messageAdd.setText(message)
+        self.ui.messageAdd.show()
+
+    def showMessageBox(self, title:str, message:str, icon: QMessageBox.Icon):
+        msg = QMessageBox()
+        msg.setWindowTitle(title)
+        msg.setText(message)
+        msg.setIcon(icon)
+        msg.exec()
         
-    def showMessageBox(self, title: str, message: str, icon: QMessageBox.Icon):
-        msg_box = QMessageBox()
-        msg_box.setWindowTitle(title)
-        msg_box.setText(message)
-        msg_box.setIcon(icon)
-        msg_box.exec()
+    def textChanged(self):
+        
+        self.ui.input_isbnAdd.textChanged.connect(self.validateISBN)
+    
+    def validateISBN(self, text: str):
+
+
+
+        if len(text.strip()) == 13:
+            self.ui.input_isbnAdd.setStyleSheet("""
+                border: 2px solid green;
+                color: green;
+            """)
+            self.ui.isbn.setStyleSheet("color: green;")
+            self.showNotification("Click Enter to check the ISBN")
+        elif len(text.strip()) == 0:
+            self.showNotification("")
+            self.ui.isbn.setStyleSheet("color: black;")
+            self.ui.input_isbnAdd.setStyleSheet("border: 2px solid black;")
+            self.ui.enter_btn.hide()
+            return
+        else:
+            # self.refreshFields()
+            self.ui.isbn.setStyleSheet("color: red;")
+            self.ui.input_isbnAdd.setStyleSheet("""
+                border: 2px solid red;
+                color: red;
+            """)
+            self.showNotification("ISBN must be 13 digits")
+
+        self.hideSubmitButtons(False)
 
     def enterButtonClicked(self):
         try:
 
             isbn = self.ui.input_isbnAdd.text().strip()
+            
+
             if not isbn:
-                self.showMessageBox("Error", "ISBN is required", QMessageBox.Icon.Critical)
+                self.showMessageBox("Error", "Please enter the ISBN", QMessageBox.Icon.Warning)
                 return
             if len(isbn) != 13:
-                self.showMessageBox("Error", "ISBN must be 13 characters long", QMessageBox.Icon.Critical)
+                self.showMessageBox("Error", "ISBN must be 13 digits", QMessageBox.Icon.Warning)
                 return
-                
-
+            
             existing_book, error = self.db_session.getBookByISBN(isbn)
+
+            self.showBookDetail(existing_book)
+
             if existing_book:
-                self.ui.messageAdd.setText("Book already exists in the system. Add with new quantity and stage for new warehouse id.")
-                self.populateInputFields(existing_book)
-                self.disableInputFields(full=False)
-            else:
-                self.ui.messageAdd.setText("This is a new ISBN. Please enter book details to add a new book.")
-                self.enableInputFields()  
+                self.showNotification("Book already exists in the system, your addition will be updated with new warehouse ID")
 
-            self.showDetails()
-            self.ui.submit_btn.show()
-            self.ui.clear_btn.show()
-            self.ui.enter_btn.hide()
-            self.ui.input_isbnAdd.setEnabled(False)   
+                self.setDisabledStyle(self.ui.input_isbnAdd)
+                self.showBookDetail(existing_book)
+
+
+            else:
+                self.showNotification("Book does not exist in the system, your addition will be added as new entire book")
+
+                self.setPlaceholderText(self.ui.input_titleAdd, "Enter the title")
+                self.setPlaceholderText(self.ui.input_authorAdd, "Enter the author")
+                self.setPlaceholderText(self.ui.input_compAdd, "Enter the publisher")
+                self.setPlaceholderText(self.ui.input_yearAdd, "Enter the publication year")
                 
+
+                # self.ui.input_isbnAdd.mousePressEvent = self.ensureChangeISBN()
+                
+            
+            self.showSubmitButtons()
+            # self.isbn_details_entered = True
+
         except Exception as e:
-            self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
-            print(str(e))
-
-    def submitButtonClicked(self):
-        try:
-            # Check if all fields are empty before proceeding
-            if self.checkIfAllFieldsEmpty():
-                self.showMessageBox("Warning", "All input fields are empty.", QMessageBox.Icon.Warning)
-                return
-
-            isbn = self.ui.input_isbnAdd.text().strip()
-            print(f"ISBN: {isbn}")  # Debug statement
-
-            check = self.checkEmptyFields()
-            print(f"Check Empty Fields: {check}")  # Debug statement
-
-            if not check:
-                return
-
-            # Show confirmation message
-            reply = QMessageBox.question(
-                self.ui, 'Confirmation',
-                "Are you sure you want to submit?",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-            )
-
-            print(f"User reply: {reply}")  # Debug statement
-
-            if reply == QMessageBox.StandardButton.No:
-                return
-            else:
-                existing_book, error = self.db_session.getBookByISBN(isbn)
-                print(f"Existing Book: {existing_book}, Error: {error}")  # Debug statement
-
-                admin_id = self.ui.admin_id.text()
-                print(f"Admin ID: {admin_id}")  # Debug statement
-
-                if existing_book:
-                    print("Book ID: ", existing_book.book_id)
-                    bookData = self.createSubmitBookData()
-                    print(f"Book Data: {bookData}")  # Debug statement
-                    self.db_session.insertBook(bookData)
-                    self.showMessageBox("Success", "Book added successfully", QMessageBox.Icon.Information)
-                else:
-                    bookMarcData = self.createSubmitBookMarcData()
-                    print(f"Book Marc Data: {bookMarcData}")  # Debug statement
-                    bookData = self.createSubmitBookData()
-                    print(f"Book Data: {bookData}")  # Debug statement
-                    self.db_session.insertBookMarc(bookMarcData)
-                    self.db_session.insertBook(bookData)
-                    self.showMessageBox("Success", "Book added successfully", QMessageBox.Icon.Information)
-
-                return
-
-        except AttributeError as attr_err:
-            print("AttributeError", attr_err)
-            QMessageBox.critical(self.ui, "Error", "An attribute error occurred: " + str(attr_err))
-        except Exception as e:
-            print(str(e))
-            QMessageBox.critical(self.ui, "Error", str(e))
-
-
-    def createSubmitBookMarcData(self):
-        return BooksBookMarcData(
-            title=self.ui.input_titleAdd.text().strip(),
-            author=self.ui.input_authorAdd.text().strip(),
-            public_year=self.ui.input_yearAdd.date().year(),
-            public_comp=self.ui.input_compAdd.text().strip(),
-            isbn=self.ui.input_isbnAdd.text().strip(),
-        )
-    
-    def createSubmitBookData(self):
-        return BooksBookData(
-            quantity=self.ui.input_quantityAdd.value(),
-            stage=self.ui.input_stageAdd.currentText().strip(),
-            isbn=self.ui.input_isbnAdd.text().strip()
-        )
-    
-    def checkEmptyFields(self):
-        if self.ui.input_titleAdd.text().strip() == "":
-            self.showMessageBox("Error", "Title is required", QMessageBox.Icon.Critical)
-            return False
-        if self.ui.input_authorAdd.text().strip() == "":
-            self.showMessageBox("Error", "Author is required", QMessageBox.Icon.Critical)
-            return False
-        if self.ui.input_compAdd.text().strip() == "":
-            self.showMessageBox("Error", "Publisher is required", QMessageBox.Icon.Critical)
-            return False
-        if self.ui.input_yearAdd.text().strip() == "":
-            self.showMessageBox("Error", "Publication year is required", QMessageBox.Icon.Critical)
-            return False
-        if self.ui.input_quantityAdd.value() == 0:
-            self.showMessageBox("Error", "Quantity is required", QMessageBox.Icon.Critical)
-            return False
-        if self.ui.input_stageAdd.currentIndex() == -1:
-            self.showMessageBox("Error", "Stage is required", QMessageBox.Icon.Critical)
-            return False
-        
-    
-    def clearFieldsAndDisable(self):
-        self.ui.input_isbnAdd.clear()
-        self.ui.input_titleAdd.clear()
-        self.ui.input_authorAdd.clear()
-        self.ui.input_compAdd.clear()
-        self.ui.input_yearAdd.setDate(QDate(2000, 1, 1))
-        self.ui.input_quantityAdd.setValue(0)
-        self.ui.input_stageAdd.setCurrentIndex(0)
-        
-        self.disableInputFields()
-        self.ui.input_isbnAdd.setEnabled(True)   # Enable input_isbnAdd
-        self.ui.enter_btn.setEnabled(True)       # Enable enter_btn
-
-    def disableInputFields(self, full=True):
-        # Disable all input fields and apply style
-        self.setDisabledStyle(self.ui.input_titleAdd)
-        self.setDisabledStyle(self.ui.input_authorAdd)
-        self.setDisabledStyle(self.ui.input_compAdd)
-        self.setDisabledStyle(self.ui.input_yearAdd)
-
-        if full:
-            self.setDisabledStyle(self.ui.input_quantityAdd)
-            self.setDisabledStyle(self.ui.input_stageAdd)
-        else:
-            self.setEnabledStyle(self.ui.input_quantityAdd)
-            self.setEnabledStyle(self.ui.input_stageAdd)
-
-    def enableInputFields(self):
-        self.setEnabledStyle(self.ui.input_titleAdd)
-        self.setEnabledStyle(self.ui.input_authorAdd)
-        self.setEnabledStyle(self.ui.input_compAdd)
-        self.setEnabledStyle(self.ui.input_yearAdd)
-        self.setEnabledStyle(self.ui.input_quantityAdd)
-        self.setEnabledStyle(self.ui.input_stageAdd)
-
-    
-
-
-
-    def clearButtonClicked(self):
-        # Check if all fields are already empty before proceeding
-        if self.checkIfAllFieldsEmpty():
-            QMessageBox.information(self.ui, "Warning", "All input fields are empty.")
+            self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
             return
-
-        # Create a confirmation message box
-        reply = QMessageBox.question(
-            self.ui, 'Message',
-            "Are you sure you want to clear all fields?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
         
-        # Check the user's response
+    def ensureChangeISBN(self):
+
+        reply = QMessageBox.question(self, "Change ISBN", "Do you want to change the ISBN? You have to check ISBN again to make sure the book isn't exist in the system.", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
         if reply == QMessageBox.StandardButton.Yes:
-            # Clear input fields
-            self.ui.input_isbnAdd.clear()
-            self.ui.input_titleAdd.clear()
-            self.ui.input_authorAdd.clear()
-            self.ui.input_compAdd.clear()
-            self.ui.input_yearAdd.setDate(QDate(2000, 1, 1))
-            self.ui.input_quantityAdd.setValue(0)
-            self.ui.input_stageAdd.setCurrentIndex(0)
-            
-            # Clear messageAdd field
-            self.ui.messageAdd.clear()
-            
-            # Disable input fields and enter button
-            self.disableInputFields()
-            self.ui.input_isbnAdd.setEnabled(True)   # Enable input_isbnAdd
-            self.ui.enter_btn.setEnabled(True)       # Enable enter_btn
+            self.disableDetailFields(self.input_fields.values())
+            self.hideSubmitButtons(all=False)
         else:
-            # If the user chooses not to clear the fields, do nothing
             return
 
 
-    def populateInputFields(self, book):
-        self.ui.input_titleAdd.setText(book.title)
-        self.ui.input_authorAdd.setText(book.author)
-        self.ui.input_compAdd.setText(book.public_comp)
-        self.ui.input_yearAdd.setText(str(book.public_year))
-        self.ui.input_quantityAdd.setValue(0)
-        self.ui.input_stageAdd.setCurrentIndex(-1)
-
-
-    def setDisabledStyle(self, widget):
-        widget.setStyleSheet("border: 2px solid grey; color: grey;")
-        widget.setEnabled(False)
-
-    def setEnabledStyle(self, widget):
-        widget.setStyleSheet("border: 2px solid black; color: black;")
-        widget.setEnabled(True)
-
-    def checkInputFields(self):
-        # Check if all relevant input fields are empty
-        all_empty = (
-            not self.ui.input_titleAdd.text().strip() and
-            not self.ui.input_authorAdd.text().strip() and
-            not self.ui.input_compAdd.text().strip() and
-            self.ui.input_yearAdd.text().strip() and
-            self.ui.input_quantityAdd.value() == 0 and
-            self.ui.input_stageAdd.currentIndex() == -1
-        )
         
-        # Enable or disable the reset and submit buttons based on the check
-        self.ui.clear_btn.setEnabled(not all_empty)
-        self.ui.submit_btn.setEnabled(not all_empty)
+    def showBookDetail(self, existing_book: BooksBookMarcData):
+        try:
+            if existing_book:
+                self.ui.input_titleAdd.setText(existing_book.title)
+                self.ui.input_authorAdd.setText(existing_book.author)
+                self.ui.input_compAdd.setText(existing_book.public_comp)
+                self.ui.input_yearAdd.setText(str(existing_book.public_year))
+                self.disableDetailFields(self.detail_fields)
+
+            self.showInputFields()
+
+        except Exception as e:
+            self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
+            return
+            
+    def showInputFields(self):
+        self.ui.input_titleAdd.show()
+        self.ui.input_authorAdd.show()
+        self.ui.input_compAdd.show()
+        self.ui.input_yearAdd.show()
+        self.ui.input_quantityAdd.show()
+        self.ui.input_stageAdd.show()
+
+        self.ui.title.show()
+        self.ui.author.show()
+        self.ui.public_comp.show()
+        self.ui.public_year.show()
+        self.ui.quantity.show()
+        self.ui.stage.show()
+
+    def showSubmitButtons(self):
+        self.ui.submit_btn.show()
+        self.ui.cancel_btnAdd.show()
+        self.ui.enter_btn.hide()
     
-    def checkIfAllFieldsEmpty(self):
-        return (
-            not self.ui.input_titleAdd.text().strip() and
-            not self.ui.input_authorAdd.text().strip() and
-            not self.ui.input_compAdd.text().strip() and
-            not self.ui.input_yearAdd.text().strip() and
-            self.ui.input_quantityAdd.value() == 0 and
-            self.ui.input_stageAdd.currentIndex() == -1
-        )
+    def disableDetailFields(self, disabled_field):
+        for field in disabled_field:
+            if field != self.ui.input_isbnAdd:
+                self.setDisabledStyle(field)
+                
+    def setDisabledStyle(self, field: QLineEdit):
+        field.setReadOnly(True)
+        field.setStyleSheet("""
+            background-color: #f0f0f0;
+            border: 2px solid grey;
+            color: green;
+        """)
+            
+    def refreshFields(self):
+        for field in self.input_fields.values():
+            if field != self.ui.input_isbnAdd:
+                field.clear()
+                field.setStyleSheet("border: 2px solid black;")
+
+    def setPlaceholderText(self, field: QLineEdit, text: str):
+        field.setPlaceholderText(text)
+
     
-    def validateISBN(self, text):
-        if len(text.strip()) != 13:
-            self.ui.messageAdd.setText("<font color='red'>ISBN must be 13 characters long</font>")
-        else:
-            self.ui.messageAdd.clear()
-    
-    def validateQuantity(self, value):
-        if value <= 0:
-            self.ui.messageAdd.setText("<font color='red'>Quantity must be greater than 0</font>")
-        else:
-            self.ui.messageAdd.clear()
 
 
+
+    
+    

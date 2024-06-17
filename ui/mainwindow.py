@@ -46,7 +46,7 @@ class MainWindow_UI(QMainWindow):
         # Connect buttons to functions in the modules
         self.ui.find_btn.clicked.connect(self.searchbook.searchBookInformation)
         
-        self.addbook.checkInputFields()
+        # self.addbook.checkInputFields()
         
         # Show admin id and name in the navigation bar
         self.account_id = account_id
