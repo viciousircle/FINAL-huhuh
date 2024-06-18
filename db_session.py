@@ -253,9 +253,13 @@ class DBSession:
         except Exception as err:
             print("Error:", err)
             return None
-            
+  
+
     def updateBook(self, admin_id: int, bookMarcData: BooksBookMarcData, bookData: BooksBookData, old_bookMarcData: Optional[BooksBookMarcData] = None, old_bookData: Optional[BooksBookData] = None) -> ExecuteResult[None]:
         try:
+            # Start a transaction by ensuring auto-commit is off
+            self.connection.autocommit = False
+
             # Update BookMarcData if old data is provided and there are changes
             if old_bookMarcData is not None:
                 update_query = "UPDATE books.bookMarc SET "
@@ -269,75 +273,101 @@ class DBSession:
                 if bookMarcData.isbn != old_bookMarcData.isbn:
                     # Check if the new ISBN is already in the database
                     self.cursor.execute("SELECT COUNT(*) FROM books.bookMarc WHERE isbn = ? AND book_id != ?", (bookMarcData.isbn, old_bookMarcData.book_id))
-                    
                     if self.cursor.fetchone()[0] > 0:
+                        self.connection.rollback()
                         return (False, f"ISBN {bookMarcData.isbn} is already assigned to another book.")
                     
-                    update_query += "isbn = ?, "
-                    params.append(bookMarcData.isbn)
+                    # Update ISBN in books.book first to avoid foreign key conflict
+                    self.cursor.execute("UPDATE books.bookMarc SET isbn = ? WHERE isbn = ?", (bookMarcData.isbn, old_bookMarcData.isbn))
+                    self.cursor.execute("UPDATE books.book SET isbn = ? WHERE isbn = ?", (bookMarcData.isbn, old_bookMarcData.isbn))
                     
                 if bookMarcData.public_year != old_bookMarcData.public_year:
                     update_query += "public_year = ?, "
                     params.append(bookMarcData.public_year)
-                    
                 if bookMarcData.public_comp != old_bookMarcData.public_comp:
                     update_query += "public_comp = ?, "
                     params.append(bookMarcData.public_comp)
-
                 if update_query.endswith(", "):
                     update_query = update_query[:-2]  # Remove the trailing comma and space
-                    update_query += " WHERE book_id = ?"
-                    params.append(old_bookMarcData.book_id)
-
+                    update_query += " WHERE isbn = ?"
+                    params.append(old_bookMarcData.isbn)
                     self.cursor.execute(update_query, params)
-                    self.connection.commit()
 
-                    # Log the update in history
-                    self.logHistory(admin_id, old_bookMarcData.book_id if old_bookMarcData else None, old_bookMarcData.isbn if old_bookMarcData else None, old_bookData.warehouse_id if old_bookData else None, datetime.now())
+            # Update BookData if old data is provided and there are changes
+            if old_bookData is not None:
+                update_query = "UPDATE books.book SET "
+                params = []
+                if bookData.quantity != old_bookData.quantity:
+                    update_query += "quantity = ?, "
+                    params.append(bookData.quantity)
+                if bookData.stage != old_bookData.stage:
+                    update_query += "stage = ?, "
+                    params.append(bookData.stage)
+                if bookData.isbn != old_bookData.isbn:
+                    update_query += "isbn = ?, "
+                    params.append(bookData.isbn)
+                if update_query.endswith(", "):
+                    update_query = update_query[:-2]
+                    update_query += " WHERE warehouse_id = ? AND book_id = ?"
+                    params.extend([old_bookData.warehouse_id, old_bookData.book_id])
+                    self.cursor.execute(update_query, params)
+
+            # Commit the transaction if all updates succeed
+            self.connection.commit()
 
         except pyodbc.Error as err:
             self.connection.rollback()
             return (False, str(err))
         except Exception as err:
+            self.connection.rollback()
             return (False, str(err))
+        finally:
+            # Ensure auto-commit is turned back on
+            self.connection.autocommit = True
 
         return (True, None)
-
-    def deleteBook(self, warehouse_id, book_id: int, admin_id: int) -> tuple[bool, str]:
+    
+    def deleteBook(self, admin_id: int, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
         try:
-            # Retrieve the ISBN and warehouse_ids from the books.book table before deletion
-            self.cursor.execute("""
-                SELECT BM.book_id, BM.isbn, B.warehouse_id
-                FROM books.bookMarc BM
-                JOIN books.book B ON BM.book_id = B.book_id
-                WHERE BM.book_id = ?
-            """, (book_id,))
-            rows = self.cursor.fetchall()
+            # # Retrieve the ISBN and warehouse_ids from the books.book table before deletion
+            # self.cursor.execute("""
+            #     SELECT BM.book_id, BM.isbn, B.warehouse_id
+            #     FROM books.bookMarc BM
+            #     JOIN books.book B ON BM.book_id = B.book_id
+            #     WHERE BM.book_id = ?
+            # """, (book_id,))
+            # rows = self.cursor.fetchall()
             
-            if not rows:
-                return False, "Book not found."
+            # if not rows:
+            #     return False, "Book not found."
 
-            # Determine the number of distinct warehouse_ids associated with the book_id
-            warehouse_ids = {row.warehouse_id for row in rows}
+            # # Determine the number of distinct warehouse_ids associated with the book_id
+            # warehouse_ids = {row.warehouse_id for row in rows}
 
-            if len(warehouse_ids) > 1:
-                # More than one warehouse_id, delete only from books.book
-                self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ? AND warehouse_id = ?", (book_id, rows[0].isbn, warehouse_id))
-                warehouse_id = None  # Set warehouse_id to None for history record
-            else:
-                # Only one warehouse_id, delete from both books.book and books.bookMarc
-                self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ?", (book_id, rows[0].isbn))
-                self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ? AND isbn = ?", (book_id, rows[0].isbn))
-                warehouse_id = rows[0].warehouse_id  # Use the existing warehouse_id for history record
+            # if len(warehouse_ids) > 1:
+            #     # More than one warehouse_id, delete only from books.book
+            #     self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ? AND warehouse_id = ?", (book_id, rows[0].isbn, warehouse_id))
+            #     warehouse_id = None  # Set warehouse_id to None for history record
+            # else:
+            #     # Only one warehouse_id, delete from both books.book and books.bookMarc
+            #     self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ?", (book_id, rows[0].isbn))
+            #     self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ? AND isbn = ?", (book_id, rows[0].isbn))
+            #     warehouse_id = rows[0].warehouse_id  # Use the existing warehouse_id for history record
 
-            # Insert the deletion record into users.history
-            self.cursor.execute("""
-                INSERT INTO users.history (admin_id, isbn, book_id, warehouse_id, timestamp)
-                VALUES (?, ?, ?, ?, ?)   
-            """, (admin_id, rows[0].isbn, None, warehouse_id, datetime.now()))
+            # # Insert the deletion record into users.history
+            # self.cursor.execute("""
+            #     INSERT INTO users.history (admin_id, isbn, book_id, warehouse_id, timestamp)
+            #     VALUES (?, ?, ?, ?, ?)   
+            # """, (admin_id, rows[0].isbn, None, warehouse_id, datetime.now()))
 
+            # self.connection.commit()
+            # return True, None
+
+            self.cursor.execute("DELETE FROM books.book WHERE isbn = ?", (bookData.isbn,))
+            self.cursor.execute("DELETE FROM books.bookMarc WHERE isbn = ?", (bookMarcData.isbn,))
             self.connection.commit()
             return True, None
+
 
         except pyodbc.Error as err:
             self.connection.rollback()

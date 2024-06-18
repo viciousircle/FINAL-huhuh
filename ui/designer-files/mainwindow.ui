@@ -716,7 +716,7 @@ QPushButton::after{
      </widget>
     </widget>
     <widget class="QWidget" name="search_page">
-     <widget class="QWidget" name="horizontalLayoutWidget">
+     <widget class="QFrame" name="horizontalFrame">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -857,528 +857,567 @@ padding: 0 10px 0 10px ;
        </item>
       </layout>
      </widget>
-     <widget class="QTableWidget" name="search_table">
+     <widget class="QFrame" name="frame_3">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>70</y>
-        <width>521</width>
-        <height>471</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Box</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
-      </property>
-      <property name="lineWidth">
-       <number>4</number>
-      </property>
-      <property name="midLineWidth">
-       <number>2</number>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-      <property name="dragEnabled">
-       <bool>false</bool>
-      </property>
-      <attribute name="horizontalHeaderVisible">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="horizontalHeaderCascadingSectionResizes">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="horizontalHeaderHighlightSections">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-     </widget>
-     <widget class="QFrame" name="frame">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>70</y>
-        <width>581</width>
+        <width>1121</width>
         <height>471</height>
        </rect>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Box</enum>
+       <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
+       <enum>QFrame::Raised</enum>
       </property>
-      <property name="lineWidth">
-       <number>4</number>
-      </property>
-      <widget class="QFrame" name="verticalFrame_12">
+      <widget class="QWidget" name="horizontalLayoutWidget_3">
        <property name="geometry">
         <rect>
-         <x>40</x>
-         <y>70</y>
-         <width>361</width>
-         <height>371</height>
+         <x>-10</x>
+         <y>-10</y>
+         <width>1131</width>
+         <height>481</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_9">
-        <item alignment="Qt::AlignTop">
-         <widget class="QLabel" name="title_4">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Title</string>
-          </property>
-         </widget>
-        </item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetDefaultConstraint</enum>
+        </property>
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
         <item>
-         <widget class="QLineEdit" name="input_titleEdit">
-          <property name="enabled">
-           <bool>true</bool>
+         <widget class="QTableWidget" name="search_table">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="styleSheet">
-           <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 5px 10px 5px 10px ;
-</string>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignTop">
-         <widget class="QLabel" name="author_4">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Author</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="input_authorEdit">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 5px 10px 5px 10px ;
-</string>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="publish_comp_4">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Public Company</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="input_compEdit">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 5px 10px 5px 10px ;
-</string>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="publish_year_4">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Public Year</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="input_yearEdit">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 5px 10px 5px 10px ;
-</string>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="quantity_5">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Quantity</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="input_quantityEdit">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 5px 10px 5px 10px ;
-</string>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="status_5">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Stage</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="input_stageEdit">
-          <property name="enabled">
+          <property name="tabletTracking">
            <bool>false</bool>
           </property>
-          <property name="styleSheet">
-           <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 5px 10px 5px 10px ;
-</string>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
           </property>
-          <property name="editable">
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>4</number>
+          </property>
+          <property name="midLineWidth">
+           <number>3</number>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="dragEnabled">
            <bool>false</bool>
           </property>
-          <property name="duplicatesEnabled">
+          <property name="alternatingRowColors">
            <bool>false</bool>
           </property>
-          <item>
-           <property name="text">
-            <string>Available</string>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="horizontalHeaderCascadingSectionResizes">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderHighlightSections">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="detail_box">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>4</number>
+          </property>
+          <widget class="QFrame" name="verticalFrame_12">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>70</y>
+             <width>361</width>
+             <height>371</height>
+            </rect>
            </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Unavailable</string>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <item alignment="Qt::AlignTop">
+             <widget class="QLabel" name="title_4">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Title</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="input_titleEdit">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+              </property>
+              <property name="readOnly">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item alignment="Qt::AlignTop">
+             <widget class="QLabel" name="author_4">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Author</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="input_authorEdit">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+              </property>
+              <property name="readOnly">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="publish_comp_4">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Public Company</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="input_compEdit">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+              </property>
+              <property name="readOnly">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="publish_year_4">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Public Year</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="input_yearEdit">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+              </property>
+              <property name="readOnly">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="quantity_5">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Quantity</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="input_quantityEdit">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+              </property>
+              <property name="readOnly">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="status_5">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Stage</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="input_stageEdit">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+              </property>
+              <property name="editable">
+               <bool>false</bool>
+              </property>
+              <property name="duplicatesEnabled">
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Available</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Unavailable</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QPushButton" name="edit_btn">
+           <property name="geometry">
+            <rect>
+             <x>410</x>
+             <y>100</y>
+             <width>121</width>
+             <height>31</height>
+            </rect>
            </property>
-          </item>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+	border: 2px solid black;
+	color: rgb(0, 0, 0);
+	padding: 5 10px 5 10px ;
+}
+QPushButton:hover{
+	border: 2px solid #560bad;
+	color: #560bad;
+	padding: 0 10px 0 10px ;
+}
+QPushButton::after{
+	border: 2px solid grey;
+color: grey;
+padding: 0 10px 0 10px ;
+
+}
+
+
+</string>
+           </property>
+           <property name="text">
+            <string>Edit</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="warehouse_id_5">
+           <property name="geometry">
+            <rect>
+             <x>290</x>
+             <y>10</y>
+             <width>101</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Warehouse ID</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="input_isbnEdit">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>90</x>
+             <y>10</y>
+             <width>191</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QLabel" name="isbn_4">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>10</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>ISBN</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="input_warehouse_idEdit">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>390</x>
+             <y>10</y>
+             <width>121</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+padding: 5px 10px 5px 10px ;
+</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLabel" name="message_edit">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>50</y>
+             <width>451</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="cancel_btn">
+           <property name="geometry">
+            <rect>
+             <x>410</x>
+             <y>340</y>
+             <width>121</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="mouseTracking">
+            <bool>true</bool>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::DefaultContextMenu</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+	border: 2px solid black;
+	color: rgb(0, 0, 0);
+	padding: 5 10px 5 10px ;
+}
+QPushButton:hover{
+	border: 2px solid #560bad;
+	color: #560bad;
+	padding: 0 10px 0 10px ;
+}
+
+
+</string>
+           </property>
+           <property name="text">
+            <string>Cancel</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="delete_btn">
+           <property name="geometry">
+            <rect>
+             <x>410</x>
+             <y>390</y>
+             <width>121</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+	border: 2px solid black;
+	color: rgb(0, 0, 0);
+	padding: 5 10px 5 10px ;
+}
+QPushButton:hover{
+	border: 2px solid #560bad;
+	color: #560bad;
+	padding: 0 10px 0 10px ;
+}
+QPushButton::after{
+	border: 2px solid grey;
+color: grey;
+padding: 0 10px 0 10px ;
+
+}
+
+
+</string>
+           </property>
+           <property name="text">
+            <string>Delete book</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="save_btn">
+           <property name="geometry">
+            <rect>
+             <x>410</x>
+             <y>290</y>
+             <width>121</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+	border: 2px solid black;
+	color: rgb(0, 0, 0);
+	padding: 5 10px 5 10px ;
+}
+QPushButton:hover{
+	border: 2px solid #560bad;
+	color: #560bad;
+	padding: 0 10px 0 10px ;
+}
+QPushButton::after{
+	border: 2px solid grey;
+color: grey;
+padding: 0 10px 0 10px ;
+
+}
+
+
+</string>
+           </property>
+           <property name="text">
+            <string>Save change</string>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QPushButton" name="edit_btn">
-       <property name="geometry">
-        <rect>
-         <x>420</x>
-         <y>290</y>
-         <width>121</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton{
-	border: 2px solid black;
-	color: rgb(0, 0, 0);
-	padding: 5 10px 5 10px ;
-}
-QPushButton:hover{
-	border: 2px solid #560bad;
-	color: #560bad;
-	padding: 0 10px 0 10px ;
-}
-QPushButton::after{
-	border: 2px solid grey;
-color: grey;
-padding: 0 10px 0 10px ;
-
-}
-
-
-</string>
-       </property>
-       <property name="text">
-        <string>Edit</string>
-       </property>
-      </widget>
-      <widget class="QFrame" name="frame_2">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>20</y>
-         <width>501</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <widget class="QLabel" name="isbn_4">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>51</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>ISBN</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="input_isbnEdit">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>50</x>
-          <y>0</y>
-          <width>191</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 5px 10px 5px 10px ;
-</string>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QLabel" name="warehouse_id_5">
-        <property name="geometry">
-         <rect>
-          <x>250</x>
-          <y>0</y>
-          <width>111</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Warehouse ID</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="input_warehouse_idEdit">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>372</x>
-          <y>0</y>
-          <width>121</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
-padding: 5px 10px 5px 10px ;
-</string>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QPushButton" name="delete_btn">
-       <property name="geometry">
-        <rect>
-         <x>420</x>
-         <y>330</y>
-         <width>121</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton{
-	border: 2px solid black;
-	color: rgb(0, 0, 0);
-	padding: 5 10px 5 10px ;
-}
-QPushButton:hover{
-	border: 2px solid #560bad;
-	color: #560bad;
-	padding: 0 10px 0 10px ;
-}
-QPushButton::after{
-	border: 2px solid grey;
-color: grey;
-padding: 0 10px 0 10px ;
-
-}
-
-
-</string>
-       </property>
-       <property name="text">
-        <string>Delete</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="save_btn">
-       <property name="geometry">
-        <rect>
-         <x>420</x>
-         <y>370</y>
-         <width>121</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton{
-	border: 2px solid black;
-	color: rgb(0, 0, 0);
-	padding: 5 10px 5 10px ;
-}
-QPushButton:hover{
-	border: 2px solid #560bad;
-	color: #560bad;
-	padding: 0 10px 0 10px ;
-}
-QPushButton::after{
-	border: 2px solid grey;
-color: grey;
-padding: 0 10px 0 10px ;
-
-}
-
-
-</string>
-       </property>
-       <property name="text">
-        <string>Save</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="cancel_btn">
-       <property name="geometry">
-        <rect>
-         <x>420</x>
-         <y>410</y>
-         <width>121</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton{
-	border: 2px solid black;
-	color: rgb(0, 0, 0);
-	padding: 5 10px 5 10px ;
-}
-QPushButton:hover{
-	border: 2px solid #560bad;
-	color: #560bad;
-	padding: 0 10px 0 10px ;
-}
-QPushButton::after{
-	border: 2px solid grey;
-color: grey;
-padding: 0 10px 0 10px ;
-
-}
-
-
-</string>
-       </property>
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
      </widget>
+     <zorder>frame_3</zorder>
+     <zorder>horizontalFrame</zorder>
     </widget>
    </widget>
    <widget class="QFrame" name="navigation">

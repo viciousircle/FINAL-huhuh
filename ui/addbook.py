@@ -22,7 +22,7 @@ class AddBook_UI:
     submit_btn         : QPushButton
     cancel_btnAdd      : QPushButton
     enter_btn          : QPushButton
-    check_btn          : QPushButton
+    # check_btn          : QPushButton
     
     def __init__(self, ui, db_session: DBSession):
         self.ui = ui

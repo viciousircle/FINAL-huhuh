@@ -18,8 +18,8 @@ class Login_UI(QMainWindow):
     adminBtn        : QPushButton
     
     input_name      : QLineEdit
-    backBtn       : QPushButton
-    enterBtn      : QPushButton
+    backBtn         : QPushButton
+    enterBtn        : QPushButton
     
     input_id        : QLineEdit
     input_pass      : QLineEdit
