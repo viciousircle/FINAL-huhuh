@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QPushButton, QMessageBox, QComboBox, QLineEdit, QDateEdit, QSpinBox
-from PyQt6.QtCore import QDate, QRegularExpression
+from PyQt6.QtCore import QDate, QRegularExpression, Qt, pyqtSignal
 from PyQt6.QtGui import QRegularExpressionValidator, QIntValidator
 from datetime import datetime
 import sys
@@ -20,8 +20,9 @@ class AddBook_UI:
     input_quantityAdd  : QSpinBox
     input_stageAdd     : QComboBox
     submit_btn         : QPushButton
-    cancel_btnAdd          : QPushButton
+    cancel_btnAdd      : QPushButton
     enter_btn          : QPushButton
+    check_btn          : QPushButton
     
     def __init__(self, ui, db_session: DBSession):
         self.ui = ui
@@ -36,15 +37,31 @@ class AddBook_UI:
     
     def connectSignals(self):
         
+        # self.ui.input_isbnAdd = ClickableLineEdit()
+
+        # self.ui.input_isbnAdd.clicked.connect(self.ensureChangeISBN)
+
         self.textChanged()
+        # self.showCheckButton()
+
         self.ui.enter_btn.clicked.connect(self.enterButtonClicked)
         self.ui.submit_btn.clicked.connect(self.submitButtonClicked)
         self.ui.cancel_btnAdd.clicked.connect(self.cancelButtonClicked)
+        # self.ui.check_btn.clicked.connect(self.enterButtonClicked)
+
+        self.ui.input_isbnAdd.editingFinished.connect(self.isbnEdited)
+
+
+
     
     def initialize(self):
-        # self.isbn_details_entered = False
+        
+        self.isbn_checked = True
+
         self.hideSubmitButtons(True)
         self.hideInputFields()
+
+        # self.check_btn.hide()
 
     def hideSubmitButtons(self, all: bool):
         self.ui.submit_btn.hide()
@@ -71,6 +88,8 @@ class AddBook_UI:
         self.ui.stage.hide()
 
     def setupFields(self):
+
+        self.previous_isbn = ""
             
         # Set up the input fields
         self.detail_fields = [
@@ -114,7 +133,7 @@ class AddBook_UI:
         
     def textChanged(self):
         self.ui.input_isbnAdd.textChanged.connect(self.validateISBN)
-        # self.ui.input_isbnAdd.textChanged.connect(self.checkInputFieldsEmpty)
+        
         self.ui.input_titleAdd.textChanged.connect(self.checkInputFieldsEmpty)
         self.ui.input_authorAdd.textChanged.connect(self.checkInputFieldsEmpty)
         self.ui.input_compAdd.textChanged.connect(self.checkInputFieldsEmpty)
@@ -122,7 +141,6 @@ class AddBook_UI:
         self.ui.input_quantityAdd.valueChanged.connect(self.checkInputFieldsEmpty)
         self.ui.input_stageAdd.currentIndexChanged.connect(self.checkInputFieldsEmpty)
         
-        # self.ui.input_isbnAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
         self.ui.input_titleAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
         self.ui.input_authorAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
         self.ui.input_compAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
@@ -153,7 +171,6 @@ class AddBook_UI:
             self.ui.enter_btn.hide()
             return
         else:
-            # self.refreshFields()
             self.ui.isbn.setStyleSheet("color: red;")
             self.ui.input_isbnAdd.setStyleSheet("""
                 border: 2px solid red;
@@ -195,26 +212,47 @@ class AddBook_UI:
                 self.setPlaceholderText(self.ui.input_compAdd, "Enter the publisher")
                 self.setPlaceholderText(self.ui.input_yearAdd, "Enter the publication year")
 
-
-                # self.ui.input_isbnAdd.mousePressEvent = self.ensureChangeISBN()
-                
             
             self.hideSubmitButtons(all=True)
-            # self.isbn_details_entered = True
+            self.isbn_checked = True
+            self.previous_isbn = isbn
 
         except Exception as e:
             self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
             return
+
+    def isbnEdited(self):
+        isbn_text = self.ui.input_isbnAdd.text().strip()
         
-    def ensureChangeISBN(self):
+        # If the ISBN is not 13 digits, reset fields
+        if len(isbn_text) != 13:
+            for field in self.input_fields.values():
+                if field != self.ui.input_isbnAdd:
+                    self.setDisabledStyle(field)
+            self.isbn_checked = False
 
-        reply = QMessageBox.question(self, "Change ISBN", "Do you want to change the ISBN? You have to check ISBN again to make sure the book isn't exist in the system.", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        # If the ISBN is changed, prompt the user for confirmation
+        if self.isbn_checked and isbn_text != self.previous_isbn:
+            result = QMessageBox.question(
+                self.ui, 
+                "Change ISBN", 
+                "You have changed the ISBN. We need to check the new ISBN. Do you want to continue? If the ISBN already exists, the information you have entered will be lost.",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            if result == QMessageBox.StandardButton.Yes:
+                self.isbn_checked = False
+                for field in self.input_fields.values():
+                    if field != self.ui.input_isbnAdd:
+                        self.setEnabledStyle(field)
+                self.enterButtonClicked()
+            else:
+                self.ui.input_isbnAdd.setText(self.previous_isbn)
 
-        if reply == QMessageBox.StandardButton.Yes:
-            self.disableDetailFields(self.input_fields.values())
-            self.hideSubmitButtons(all=False)
-        else:
-            return
+    # def showCheckButton(self):
+    #     if self.isbn_checked:
+    #         self.ui.check_btn.hide()
+    #     else:
+    #         self.ui.check_btn.show()
 
  
     def showBookDetail(self, existing_book: BooksBookMarcData):
@@ -258,24 +296,27 @@ class AddBook_UI:
                 self.setDisabledStyle(field)
                 
     def setDisabledStyle(self, field: QLineEdit):
-        field.setReadOnly(True)
+        field.setDisabled(True)
         field.setStyleSheet("""
             background-color: #f0f0f0;
             border: 2px solid grey;
             color: green;
         """)
             
-
+    def setEnabledStyle(self, field: QLineEdit):
+        field.setDisabled(False)
+        field.setStyleSheet("""
+            background-color: white;
+            border: 2px solid black;
+            color: black;
+        """)
 
     def setPlaceholderText(self, field: QLineEdit, text: str):
         field.setPlaceholderText(text)
 
     def submitButtonClicked(self):
         try:
-            # all_empty = self.checkAllInputFieldsEmpty()
-            # if all_empty == True:
-            #     self.showMessageBox("Error", "Please enter all the fields to submit the book", QMessageBox.Icon.Warning)
-            #     return
+           
 
             empty = self.showErrorEmptyFields()
             if empty == True:
@@ -285,7 +326,7 @@ class AddBook_UI:
 
             if reply == QMessageBox.StandardButton.Yes:
                 self.submitBook()
-                self.refreshFields()
+
             else:
                 return
 
@@ -323,19 +364,24 @@ class AddBook_UI:
         
         if result[0]:
                 self.showMessageBox("Success", "Book added successfully", QMessageBox.Icon.Information)
+                self.refreshFields()
         else:
             self.showMessageBox("Error", f"Error: {result[1]}", QMessageBox.Icon.Critical)
 
     def refreshFields(self):
+        self.ui.messageAdd.clear()
+        self.ui.input_isbnAdd.setReadOnly(False)
+        self.hideInputFields()
         for field in self.input_fields.values():
             if field != self.ui.input_stageAdd:
-                field.clear()
-                field.setStyleSheet("border: 2px solid black;")
-        self.ui.messageAdd.clear()
+                if field != self.ui.input_quantityAdd:
+                    field.clear()
+                    field.setStyleSheet("border: 2px solid black;")
+                else:
+                    field.setValue(0)
+            else:
+                field.setCurrentIndex(-1)
         self.hideSubmitButtons(all=True)
-        self.hideInputFields()
-        self.ui.input_isbnAdd.setReadOnly(False)
-        self.ui.input_stageAdd.setCurrentIndex(-1)
 
 
     def checkInputFieldsEmpty(self):
@@ -378,10 +424,7 @@ class AddBook_UI:
 
     def cancelButtonClicked(self):
         try:
-            # empty = self.checkAllInputFieldsEmpty()
-            # if empty == True:
-            #     self.showMessageBox("Error", "All fields are empty", QMessageBox.Icon.Warning)
-            #     return
+           
 
             reply = QMessageBox.question(self.ui, "Cancel", "Are you sure you want to cancel?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
 
@@ -406,8 +449,6 @@ class AddBook_UI:
         if all_empty:
             self.hideSubmitButtons(True)
             return True
-
-            
 
 
         
