@@ -100,6 +100,7 @@ class SearchBook_UI:
                 self.clearTableAndDetailFields()
 
             self.ui.detail_box.hide()
+            self.ui.check_btn.hide()
             
             search_query = self.ui.input_findSearch.text().strip()
             
@@ -191,6 +192,8 @@ class SearchBook_UI:
 
     def displayBookDetails(self, row, column):
         try:
+            self.ui.message_edit.clear()
+            self.ui.check_btn.hide()
             book_id_item = self.ui.search_table.item(row, 0)  
 
             if book_id_item is None:
@@ -216,6 +219,7 @@ class SearchBook_UI:
             self.hideButtons(all=False)
             self.ui.detail_box.show()
             self.disableEditFields()
+
 
         except Exception as e:
             self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)

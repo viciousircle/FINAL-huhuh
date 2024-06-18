@@ -25,6 +25,7 @@ class EditBook_UI:
     delete_btn              : QPushButton
     save_btn                : QPushButton
     cancel_btn              : QPushButton
+    check_btn               : QPushButton
 
     detail_box              : QFrame
 
@@ -40,13 +41,15 @@ class EditBook_UI:
 
     def connectSignals(self):
 
-        self.ui.cancel_btn.clicked.connect(self.cancelEditButtonClicked)
+        self.ui.cancel_btn.clicked.connect(self.cancelButtonClicked)
         self.ui.edit_btn.clicked.connect(self.editButtonClicked)
         self.ui.save_btn.clicked.connect(self.saveButtonClicked)
         self.ui.delete_btn.clicked.connect(self.deleteButtonClicked)
+        self.ui.check_btn.pressed.connect(self.checkButtonClicked)
     
     def initialize(self):
         # self.hideButtons(all=True)
+        self.ui.check_btn.hide()
         self.setupFields()
         
         self.initial_field_values = {}
@@ -73,8 +76,6 @@ class EditBook_UI:
             "input_quantityEdit": self.ui.input_quantityEdit,
             "input_stageEdit": self.ui.input_stageEdit
         }
-
-        
 
         self.ui.input_isbnEdit.setMaxLength(13)
         isbn_validator = QRegularExpressionValidator(QRegularExpression(r'^\d{1,13}$'), self.ui.input_isbnEdit)
@@ -105,6 +106,8 @@ class EditBook_UI:
         
 
     def editButtonClicked(self):
+        self.checkISBNChanged()
+
 
         self.showNotification("You are now in edit mode. You can now edit the fields.")
 
@@ -191,19 +194,20 @@ class EditBook_UI:
         self.ui.search_table.setDisabled(True)
     
         
-    def cancelEditButtonClicked(self):
+    def cancelButtonClicked(self):
         try:
-            print("Cancel button clicked")
             current_field_values = self.getCurrentFieldValues()
+
             
             if not self.areChangesMade(current_field_values):
                 self.showMessageBox("Message", "No changes were made.", QMessageBox.Icon.Information)
                 
                 self.uneditSelectedRow()
-                self.disableEditFields()
+                self.disableEditFields(full=True)
                 self.showNotification("")
                 self.hideButtons(all=False)
                 self.enableSearchBar()
+                self.showNotification("")
 
                 return
 
@@ -211,10 +215,13 @@ class EditBook_UI:
                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
                 self.reverseChanges()
                 self.uneditSelectedRow()
-                self.disableEditFields()
+                self.disableEditFields(full=True)
                 self.showNotification("")
                 self.hideButtons(all=False)
                 self.enableSearchBar()
+                self.ui.check_btn.hide()
+                
+            
 
                 
         except Exception as e:
@@ -298,6 +305,130 @@ class EditBook_UI:
 
         self.hideButtons(False)
 
+    def checkButtonClicked(self):
+        try:
+            self.checkISBNChanged()
+            isbn = self.ui.input_isbnEdit.text().strip()
+            if len(isbn) != 13:
+                self.showMessageBox("Error", "ISBN must be 13 digits long.", QMessageBox.Icon.Critical)
+                return
+
+            bookMarcData, message = self.db_session.getBookByISBN(isbn)
+
+            if bookMarcData is None:
+                self.showNotification("No book found in system with this ISBN. Now you can continue edit with this ISBN.")
+                self.enableEditFields()
+                self.showButtons(all=False)
+                self.ui.check_btn.hide()
+                return
+            elif bookMarcData.isbn == self.initial_field_values['input_isbnEdit']:
+                self.showNotification("ISBN is the same as the original. You can now edit the fields.")
+                self.enableEditFields()
+                self.showButtons(all=False)
+                self.ui.check_btn.hide()
+                return
+            else:
+                result = QMessageBox.question(self.ui, "Conflict", "A book with this ISBN already exists in the system. \nClick YES to load the book details of this ISBN, or NO to continue with the edit without changing the ISBN.", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
+                if result == QMessageBox.StandardButton.Yes:
+                    self.loadBookDetails(bookMarcData)
+                    self.showButtons(all=False)
+                    self.ui.check_btn.hide()
+                    self.showNotification("You can edit quantity and stage fields only. Or you can input a new ISBN.")
+                    self.ui.message_edit.setStyleSheet("""
+                        color: red;
+                    """)
+                    self.enableEditFields()
+                    self.disableDetailsFields()
+                    return
+                else:
+                    self.showNotification("You can now edit the fields.")
+                    self.ui.input_isbnEdit.setText(self.initial_field_values['input_isbnEdit'])
+                    self.enableEditFields()
+                    self.showButtons(all=False)
+                    self.ui.check_btn.hide()
+                    return
+
+        except Exception as e:
+            print("Error checking ISBN:", e)
+            self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
+
+    def disableDetailsFields(self):
+        self.ui.input_titleEdit.setDisabled(True)
+        self.ui.input_authorEdit.setDisabled(True)
+        self.ui.input_compEdit.setDisabled(True)
+        self.ui.input_yearEdit.setDisabled(True)
+        # self.ui.input_isbnEdit.setDisabled(True)
+
+        self.ui.input_titleEdit.setStyleSheet("""
+            background-color: lightgrey;
+            color: red;
+            border: 2px solid red;
+            padding: 5px 10px 5px 10px ;
+        """)
+        self.ui.input_authorEdit.setStyleSheet("""
+            background-color: lightgrey;
+            color: red;
+            border: 2px solid red;
+            padding: 5px 10px 5px 10px ;    
+        """)
+        self.ui.input_compEdit.setStyleSheet("""
+            background-color: lightgrey;
+            color: red;
+            border: 2px solid red;
+            padding: 5px 10px 5px 10px ;
+        """)
+        self.ui.input_yearEdit.setStyleSheet("""
+            background-color: lightgrey;
+            color: red;
+            border: 2px solid red;
+            padding: 5px 10px 5px 10px ;
+        """)
+        self.ui.input_isbnEdit.setStyleSheet("""
+            border: 2px solid red;
+            padding: 5px 10px 5px 10px ;
+        """)
+        labels = [self.ui.isbn_edit, self.ui.title_edit, self.ui.author_edit, self.ui.public_comp_edit, self.ui.public_year_edit]
+        for label in labels:
+            label.setStyleSheet("""
+                color: red;
+            """)
+
+        
+        
+
+   
+    def loadBookDetails(self, bookMarcData):
+        self.ui.input_titleEdit.setText(bookMarcData.title)
+        self.ui.input_authorEdit.setText(bookMarcData.author)
+        self.ui.input_compEdit.setText(bookMarcData.public_comp)
+        self.ui.input_yearEdit.setText(str(bookMarcData.public_year))
+        
+    def checkISBNChanged(self):
+        # self.showNotification("You must check the ISBN first before continuing with the edit.")
+        self.ui.input_isbnEdit.textChanged.connect(self.validateISBN)
+        # self.disableEditFields()
+        
+
+    def validateISBN(self, text: str):
+        if text == self.initial_field_values['input_isbnEdit']:
+            self.ui.check_btn.hide()
+            self.showNotification("You can now edit the fields.")
+            self.enableEditFields()
+            self.ui.input_isbnEdit.textChanged.disconnect(self.validateISBN)
+        if len(text) == 13:
+            self.ui.check_btn.show()
+            self.showNotification("ISBN looks good. You can now check the ISBN.")
+        else:
+            self.ui.check_btn.hide()
+            self.showNotification("ISBN must be 13 digits long.")
+
+        self.disableEditFields(full=False)
+        self.hideButtons(all=True)
+        self.ui.check_btn.show()
+
+        
+
     def saveButtonClicked(self):
         try:
             current_field_values = self.getCurrentFieldValues()
@@ -309,7 +440,7 @@ class EditBook_UI:
             if QMessageBox.question(self.ui, "Message", "Are you sure you want to save changes?",
                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
                 self.saveChanges(current_field_values)
-                self.disableEditFields()
+                self.disableEditFields(full=True)
                 self.showNotification("")
                 self.hideButtons(all=False)
                 self.enableSearchBar()
@@ -336,7 +467,7 @@ class EditBook_UI:
             self.showMessageBox("Success", "Changes saved successfully.", QMessageBox.Icon.Information)
             
             self.unhighlightSelectedRow()
-            self.disableEditFields()
+            self.disableEditFields(full=True)
             self.enableSearchBar()
             
             from ui import ShowFile_UI
@@ -367,7 +498,7 @@ class EditBook_UI:
 
     def deleteButtonClicked(self):
         
-        if QMessageBox.question(self.ui, "Message", "Are you sure you want to delete this book? This action cannot be undo.",
+        if QMessageBox.question(self.ui, "Message", "Are you sure you want to delete this book? This action cannot be undo. Note that this will not delete the book with your input edit without submitting the changes.",
                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
             self.deleteBook()
     
@@ -404,7 +535,6 @@ class EditBook_UI:
             self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
 
 
-
     def enableEditFields(self):
         for field in self.input_fields.values():
             field.setDisabled(False)
@@ -414,14 +544,38 @@ class EditBook_UI:
                 border: 2px solid black;
                                 """)
 
-    def disableEditFields(self,):
+    def disableEditFields(self,full: bool):
         for field in self.detail_fields:
-            field.setDisabled(True)
-            field.setStyleSheet("""
-                background-color: lightgrey;
+            if full:
+                field.setDisabled(True)
+                field.setStyleSheet("""
+                    background-color: lightgrey;
+                    color: grey;
+                    border: 2px solid grey;
+                    padding: 5px 10px 5px 10px ;
+                """)
+            else:
+                if field != self.ui.input_isbnEdit:
+                    field.setDisabled(True)
+                    field.setStyleSheet("""
+                        background-color: lightgrey;
+                        color: grey;
+                        border: 2px solid grey;
+                        padding: 5px 10px 5px 10px ;
+                    """)
+                else:
+                    field.setDisabled(False)
+                    field.setStyleSheet("""
+                        background-color: white;
+                        color: black;
+                        border: 2px solid black;
+                        padding: 5px 10px 5px 10px ;
+                    """)
+        labels = [self.ui.isbn_edit, self.ui.title_edit, self.ui.author_edit, self.ui.public_comp_edit, self.ui.public_year_edit]
+        for label in labels:
+            label.setStyleSheet("""
                 color: black;
-                border: 2px solid black;
-                                """)
+            """)
 
     def showNotification(self, message: str):
         self.ui.message_edit.setText(message)
