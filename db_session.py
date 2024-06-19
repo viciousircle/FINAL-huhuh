@@ -329,52 +329,44 @@ class DBSession:
     
     def deleteBook(self, admin_id: int, bookMarcData: BooksBookMarcData, bookData: BooksBookData) -> ExecuteResult[None]:
         try:
-            # # Retrieve the ISBN and warehouse_ids from the books.book table before deletion
-            # self.cursor.execute("""
-            #     SELECT BM.book_id, BM.isbn, B.warehouse_id
-            #     FROM books.bookMarc BM
-            #     JOIN books.book B ON BM.book_id = B.book_id
-            #     WHERE BM.book_id = ?
-            # """, (book_id,))
-            # rows = self.cursor.fetchall()
-            
-            # if not rows:
-            #     return False, "Book not found."
+            isbn = bookMarcData.isbn
+            warehouse_id = bookData.warehouse_id
 
-            # # Determine the number of distinct warehouse_ids associated with the book_id
-            # warehouse_ids = {row.warehouse_id for row in rows}
+            print(isbn)
+            print(warehouse_id)
 
-            # if len(warehouse_ids) > 1:
-            #     # More than one warehouse_id, delete only from books.book
-            #     self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ? AND warehouse_id = ?", (book_id, rows[0].isbn, warehouse_id))
-            #     warehouse_id = None  # Set warehouse_id to None for history record
-            # else:
-            #     # Only one warehouse_id, delete from both books.book and books.bookMarc
-            #     self.cursor.execute("DELETE FROM books.book WHERE book_id = ? AND isbn = ?", (book_id, rows[0].isbn))
-            #     self.cursor.execute("DELETE FROM books.bookMarc WHERE book_id = ? AND isbn = ?", (book_id, rows[0].isbn))
-            #     warehouse_id = rows[0].warehouse_id  # Use the existing warehouse_id for history record
+            # Check how many entries exist for the given ISBN
+            query = "SELECT warehouse_id FROM books.book WHERE isbn = ?"
+            self.cursor.execute(query, (isbn,))
+            rows = self.cursor.fetchall()
 
-            # # Insert the deletion record into users.history
-            # self.cursor.execute("""
-            #     INSERT INTO users.history (admin_id, isbn, book_id, warehouse_id, timestamp)
-            #     VALUES (?, ?, ?, ?, ?)   
-            # """, (admin_id, rows[0].isbn, None, warehouse_id, datetime.now()))
+            if not rows:
+                # No books found with the given ISBN
+                return (False, f"Book with ISBN {isbn} not found")
 
-            # self.connection.commit()
-            # return True, None
+            if len(rows) > 1:
+                # Multiple entries found, delete only from the specified warehouse
+                query = "DELETE FROM books.book WHERE warehouse_id = ? AND isbn = ?"
+                self.cursor.execute(query, (warehouse_id, isbn))
+            else:
+                query = "DELETE FROM books.book WHERE isbn = ?"
+                self.cursor.execute(query, (isbn,))
+                # Single entry found, delete from both book and bookMarc tables
+                query = "DELETE FROM books.bookMarc WHERE isbn = ?"
+                self.cursor.execute(query, (isbn,))
 
-            self.cursor.execute("DELETE FROM books.book WHERE isbn = ?", (bookData.isbn,))
-            self.cursor.execute("DELETE FROM books.bookMarc WHERE isbn = ?", (bookMarcData.isbn,))
             self.connection.commit()
-            return True, None
-
+            return (True, "Book deleted successfully")
 
         except pyodbc.Error as err:
             self.connection.rollback()
-            return False, str(err)
+            return (False, str(err))
 
         except Exception as err:
-            return False, str(err)
+            self.connection.rollback()
+            return (False, str(err))
+
+
     # --- SEARCH BOOK FUNCTION ------------------------------------------
     def searchBook(self, filter_criteria: Optional[str] = None, filter_value: Optional[str] = None) -> Generator[Tuple[int, str, str, int, Optional[str]], None, None]:
         try:

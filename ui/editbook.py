@@ -493,6 +493,7 @@ class EditBook_UI:
             quantity = current_field_values['input_quantityEdit'],
             stage = current_field_values['input_stageEdit'],
             isbn= current_field_values['input_isbnEdit'],
+            warehouse_id = current_field_values['input_warehouse_idEdit']
         )
         return bookData
 
