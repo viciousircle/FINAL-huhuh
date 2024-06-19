@@ -499,7 +499,7 @@ class EditBook_UI:
 
     def deleteButtonClicked(self):
         
-        if QMessageBox.question(self.ui, "Message", "Are you sure you want to delete this book? This action cannot be undo. Note that this will not delete the book with your input edit without submitting the changes.",
+        if QMessageBox.question(self.ui, "Message", "Are you sure you want to delete this book with this warehouse ID? This action cannot be undone and the edit will be cancelled.",
                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
             self.deleteBook()
     
