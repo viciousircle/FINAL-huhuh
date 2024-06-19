@@ -52,6 +52,7 @@ class SearchBook_UI:
 
         self.setupFields()
         self.initial_field_values = {}
+        self.initial_find_values = {}
 
     def hideButtons(self, all: bool):
         self.ui.delete_btn.hide()
@@ -121,6 +122,10 @@ class SearchBook_UI:
 
             if search_results:
                 self.populateTableWithResults(search_results, filter_criteria)
+                self.initial_find_values = {
+                    'input_findSearch': search_query,
+                    'input_filterSearch': filter_criteria
+                }
 
                 
             else:
@@ -129,6 +134,9 @@ class SearchBook_UI:
         except Exception as e:
             print("Error searching book information:", e)
             self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
+
+    # def getInitialFindValues(self):
+        
 
     def populateTableWithResults(self, search_results, filter_criteria):
         # Display search results in the table
@@ -139,6 +147,9 @@ class SearchBook_UI:
         self.setTableHeaders(header_labels)
         self.fillTableWithData(search_results)
         self.adjustColumnWidths(self.ui.search_table)
+
+    # def updateTable(self, initial_find_values):
+    #     self.populateTableWithResults(self, initial_find_values['input_findSearch'], initial_find_values['input_filterSearch'])
 
     def getHeaderLabels(self, filter_criteria: str) -> list[str]:
         if filter_criteria in ["Book ID", "Title", "ISBN", "Warehouse ID", ""]:
@@ -272,257 +283,3 @@ class SearchBook_UI:
                 field.setValue(0)
             elif isinstance(field, QComboBox):
                 field.setCurrentIndex(-1)
-
-   
-    # def editButtonClicked(self):
-    #     try:
-    #         self.ui.search_table.clearSelection()
-            
-    #         selected_row = self.ui.search_table.currentRow()
-            
-    #         if selected_row == -1:
-    #             return
-            
-    #         self.highlightSelectedRow(selected_row)
-    #         self.enableDetailFields()
-    #         self.showEditOptions()
-            
-    #     except Exception as e:
-    #         print("Error editing book details:", e)
-            
-    #         self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
-
-    # def highlightSelectedRow(self, selected_row):
-    #     column_count = self.ui.search_table.columnCount()
-            
-    #     for col_idx in range(column_count):
-            
-    #         item = self.ui.search_table.item(selected_row, col_idx)
-            
-    #         if item:
-                
-    #             item.setBackground(QColor("#FFFF00"))  # Set background color to yellow
-
-
-    # def showEditOptions(self):
-    #     self.ui.edit_btn.hide()
-    #     self.ui.save_btn.show()
-    #     self.ui.cancel_btn.show()
-    #     self.ui.delete_btn.show()
-    #     self.ui.search_table.setDisabled(True)
-    #     self.ui.input_findSearch.setDisabled(True)
-    #     self.ui.input_filterSearch.setDisabled(True)
-    #     self.ui.find_btn.setDisabled(True)
-            
-    # def cancelButtonClicked(self):
-    #     try:
-    #         print("Cancelling changes...")
-
-    #         current_field_values = self.getCurrentFieldValues()
-            
-    #         if not self.areChangesMade(current_field_values):
-                
-    #             self.showMessageBox("Message", "No changes were made.", QMessageBox.Icon.Information)
-    #             self.resetUI()
-    #             self.disableDetailFields()
-
-    #             return
-
-    #         if QMessageBox.question(self.ui, 'Message', "Are you sure you want to cancel and discard changes?",
-    #                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
-                
-    #             self.resetUI()
-    #             self.disableDetailFields()
-                
-    #             for field_name, field_widget in self.input_fields.items():
-    #                 if field_name in self.initial_field_values:
-    #                     initial_value = self.initial_field_values[field_name]
-                        
-    #                     if isinstance(field_widget, QLineEdit):
-    #                         field_widget.setText(initial_value)
-                            
-    #                     elif isinstance(field_widget, QSpinBox):
-    #                         field_widget.setValue(int(initial_value))
-                            
-    #                     elif isinstance(field_widget, QComboBox):
-    #                         index = field_widget.findText(initial_value)
-                            
-    #                         if index != -1:
-    #                             field_widget.setCurrentIndex(index)
-
-                        
-
-    #     except Exception as e:
-    #         print("Error cancelling changes:", e)
-    #         self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
-
-    # def getCurrentFieldValues(self):
-    #     current_field_values = {
-    #             'input_titleEdit'           : self.ui.input_titleEdit.text(),
-    #             'input_authorEdit'          : self.ui.input_authorEdit.text(),
-    #             'input_isbnEdit'            : self.ui.input_isbnEdit.text(),
-    #             'input_yearEdit'            : self.ui.input_yearEdit.text(),  # No need for str() conversion
-    #             'input_compEdit'            : self.ui.input_compEdit.text(),
-    #             'input_warehouse_idEdit'    : self.ui.input_warehouse_idEdit.text(),  # No need for str() conversion
-    #             'input_quantityEdit'        : self.ui.input_quantityEdit.value(),
-    #             'input_stageEdit'           : self.ui.input_stageEdit.currentText()
-    #     }
-    #     return current_field_values
-
-    # def areChangesMade(self, current_field_values):
-    #     return current_field_values != self.initial_field_values
-
-    # def disableDetailFields(self):
-    #     for field_widget in self.input_fields.values():
-    #         if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-    #             field_widget.setReadOnly(True)
-
-    #         elif isinstance(field_widget, QComboBox):
-    #             field_widget.setEnabled(False)
-
-    # def enableDetailFields(self):
-    #     for field_widget in self.input_fields.values():
-    #         if isinstance(field_widget, QLineEdit) or isinstance(field_widget, QSpinBox):
-    #             field_widget.setReadOnly(False)
-
-    #         elif isinstance(field_widget, QComboBox):
-    #             field_widget.setEnabled(True)
-
-    # def resetUI(self):
-        
-    #     self.ui.search_table.setDisabled(False)
-    #     self.ui.input_findSearch.setDisabled(False)
-    #     self.ui.input_filterSearch.setDisabled(False)
-    #     self.ui.find_btn.setDisabled(False)
-
-    #     self.ui.search_table.clearSelection()
-
-    #     # Iterate through all rows to clear any highlighted rows
-    #     for row_idx in range(self.ui.search_table.rowCount()):
-    #         for col_idx in range(self.ui.search_table.columnCount()):
-                
-    #             item = self.ui.search_table.item(row_idx, col_idx)
-                
-    #             if item:
-    #                 item.setBackground(QColor(Qt.GlobalColor.white))  # Set background color back to white
-
-    #     self.hideButtons(False)
-
-    # def saveButtonClicked(self):
-    #     try:
-            
-    #         current_field_values = self.getCurrentFieldValues()
-        
-    #         if not self.areChangesMade(current_field_values):
-                
-    #             self.showMessageBox("Message", "You need to edit the fields to make changes.", QMessageBox.Icon.Information)
-
-    #             return
-            
-    #         confirm_save = QMessageBox.question(self.ui, "Save Changes", "Are you sure you want to save the changes?",
-    #                                             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-    #                                             QMessageBox.StandardButton.No)
-
-    #         if confirm_save == QMessageBox.StandardButton.Yes:
-                
-    #             admin_id = self.ui.admin_id.text()                  
-    #             updated_bookMarcData = self.createUpdatedBookMarcData() 
-    #             updated_bookData = self.createUpdatedBookData()
-
-    #             success, message = self.db_session.updateBook(admin_id,updated_bookMarcData, updated_bookData, self.old_bookMarcData, self.old_bookData)
-
-    #             if not success:
-    #                 print("Error saving changes:", message)
-    #                 self.showMessageBox("Error", message, QMessageBox.Icon.Critical)        
-    #                 return
-
-    #             self.disableDetailFields()
-    #             self.showMessageBox("Save Changes", "Changes saved successfully.", QMessageBox.Icon.Information)
-                
-    #             self.resetUI()
-    #             self.findButtonClicked(clear=False)
-                
-
-    #             from ui.showfile import ShowFile_UI
-    #             showfile = ShowFile_UI(self.ui, self.db_session)
-    #             showfile.updateBookMarcTable()
-    #             showfile.updateBookTable()
-                
-                
-    #         elif confirm_save == QMessageBox.StandardButton.No:                
-    #             return
-
-    #     except Exception as e:
-    #         print("Error saving changes:", e)
-            
-    #         QMessageBox.critical(self.ui, "Error", str(e))
-
-
-    # def createUpdatedBookMarcData(self):
-    #     return BooksBookMarcData(
-    #             title       =self.ui.input_titleEdit.text(),
-    #             author      =self.ui.input_authorEdit.text(),
-    #             isbn        =self.ui.input_isbnEdit.text(),
-    #             public_year =int(self.ui.input_yearEdit.text()),
-    #             public_comp =self.ui.input_compEdit.text(),
-    #             book_id     =self.old_bookMarcData.book_id
-    #         )
-    
-    # def createUpdatedBookData(self):
-    #     return BooksBookData(
-    #             warehouse_id=int(self.ui.input_warehouse_idEdit.text()),
-    #             quantity    =self.ui.input_quantityEdit.value(),
-    #             stage       =self.ui.input_stageEdit.currentText(),
-    #             book_id     =self.old_bookData.book_id,
-    #             isbn        =self.ui.input_isbnEdit.text()
-    #         )
-    
-    # def deleteButtonClicked(self):
-    #     try:
-            
-    #         selected_row = self.ui.search_table.currentRow()
-    #         if selected_row == -1:
-    #             self.showMessageBox("Error", "Please select a book to delete.", QMessageBox.Icon.Warning)
-    #             return
-
-    #         book_id_item = self.ui.search_table.item(selected_row, 0)
-    #         book_id     = int(book_id_item.text())
-    #         if book_id is None:
-    #             return
-            
-    #         admin_id    = self.ui.admin_id.text()
-
-    #         confirmation = QMessageBox.question(self.ui, 'Message', "Are you sure you want to delete this book?",
-    #                                             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-            
-    #         if confirmation == QMessageBox.StandardButton.Yes:
-    #             warehouse_id = self.ui.input_warehouse_idEdit.text()
-
-    #             success, message = self.db_session.deleteBook(warehouse_id,book_id, admin_id)
-    #             if not success:
-    #                 print("Error deleting book:", message)
-    #                 self.showMessageBox("Error", message, QMessageBox.Icon.Critical)                    
-    #                 return
-
-    #             self.showMessageBox("Delete Book", "Book deleted successfully.", QMessageBox.Icon.Information)
-
-    #             self.findButtonClicked()
-    #             self.disableDetailFields()
-    #             self.hideButtons(True)
-    #             self.ui.input_findSearch.setDisabled(False)
-    #             self.ui.input_filterSearch.setDisabled(False)
-    #             self.ui.search_table.setDisabled(False)
-    #             self.ui.find_btn.setDisabled(False)
-
-    #             from ui.showfile import ShowFile_UI
-    #             showfile = ShowFile_UI(self.ui, self.db_session)
-    #             showfile.updateBookMarcTable()
-    #             showfile.updateBookTable()
-                
-    #         elif confirmation == QMessageBox.StandardButton.No:
-    #             return                
-
-    #     except Exception as e:
-    #         print("Error deleting book:", e)
-    #         self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
-    

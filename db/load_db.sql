@@ -2,12 +2,25 @@
 USE LMS;
 GO
 
+USE master;
+GO
+
+DROP DATABASE LMS;
+
 SELECT * FROM users.account;
 SELECT * FROM users.history;
 SELECT * FROM users.guest;
 SELECT * FROM books.bookMarc;
 SELECT * FROM books.book;
+GO
 
+
+
+UPDATE books.book SET isbn = '0000' WHERE isbn = '9780743273565';
+UPDATE books.bookMarc SET isbn = '0000' WHERE isbn = '9780743273565';
+
+
+GO
 sp_help 'users.account';
 GO 
 sp_help 'users.history';

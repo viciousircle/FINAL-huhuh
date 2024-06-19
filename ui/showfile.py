@@ -46,7 +46,6 @@ class ShowFile_UI:
         
         
     def showFileBookMarc(self):
-        print("Show File BookMarc.....")
         data = list(self.db_session.showFileBookMarc())
 
         self.ui.bookMarc_table.setRowCount(len(data))
@@ -72,7 +71,6 @@ class ShowFile_UI:
 
         self.ui.bookMarc_table.resizeColumnsToContents()
         self.adjustColumnWidths(self.ui.bookMarc_table)
-        print("Done Show File BookMarc.....")
 
     def showFileBook(self):
         print("Show File Book.....")
@@ -101,7 +99,6 @@ class ShowFile_UI:
 
         self.ui.book_table.resizeColumnsToContents()
         self.adjustColumnWidths(self.ui.book_table)
-        print("Done Show File Book.....")
     
     def adjustColumnWidths(self, table_widget: QTableWidget):
         # Set the header to resize to fill the available space
@@ -112,13 +109,9 @@ class ShowFile_UI:
         table_widget.resizeRowsToContents()
 
     def updateBookMarcTable(self):
-        print("Update BookMarc Table.....")
         self.ui.bookMarc_table.clearContents()
         self.showFileBookMarc()
-        print("Done Update BookMarc Table.....")
     
     def updateBookTable(self):
-        print("Update Book Table.....")
         self.ui.book_table.clearContents()
         self.showFileBook()
-        print("Done Update Book Table.....")

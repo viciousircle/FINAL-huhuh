@@ -49,7 +49,7 @@ class AddBook_UI:
         self.ui.cancel_btnAdd.clicked.connect(self.cancelButtonClicked)
         # self.ui.check_btn.clicked.connect(self.enterButtonClicked)
 
-        self.ui.input_isbnAdd.editingFinished.connect(self.isbnEdited)
+        # self.ui.input_isbnAdd.editingFinished.connect(self.isbnEdited)
 
 
 
@@ -60,6 +60,7 @@ class AddBook_UI:
 
         self.hideSubmitButtons(True)
         self.hideInputFields()
+        self.ui.input_isbnAdd.setEnabled(True)
 
         # self.check_btn.hide()
 
@@ -216,6 +217,9 @@ class AddBook_UI:
             self.hideSubmitButtons(all=True)
             self.isbn_checked = True
             self.previous_isbn = isbn
+            self.ui.input_isbnAdd.editingFinished.connect(self.isbnEdited)
+            
+
 
         except Exception as e:
             self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
@@ -326,6 +330,7 @@ class AddBook_UI:
 
             if reply == QMessageBox.StandardButton.Yes:
                 self.submitBook()
+                self.initialize()
 
             else:
                 return
@@ -337,8 +342,9 @@ class AddBook_UI:
         
     def submitBook(self):
         admin_id = self.ui.admin_id.text()
-        isbn = self.ui.input_isbnAdd.text().strip()
+        isbn = self.ui.input_isbnAdd.text()
         existing_book, error = self.db_session.getBookByISBN(isbn)
+        print(existing_book)
         if existing_book:
             bookData = BooksBookData(
                 isbn = isbn,
@@ -430,6 +436,7 @@ class AddBook_UI:
 
             if reply == QMessageBox.StandardButton.Yes:
                 self.refreshFields()
+                self.initialize()
             else:
                 return
             

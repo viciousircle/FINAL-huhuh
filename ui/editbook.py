@@ -470,14 +470,23 @@ class EditBook_UI:
             self.disableEditFields(full=True)
             self.enableSearchBar()
             
-            from ui import ShowFile_UI
-            showfile = ShowFile_UI(self.ui, self.db_session)
-            showfile.updateBookMarcTable()
-            showfile.updateBookTable()
+            # from ui import ShowFile_UI
+            # showfile = ShowFile_UI(self.ui, self.db_session)
+            # showfile.updateBookMarcTable()
+            
+            # from ui import SearchBook_UI   
+            # searchbook = SearchBook_UI(self.ui, self.db_session)
+            # searchbook.updateSearchTable()
+
+            from ui import SearchBook_UI
+            searchbook = SearchBook_UI(self.ui, self.db_session)
+            searchbook.findButtonClicked()
 
         except Exception as e:
             print("Error saving changes:", e)
             self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
+
+    
 
     def getBookMarcData(self, current_field_values):
         bookMarcData = BooksBookMarcData(
@@ -526,10 +535,10 @@ class EditBook_UI:
             self.enableSearchBar()
             
             self.ui.search_table.removeRow(selected_row)
-            from ui import ShowFile_UI
-            showfile = ShowFile_UI(self.ui, self.db_session)
-            showfile.updateBookMarcTable()
-            showfile.updateBookTable()
+            # from ui import ShowFile_UI
+            # showfile = ShowFile_UI(self.ui, self.db_session)
+            # showfile.updateBookMarcTable()
+            # showfile.updateBookTable()
 
         except Exception as e:
             print("Error deleting book:", e)

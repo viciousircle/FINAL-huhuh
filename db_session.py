@@ -158,6 +158,8 @@ class DBSession:
             "INSERT INTO books.book (book_id, isbn, quantity, stage) VALUES (?, ?, ?, ?)",
             (book_id, bookData.isbn, bookData.quantity, bookData.stage)
         )          
+        self.connection.commit()
+        
                 
     # --- EDIT BOOK FUNCTION ------------------------------------------
     def getBookById(self, book_id: int) -> Optional[Tuple[BooksBookMarcData, BooksBookData]]:
@@ -260,6 +262,26 @@ class DBSession:
             # Start a transaction by ensuring auto-commit is off
             self.connection.autocommit = False
 
+            # Update BookData if old data is provided and there are changes
+            if old_bookData is not None:
+                if bookData.isbn != old_bookData.isbn:   
+                    update_query = "UPDATE books.book SET isbn = ? WHERE isbn = ?"
+                    self.cursor.execute(update_query, (bookData.isbn, old_bookData.isbn))
+                update_query = "UPDATE books.book SET "
+                params = []
+                if bookData.quantity != old_bookData.quantity:
+                    update_query += "quantity = ?, "
+                    params.append(bookData.quantity)
+                if bookData.stage != old_bookData.stage:
+                    update_query += "stage = ?, "
+                    params.append(bookData.stage)
+                if update_query.endswith(", "):
+                        update_query = update_query[:-2]
+                        update_query += " WHERE warehouse_id = ?"
+                        params.append(bookData.warehouse_id)
+                        self.cursor.execute(update_query, params)
+
+
             # Update BookMarcData if old data is provided and there are changes
             if old_bookMarcData is not None:
                 update_query = "UPDATE books.bookMarc SET "
@@ -276,11 +298,8 @@ class DBSession:
                     if self.cursor.fetchone()[0] > 0:
                         self.connection.rollback()
                         return (False, f"ISBN {bookMarcData.isbn} is already assigned to another book.")
-                    
-                    # Update ISBN in books.book first to avoid foreign key conflict
-                    self.cursor.execute("UPDATE books.bookMarc SET isbn = ? WHERE isbn = ?", (bookMarcData.isbn, old_bookMarcData.isbn))
-                    self.cursor.execute("UPDATE books.book SET isbn = ? WHERE isbn = ?", (bookMarcData.isbn, old_bookMarcData.isbn))
-                    
+                    update_query += "isbn = ?, "
+                    params.append(bookMarcData.isbn)
                 if bookMarcData.public_year != old_bookMarcData.public_year:
                     update_query += "public_year = ?, "
                     params.append(bookMarcData.public_year)
@@ -291,25 +310,6 @@ class DBSession:
                     update_query = update_query[:-2]  # Remove the trailing comma and space
                     update_query += " WHERE isbn = ?"
                     params.append(old_bookMarcData.isbn)
-                    self.cursor.execute(update_query, params)
-
-            # Update BookData if old data is provided and there are changes
-            if old_bookData is not None:
-                update_query = "UPDATE books.book SET "
-                params = []
-                if bookData.quantity != old_bookData.quantity:
-                    update_query += "quantity = ?, "
-                    params.append(bookData.quantity)
-                if bookData.stage != old_bookData.stage:
-                    update_query += "stage = ?, "
-                    params.append(bookData.stage)
-                if bookData.isbn != old_bookData.isbn:
-                    update_query += "isbn = ?, "
-                    params.append(bookData.isbn)
-                if update_query.endswith(", "):
-                    update_query = update_query[:-2]
-                    update_query += " WHERE warehouse_id = ? AND book_id = ?"
-                    params.extend([old_bookData.warehouse_id, old_bookData.book_id])
                     self.cursor.execute(update_query, params)
 
             # Commit the transaction if all updates succeed

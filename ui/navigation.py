@@ -39,6 +39,8 @@ class Navigation_UI:
             self.ui.open_btn,
         ]
 
+        self.ui.open_btn.clicked.connect(self.updateFile)
+
         # Add page
         self.ui.add_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.add_page))
         # Search page
@@ -96,6 +98,15 @@ class Navigation_UI:
         button.setDisabled(True)
         
         self.lastClickedNavButton = button
+
+    def updateFile(self):
+        from ui import ShowFile_UI
+        showfile = ShowFile_UI(self.ui, self.db_session)
+        showfile.updateBookMarcTable()
+        showfile.updateBookTable()
+
+
+
 
     
     

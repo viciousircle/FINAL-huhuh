@@ -19,6 +19,13 @@ GO
 
 DROP DATABASE LMS;
 
+DROP TABLE users.account;
+DROP TABLE users.history;
+DROP TABLE users.guest;
+DROP TABLE books.bookMarc;
+DROP TABLE books.book;
+
+
 -- Create the account table for users
 CREATE TABLE users.account (
     admin_id    VARCHAR(20) PRIMARY KEY,
@@ -54,7 +61,7 @@ CREATE TABLE books.bookMarc (
     public_year INT,
     public_comp VARCHAR(255),
     isbn        VARCHAR(25),
-    PRIMARY KEY (book_id, isbn)
+    PRIMARY KEY (book_id)
 );
 GO
 
@@ -65,6 +72,6 @@ CREATE TABLE books.book (
     isbn            VARCHAR(25),
     quantity        INT NOT NULL,
     stage           VARCHAR(100),
-    FOREIGN KEY (book_id,isbn) REFERENCES books.bookMarc(book_id,isbn)
+    FOREIGN KEY (book_id) REFERENCES books.bookMarc(book_id)
 );
 GO
