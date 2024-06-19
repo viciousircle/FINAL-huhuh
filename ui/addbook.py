@@ -213,6 +213,13 @@ class AddBook_UI:
                 self.setPlaceholderText(self.ui.input_compAdd, "Enter the publisher")
                 self.setPlaceholderText(self.ui.input_yearAdd, "Enter the publication year")
 
+                self.setEnabledStyle(self.ui.input_titleAdd)
+                self.setEnabledStyle(self.ui.input_authorAdd)
+                self.setEnabledStyle(self.ui.input_compAdd)
+                self.setEnabledStyle(self.ui.input_yearAdd)
+                self.setEnabledStyle(self.ui.input_quantityAdd)
+                self.setEnabledStyle(self.ui.input_stageAdd)
+                
             
             self.hideSubmitButtons(all=True)
             self.isbn_checked = True

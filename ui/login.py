@@ -42,11 +42,7 @@ class Login_UI(QMainWindow):
         # Move to admin page and guest page when the buttons 'adminBtn' and 'guestBtn' are clicked
         self.ui.adminBtn.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_admin))
         self.ui.guestBtn.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_guest))
-        
-        # Move to welcome page when the buttons 'backBtnLogIn' and 'backBtn' are clicked
-        self.ui.backBtnLogIn.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_welcome))
-        self.ui.backBtn.clicked.connect(lambda: self.ui.login_widget.setCurrentWidget(self.ui.page_welcome))
-        
+       
         self.setup_connections()
 
     
@@ -61,7 +57,7 @@ class Login_UI(QMainWindow):
         # Check if username and password are correct
         if admin_data is not None:
             from mainwindow import MainWindow_UI
-            main_window = MainWindow_UI(self.db_session, admin_data.admin_id, admin_data.admin_name)  
+            main_window = MainWindow_UI(self.db_session, admin_data.admin_id, admin_data.admin_name, None, guest=False)  
             main_window.show()
             self.close()
         else:
@@ -73,16 +69,28 @@ class Login_UI(QMainWindow):
         if guest_name == "":
             QMessageBox.critical(self, "Enter Failed", "You need enter your name first. Please try again.")  
         else:
+            self.db_session.recordGuestLogIn(guest_name)
             from mainwindow import MainWindow_UI
-            main_window = MainWindow_UI(self.db_session)  
+            main_window = MainWindow_UI(self.db_session, None, None, guest_name, guest=True)  
             main_window.show()
             self.close()
 
     def setup_connections(self):
         self.ui.loginBtn.clicked.connect(self.handle_login)
         self.ui.enterBtn.clicked.connect(self.handle_enter)
-        
-# ---------------------------------------------------------
+
+        self.ui.backBtn.clicked.connect(self.backButtonClicked)
+        self.ui.backBtnLogIn.clicked.connect(self.backButtonClicked)
+
+
+    def backButtonClicked(self): 
+        result = QMessageBox.question(self, "Back", "Are you sure you want to go back? This will remove all the signed data.", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if result == QMessageBox.StandardButton.Yes:
+            self.ui.login_widget.setCurrentWidget(self.ui.page_welcome)
+            self.ui.input_id.clear()
+            self.ui.input_pass.clear()
+            self.ui.input_name.clear()
+        return
 
 # ----- MAIN FUNCTION -------------------------------------
 if __name__ == '__main__':

@@ -8,14 +8,12 @@ from PyQt6 import uic
 import sys
 import os
 from pathlib import Path
-# Ensure the project root is in the system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from db_session import DBSession
 
-from ui import Navigation_UI, ShowFile_UI, EditBook_UI, AddBook_UI, SearchBook_UI
+from ui import Navigation_UI, ShowFile_UI, EditBook_UI, AddBook_UI, SearchBook_UI, Home_UI
 
-# ------------------------------------------------------------
 
 # ---------MAINWINDOW_UI CLASS--------------------------------
 
@@ -23,7 +21,7 @@ class MainWindow_UI(QMainWindow):
     
     DESIGNER_FILE: str = "mainwindow.ui"
 
-    def __init__(self, db_session: DBSession, account_id: Optional[str] = None, account_name: Optional[str] = None) -> None:
+    def __init__(self, db_session: DBSession, account_id: Optional[str] = None, account_name: Optional[str] = None, guest_name: Optional[str] = None, guest: Optional[bool] = False):
         
         super().__init__()        
         self.db_session = db_session
@@ -31,71 +29,47 @@ class MainWindow_UI(QMainWindow):
         designer_files_path = Path(__file__).resolve().parent.joinpath("designer-files", self.DESIGNER_FILE)
         self.ui = uic.loadUi(designer_files_path, self)
         
-        self.adminRecord(account_id, account_name)
-        self.connectModules()
-        self.connectSignals()
+        if guest:
+            self.guestWindow(guest_name)
+        else:
+            self.adminWindow(account_id, account_name)
 
-        self.setupUi()
-    
         self.show()
 
-    def connectModules(self):
-        # Connect modules
+    def guestWindow(self, guest_name):
+        self.guestRecord(guest_name)
+        self.connectModulesForGuest()
+        self.ui.add_btn.hide()
+
+    def adminWindow(self, account_id, account_name):
+        self.adminRecord(account_id, account_name)
+        self.connectModulesForAdmin()
+
+    def connectModulesForAdmin(self):
         self.navigation = Navigation_UI(self.ui, self.db_session)
         self.addbook = AddBook_UI(self.ui, self.db_session)
         self.searchbook = SearchBook_UI(self.ui, self.db_session)
         self.showfile = ShowFile_UI(self.ui, self.db_session)
         self.editbook = EditBook_UI(self.ui, self.db_session)
+        self.home = Home_UI(self.ui, self.db_session)
 
-    def connectSignals(self):
-        # self.editbook.hideButtons(all=True)
-        pass
+    def connectModulesForGuest(self):
+        self.navigation = Navigation_UI(self.ui, self.db_session)
+        self.showfile = ShowFile_UI(self.ui, self.db_session)
+        self.searchbook = SearchBook_UI(self.ui, self.db_session)
+        self.home = Home_UI(self.ui, self.db_session)
 
-    def pageButtonClicked(self, button):
-        if self.lastClickedPageButton is not None:
-            self.lastClickedPageButton.setStyleSheet("""
-                QPushButton{
-                    border: 2px solid black;
-                    color: black;
-                }
-                QPushButton:hover{
-                    border: 2px solid #560bad;
-                    color: #560bad;
-                }
-            """)
-            self.lastClickedPageButton.setDisabled(False)
-        
-        button.setStyleSheet("""
-            QPushButton{
-                border: 2px solid grey;
-                color: grey;
-            }
-        """)
-        button.setDisabled(True)
-        
-        self.lastClickedPageButton = button
-    
     def adminRecord(self, account_id, account_name):
-        # Show admin id and name in the navigation bar
         self.account_id = account_id
         self.account_name = account_name
         self.ui.admin_id.setText(self.account_id)
         self.ui.admin_name.setText(self.account_name)
-        
-    def setupUi(self):
-        self.setFixedSize(1400, 630)  
 
+    def guestRecord(self, guest_name):
+        self.guest_name = guest_name
+        self.ui.admin_id.setText("Guest")
+        self.ui.admin_name.setText(self.guest_name)
         
-        # Set up the page buttons
-        self.lastClickedPageButton: Optional[QPushButton] = None
-        for button in self.showfile.buttons_open:
-            button.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
-            
-        # self.searchbook.ui.edit_btn.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
-        
-        # Set home page as default page
-        self.navigation.navigationButtonClicked(self.ui.home_btn)
-            
 # ---------MAIN-----------------------------------------------
 
 if __name__ == "__main__":
@@ -106,15 +80,3 @@ if __name__ == "__main__":
     widget.show()
     sys.exit(app.exec())
 
-
-# ---------MAIN-----------------------------------------------
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    
-    db_session_instance = DBSession()
-    widget = MainWindow_UI(db_session_instance)
-    widget.show()
-    sys.exit(app.exec())
-    
-# ------------------------------------------------------------

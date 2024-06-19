@@ -490,6 +490,29 @@ class DBSession:
         except Exception as err:
             raise err
         
+    def countNumberOfBooks(self) -> int:
+        try:
+            self.cursor.execute("SELECT COUNT(*) FROM books.bookMarc")
+            return self.cursor.fetchone()[0]
+        except Exception as err:
+            raise err
+        
+    def countQuantityOfBooks(self) -> int:
+        try:
+            self.cursor.execute("SELECT SUM(quantity) FROM books.book")
+            return self.cursor.fetchone()[0]
+        except Exception as err:
+            raise err
+        
+    def get10NewAddedBooks(self) -> Generator[BooksBookMarcData, None, None]:
+        try:
+            query = "SELECT * FROM books.bookMarc ORDER BY book_id DESC LIMIT 10"
+            self.cursor.execute(query)
+            for row in self.cursor.fetchall():
+                yield BooksBookMarcData(*row)
+        except Exception as err:
+            raise err
+        
 
     def close(self) -> None:
         self.cursor.close()

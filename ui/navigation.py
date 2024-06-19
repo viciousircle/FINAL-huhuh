@@ -30,6 +30,10 @@ class Navigation_UI:
         self.ui         = ui
         # Linking database session
         self.db_session = db_session
+
+        self.lastClickedNavButton: Optional[QPushButton] = None
+        self.navigationButtonClicked(self.ui.home_btn)
+
         
         # List of buttons in the navigation bar
         self.buttons_nav = [
@@ -58,6 +62,10 @@ class Navigation_UI:
         
         for button in self.buttons_nav:
             button.clicked.connect(lambda checked, b=button: self.navigationButtonClicked(b))
+
+        self.lastClickedNavButton: Optional[QPushButton] = None
+        self.navigationButtonClicked(self.ui.home_btn)
+
         
     def comfirmLogOut(self):
         
@@ -98,6 +106,7 @@ class Navigation_UI:
         button.setDisabled(True)
         
         self.lastClickedNavButton = button
+
 
     def updateFile(self):
         from ui import ShowFile_UI

@@ -39,6 +39,7 @@ class SearchBook_UI:
 
         self.connectSignals()
         self.initialize()
+
         
     def connectSignals(self):
 
@@ -227,7 +228,10 @@ class SearchBook_UI:
             
             self.setDataFields(bookMarcData, bookData, warehouse_id)
 
-            self.hideButtons(all=False)
+            if self.ui.admin_id.text() == "Guest":
+                self.hideButtons(all=True)
+            else:
+                self.hideButtons(all=False)
             self.ui.detail_box.show()
             self.disableEditFields()
 

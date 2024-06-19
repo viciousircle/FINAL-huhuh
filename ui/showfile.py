@@ -2,7 +2,7 @@
 from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QStackedWidget, QWidget, QHeaderView
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
-
+from typing import Optional
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -36,6 +36,10 @@ class ShowFile_UI:
             self.ui.show_file_Book,
         ]
         
+        self.lastClickedPageButton: Optional[QPushButton] = None
+        for button in self.buttons_open:
+            button.clicked.connect(lambda checked, b=button: self.pageButtonClicked(b))
+
         # Link database to the table files
         self.ui.show_file_BookMarc.clicked.connect(self.showFileBookMarc)
         self.ui.show_file_Book.clicked.connect(self.showFileBook)
@@ -115,3 +119,27 @@ class ShowFile_UI:
     def updateBookTable(self):
         self.ui.book_table.clearContents()
         self.showFileBook()
+
+    def pageButtonClicked(self, button):
+        if self.lastClickedPageButton is not None:
+            self.lastClickedPageButton.setStyleSheet("""
+                QPushButton{
+                    border: 2px solid black;
+                    color: black;
+                }
+                QPushButton:hover{
+                    border: 2px solid #560bad;
+                    color: #560bad;
+                }
+            """)
+            self.lastClickedPageButton.setDisabled(False)
+        
+        button.setStyleSheet("""
+            QPushButton{
+                border: 2px solid grey;
+                color: grey;
+            }
+        """)
+        button.setDisabled(True)
+        
+        self.lastClickedPageButton = button
