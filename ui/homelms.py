@@ -15,7 +15,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from db.db_session import DBSession
-from db.lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
+from db.lms_types import UsersAccountData,  BooksBookMarcData, BooksBookData, ExecuteResult
 
 class Home_UI:
 
