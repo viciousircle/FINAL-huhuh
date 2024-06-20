@@ -8,7 +8,6 @@ from pathlib import Path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from db_session import DBSession
-# ---------------------------------------------------------
 
 # ---------LOGIN_UI CLASS--------------------------------
 class Login_UI(QMainWindow):
@@ -50,8 +49,8 @@ class Login_UI(QMainWindow):
         
     def handle_login(self):
         
-        admin_id        = self.ui.input_id.text()
-        admin_password  = self.ui.input_pass.text()
+        admin_id        = str(self.ui.input_id.text())
+        admin_password  = str(self.ui.input_pass.text())
         admin_data      = self.db_session.logIn(admin_id, admin_password)
 
         # Check if username and password are correct
@@ -69,7 +68,7 @@ class Login_UI(QMainWindow):
         if guest_name == "":
             QMessageBox.critical(self, "Enter Failed", "You need enter your name first. Please try again.")  
         else:
-            self.db_session.recordGuestLogIn(guest_name)
+            # self.db_session.recordGuestLogIn(guest_name)
             from mainwindow import MainWindow_UI
             main_window = MainWindow_UI(self.db_session, None, None, guest_name, guest=True)  
             main_window.show()

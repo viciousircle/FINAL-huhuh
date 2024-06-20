@@ -676,7 +676,7 @@ QPushButton::after{
         <rect>
          <x>270</x>
          <y>90</y>
-         <width>571</width>
+         <width>561</width>
          <height>81</height>
         </rect>
        </property>
@@ -773,10 +773,10 @@ QPushButton::after{
       <widget class="QTableWidget" name="new_books_table">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>210</y>
+         <x>30</x>
+         <y>280</y>
          <width>951</width>
-         <height>291</height>
+         <height>211</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -831,8 +831,8 @@ QPushButton::after{
       <widget class="QLabel" name="logo_11">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>160</y>
+         <x>450</x>
+         <y>220</y>
          <width>141</width>
          <height>51</height>
         </rect>

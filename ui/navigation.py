@@ -43,7 +43,8 @@ class Navigation_UI:
             self.ui.open_btn,
         ]
 
-        self.ui.open_btn.clicked.connect(self.updateFile)
+        self.ui.open_btn.clicked.connect(self.updateOpenFilesPage)
+        self.ui.home_btn.clicked.connect(self.updateHomePages)
 
         # Add page
         self.ui.add_btn.clicked.connect(lambda: self.ui.main_stackedWidget.setCurrentWidget(self.ui.add_page))
@@ -108,12 +109,18 @@ class Navigation_UI:
         self.lastClickedNavButton = button
 
 
-    def updateFile(self):
+    def updateOpenFilesPage(self):
         from ui import ShowFile_UI
         showfile = ShowFile_UI(self.ui, self.db_session)
         showfile.updateBookMarcTable()
         showfile.updateBookTable()
 
+    def updateHomePages(self):
+        from ui import Home_UI
+        home = Home_UI(self.ui, self.db_session)
+        home.showNumberOfBooks()
+        home.showQuantityOfBooks()
+        home.showNewAddedBooks()
 
 
 

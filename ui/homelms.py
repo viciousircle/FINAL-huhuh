@@ -41,32 +41,31 @@ class Home_UI:
 
 
     def showNewAddedBooks(self):
-        new_books = self.db_session.get10NewAddedBooks()
+        data = list(self.db_session.get10NewAddedBooks())
+        self.ui.new_books_table.setRowCount(len(data))
+
+        column_headers = ["Book ID", "Title", "Author", "Public Year", "Public Company", "ISBN"]
+
+        self.ui.new_books_table.setColumnCount(len(column_headers))
+
+        for col_idx, header in enumerate(column_headers):
+            item = QTableWidgetItem(header)
+            font = item.font()
+            font.setBold(True)
+            item.setFont(font)
+            self.ui.new_books_table.setHorizontalHeaderItem(col_idx, item)
+
+        for row_idx, row_data in enumerate(data):
+            for col_idx, cell_data in enumerate(BooksBookMarcData.__annotations__):
+                value = getattr(row_data, cell_data)
+                item = QTableWidgetItem(str(value))
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.ui.new_books_table.setItem(row_idx, col_idx, item)
         
+        self.ui.new_books_table.resizeColumnsToContents()
+        self.adjustColumnWidths(self.ui.new_books_table)
 
 
-        # self.ui.new_books_table.setRowCount(len(new_books))
-        # # Set the column headers explicitly
-        # column_headers = ["Book ID", "Title", "Author", "Public Year", "Public Company", "ISBN"]
-        # self.ui.new_books_table.setColumnCount(len(column_headers))
-
-        # # Set column headers
-        # for col_idx, header in enumerate(column_headers):
-        #     item = QTableWidgetItem(header)
-        #     font = item.font()
-        #     font.setBold(True)
-        #     item.setFont(font)
-        #     self.ui.new_books_table.setHorizontalHeaderItem(col_idx, item)
-
-        # for row_idx, book_marc_data in enumerate(new_books):
-        #     for col_idx, field_name in enumerate(BooksBookMarcData.__annotations__):
-        #         value   = getattr(book_marc_data, field_name)
-        #         item    = QTableWidgetItem(str(value))
-        #         item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-        #         self.ui.new_books_table.setItem(row_idx, col_idx, item)
-
-        # self.ui.new_books_table.resizeColumnsToContents()
-        # self.adjustColumnWidths(self.ui.new_books_table)
 
     def adjustColumnWidths(self, table_widget: QTableWidget):
         # Set the header to resize to fill the available space

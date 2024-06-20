@@ -1,11 +1,9 @@
-from PyQt6.QtWidgets import QPushButton, QMessageBox, QComboBox, QLineEdit, QDateEdit, QSpinBox
-from PyQt6.QtCore import QDate, QRegularExpression, Qt, pyqtSignal
+from PyQt6.QtWidgets import QPushButton, QMessageBox, QComboBox, QLineEdit, QSpinBox
+from PyQt6.QtCore import QRegularExpression
 from PyQt6.QtGui import QRegularExpressionValidator, QIntValidator
-from datetime import datetime
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from db_session import DBSession
 from lms_types import BooksBookMarcData, BooksBookData
 
@@ -22,8 +20,9 @@ class AddBook_UI:
     submit_btn         : QPushButton
     cancel_btnAdd      : QPushButton
     enter_btn          : QPushButton
-    # check_btn          : QPushButton
     
+    
+
     def __init__(self, ui, db_session: DBSession):
         self.ui = ui
         self.db_session = db_session
@@ -32,106 +31,20 @@ class AddBook_UI:
         self.setupFields()
         self.initialize()
 
-
-        
-    
-    def connectSignals(self):
-        
-        # self.ui.input_isbnAdd = ClickableLineEdit()
-
-        # self.ui.input_isbnAdd.clicked.connect(self.ensureChangeISBN)
-
-        self.textChanged()
-        # self.showCheckButton()
-
-        self.ui.enter_btn.clicked.connect(self.enterButtonClicked)
-        self.ui.submit_btn.clicked.connect(self.submitButtonClicked)
-        self.ui.cancel_btnAdd.clicked.connect(self.cancelButtonClicked)
-        # self.ui.check_btn.clicked.connect(self.enterButtonClicked)
-
-        # self.ui.input_isbnAdd.editingFinished.connect(self.isbnEdited)
-
-
-
-    
     def initialize(self):
         
         self.isbn_checked = True
 
         self.hideSubmitButtons(True)
         self.hideInputFields()
-        self.ui.input_isbnAdd.setEnabled(True)
+        self.setEnabledStyle(self.ui.input_isbnAdd)
 
-        # self.check_btn.hide()
+    def connectSignals(self):
+        self.textChanged() 
+        self.ui.enter_btn.clicked.connect(self.enterButtonClicked)
+        self.ui.submit_btn.clicked.connect(self.submitButtonClicked)
+        self.ui.cancel_btnAdd.clicked.connect(self.cancelButtonClicked)
 
-    def hideSubmitButtons(self, all: bool):
-        self.ui.submit_btn.hide()
-        self.ui.cancel_btnAdd.hide()
-        if all:
-            self.ui.enter_btn.hide()
-        else:
-            self.ui.enter_btn.show()
-
-    def hideInputFields(self):
-        
-        self.ui.input_titleAdd.hide()
-        self.ui.input_authorAdd.hide()
-        self.ui.input_compAdd.hide()
-        self.ui.input_yearAdd.hide()
-        self.ui.input_quantityAdd.hide()
-        self.ui.input_stageAdd.hide()
-
-        self.ui.title.hide()
-        self.ui.author.hide()
-        self.ui.public_comp.hide()
-        self.ui.public_year.hide()
-        self.ui.quantity.hide()
-        self.ui.stage.hide()
-
-    def setupFields(self):
-
-        self.previous_isbn = ""
-            
-        # Set up the input fields
-        self.detail_fields = [
-            self.ui.input_isbnAdd,
-            self.ui.input_titleAdd,
-            self.ui.input_authorAdd,
-            self.ui.input_compAdd,
-            self.ui.input_yearAdd
-        ]
-
-        self.input_fields = {
-            "input_titleAdd": self.ui.input_titleAdd,
-            "input_authorAdd": self.ui.input_authorAdd,
-            "input_isbnAdd": self.ui.input_isbnAdd,
-            "input_compAdd": self.ui.input_compAdd,
-            "input_yearAdd": self.ui.input_yearAdd,
-            "input_quantityAdd": self.ui.input_quantityAdd,
-            "input_stageAdd": self.ui.input_stageAdd
-        }
-
-        self.ui.input_isbnAdd.setMaxLength(13)
-        isbn_validator = QRegularExpressionValidator(QRegularExpression(r'^\d{1,13}$'), self.ui.input_isbnAdd)
-        self.ui.input_isbnAdd.setValidator(isbn_validator)
-
-        self.ui.input_titleAdd.setMaxLength(100)
-        self.ui.input_authorAdd.setMaxLength(100)
-        self.ui.input_compAdd.setMaxLength(100)
-        self.ui.input_yearAdd.setValidator(QIntValidator(1000, 9999))
-        self.ui.input_quantityAdd.setMaximum(999999)  
-
-    def showNotification(self, message: str):
-        self.ui.messageAdd.setText(message)
-        self.ui.messageAdd.show()
-
-    def showMessageBox(self, title:str, message:str, icon: QMessageBox.Icon):
-        msg = QMessageBox()
-        msg.setWindowTitle(title)
-        msg.setText(message)
-        msg.setIcon(icon)
-        msg.exec()
-        
     def textChanged(self):
         self.ui.input_isbnAdd.textChanged.connect(self.validateISBN)
         
@@ -148,15 +61,8 @@ class AddBook_UI:
         self.ui.input_yearAdd.textChanged.connect(self.checkAllInputFieldsEmpty)
         self.ui.input_quantityAdd.valueChanged.connect(self.checkAllInputFieldsEmpty)
         self.ui.input_stageAdd.currentIndexChanged.connect(self.checkAllInputFieldsEmpty)
-        
 
-
-
-
-    
     def validateISBN(self, text: str):
-
-
 
         if len(text.strip()) == 13:
             self.ui.input_isbnAdd.setStyleSheet("""
@@ -181,12 +87,99 @@ class AddBook_UI:
 
         self.hideSubmitButtons(False)
 
+    def checkAllInputFieldsEmpty(self):
+        all_empty = (
+            self.ui.input_titleAdd.text().strip() == "" and
+            self.ui.input_authorAdd.text().strip() == "" and
+            self.ui.input_compAdd.text().strip() == "" and
+            self.ui.input_yearAdd.text().strip() == "" and
+            self.ui.input_quantityAdd.value() == 0 and
+            self.ui.input_stageAdd.currentIndex() == -1
+        )
+        if all_empty:
+            self.hideSubmitButtons(True)
+            return True
+        
+    def setupFields(self):
+
+        self.previous_isbn = ""
+            
+        self.detail_fields = [
+            self.ui.input_isbnAdd,
+            self.ui.input_titleAdd,
+            self.ui.input_authorAdd,
+            self.ui.input_compAdd,
+            self.ui.input_yearAdd
+        ]
+
+        self.input_fields = {
+            "input_titleAdd"    : self.ui.input_titleAdd,
+            "input_authorAdd"   : self.ui.input_authorAdd,
+            "input_isbnAdd"     : self.ui.input_isbnAdd,
+            "input_compAdd"     : self.ui.input_compAdd,
+            "input_yearAdd"     : self.ui.input_yearAdd,
+            "input_quantityAdd" : self.ui.input_quantityAdd,
+            "input_stageAdd"    : self.ui.input_stageAdd
+        }
+
+        self.ui.input_isbnAdd.setMaxLength(13)
+        isbn_validator = QRegularExpressionValidator(QRegularExpression(r'^\d{1,13}$'), self.ui.input_isbnAdd)
+        self.ui.input_isbnAdd.setValidator(isbn_validator)
+        self.ui.input_titleAdd.setMaxLength(100)
+        self.ui.input_authorAdd.setMaxLength(100)
+        self.ui.input_compAdd.setMaxLength(100)
+        self.ui.input_yearAdd.setValidator(QIntValidator(1000, 9999))
+        self.ui.input_quantityAdd.setMaximum(999999)  
+
+
+
+    def hideSubmitButtons(self, all: bool):
+        self.ui.submit_btn.hide()
+        self.ui.cancel_btnAdd.hide()
+        if all:
+            self.ui.enter_btn.hide()
+        else:
+            self.ui.enter_btn.show()
+
+    def hideInputFields(self):
+        
+        for field in self.input_fields.values():
+            if field != self.ui.input_isbnAdd:
+                field.hide()
+
+        labels = [
+            self.ui.title,
+            self.ui.author,
+            self.ui.public_comp,
+            self.ui.public_year,
+            self.ui.quantity,
+            self.ui.stage
+        ]
+
+        for label in labels:
+            label.hide()
+
+    def showInputFields(self):
+        for field in self.input_fields.values():
+            if field != self.ui.input_stageAdd:
+                field.show()
+        labels = [
+            self.ui.title,
+            self.ui.author,
+            self.ui.public_comp,
+            self.ui.public_year,
+            self.ui.quantity,
+            self.ui.stage
+        ]
+
+        for label in labels:
+            label.show()
+
     def enterButtonClicked(self):
         try:
 
             isbn = self.ui.input_isbnAdd.text().strip()
             
-
             if not isbn:
                 self.showMessageBox("Error", "Please enter the ISBN", QMessageBox.Icon.Warning)
                 return
@@ -225,8 +218,7 @@ class AddBook_UI:
             self.isbn_checked = True
             self.previous_isbn = isbn
             self.ui.input_isbnAdd.editingFinished.connect(self.isbnEdited)
-            
-
+        
 
         except Exception as e:
             self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
@@ -259,12 +251,6 @@ class AddBook_UI:
             else:
                 self.ui.input_isbnAdd.setText(self.previous_isbn)
 
-    # def showCheckButton(self):
-    #     if self.isbn_checked:
-    #         self.ui.check_btn.hide()
-    #     else:
-    #         self.ui.check_btn.show()
-
  
     def showBookDetail(self, existing_book: BooksBookMarcData):
         try:
@@ -280,22 +266,7 @@ class AddBook_UI:
         except Exception as e:
             self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
             return
-            
-    def showInputFields(self):
-        self.ui.input_titleAdd.show()
-        self.ui.input_authorAdd.show()
-        self.ui.input_compAdd.show()
-        self.ui.input_yearAdd.show()
-        self.ui.input_quantityAdd.show()
-        self.ui.input_stageAdd.show()
-
-        self.ui.title.show()
-        self.ui.author.show()
-        self.ui.public_comp.show()
-        self.ui.public_year.show()
-        self.ui.quantity.show()
-        self.ui.stage.show()
-
+  
     def showSubmitButtons(self):
         self.ui.submit_btn.show()
         self.ui.cancel_btnAdd.show()
@@ -437,8 +408,6 @@ class AddBook_UI:
 
     def cancelButtonClicked(self):
         try:
-           
-
             reply = QMessageBox.question(self.ui, "Cancel", "Are you sure you want to cancel?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
 
             if reply == QMessageBox.StandardButton.Yes:
@@ -450,22 +419,17 @@ class AddBook_UI:
         except Exception as e:
             self.showMessageBox("Error", f"Error: {str(e)}", QMessageBox.Icon.Critical)
             return
-    
-    def checkAllInputFieldsEmpty(self):
-        all_empty = (
-            self.ui.input_titleAdd.text().strip() == "" and
-            self.ui.input_authorAdd.text().strip() == "" and
-            self.ui.input_compAdd.text().strip() == "" and
-            self.ui.input_yearAdd.text().strip() == "" and
-            self.ui.input_quantityAdd.value() == 0 and
-            self.ui.input_stageAdd.currentIndex() == -1
-        )
-        if all_empty:
-            self.hideSubmitButtons(True)
-            return True
 
+    def showNotification(self, message: str):
+        self.ui.messageAdd.setText(message)
+        self.ui.messageAdd.show()
 
-        
+    def showMessageBox(self, title:str, message:str, icon: QMessageBox.Icon):
+        msg = QMessageBox()
+        msg.setWindowTitle(title)
+        msg.setText(message)
+        msg.setIcon(icon)
+        msg.exec()
 
     
     

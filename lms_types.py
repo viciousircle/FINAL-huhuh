@@ -8,8 +8,8 @@ T = TypeVar('T')
 @dataclass
 class UsersAccountData:
     admin_id: Optional[str]
-    password: Optional[str]
     admin_name: Optional[str]
+    password: Optional[str]
 
 @dataclass
 class UsersHistoryData:

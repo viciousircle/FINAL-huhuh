@@ -25,6 +25,8 @@ class MainWindow_UI(QMainWindow):
         
         super().__init__()        
         self.db_session = db_session
+
+        self.db_session.connect()
         
         designer_files_path = Path(__file__).resolve().parent.joinpath("designer-files", self.DESIGNER_FILE)
         self.ui = uic.loadUi(designer_files_path, self)
@@ -32,7 +34,7 @@ class MainWindow_UI(QMainWindow):
         if guest:
             self.guestWindow(guest_name)
         else:
-            self.adminWindow(account_id, account_name)
+            self.adminWindow(str(account_id), str(account_name))
 
         self.show()
 
