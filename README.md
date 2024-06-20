@@ -33,3 +33,8 @@ pip install -r requirements.txt
 ```sh
 python main.py 
 ```
+```sh
+Admin ID: 100001
+Password: 5
+``` 
+
