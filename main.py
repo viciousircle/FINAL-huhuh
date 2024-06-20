@@ -1,3 +1,9 @@
+# FULL NAME: Vũ Thị Minh Quý
+# MSSV: 20227257
+# CLASS: 150328
+# PROJECT: 04 - Library Management System
+# DATE: 20/06/2024 
+
 from PyQt6.QtWidgets import QApplication
 from ui import Login_UI
 from db import DBSession
