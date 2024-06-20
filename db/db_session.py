@@ -1,6 +1,5 @@
 import sqlite3
 from typing import Optional, Generator, Tuple
-from datetime import datetime
 import os
 from db.lms_types import UsersAccountData, BooksBookMarcData, BooksBookData
 from db.data_lms import dbBookMarcToBinFile, dbBookToBinFile
