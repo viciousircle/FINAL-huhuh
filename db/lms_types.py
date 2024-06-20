@@ -1,30 +1,19 @@
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import TypeVar, Union, Optional, Literal
 
-
+# Type variable for generic typing
 T = TypeVar('T')
 
 @dataclass
 class UsersAccountData:
+    """
+    Data class representing the user account information.
+    """
     admin_id: Optional[str]
     admin_name: Optional[str]
     password: Optional[str]
 
-@dataclass
-class UsersHistoryData:
-    admin_id: Optional[str]
-    book_id: Optional[int]
-    isbn: Optional[str]
-    warehouse_id: Optional[int]
-    timestamp: Optional[datetime]
-
-@dataclass
-class UsersGuestData:
-    guest_id: Optional[int]
-    guest_name: Optional[str]
-    timestamp: Optional[datetime]
-
+# Type alias for execution results, which can be a success or failure tuple
 ExecuteResult = Union[
     tuple[Literal[True], T],
     tuple[Literal[False], str]
@@ -32,6 +21,9 @@ ExecuteResult = Union[
 
 @dataclass
 class BooksBookMarcData:
+    """
+    Data class representing the book bibliographic information.
+    """
     title: Optional[str]
     author: Optional[str]
     public_year: Optional[int]
@@ -41,10 +33,11 @@ class BooksBookMarcData:
     
 @dataclass
 class BooksBookData:
+    """
+    Data class representing the book inventory information.
+    """
     quantity: Optional[int]
     stage: Optional[str]
-    isbn : Optional[str]
+    isbn: Optional[str]
     book_id: Optional[int] = field(default=None)
     warehouse_id: Optional[int] = field(default=None)
-
-
