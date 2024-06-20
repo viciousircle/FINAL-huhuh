@@ -4,15 +4,17 @@
 import sqlite3
 from typing import Optional, Generator, Tuple
 from datetime import datetime
-from lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
-from data_lms import createDatabase, dbBookMarcToBinFile, dbBookToBinFile
+from db.lms_types import UsersAccountData, UsersHistoryData, UsersGuestData, BooksBookMarcData, BooksBookData, ExecuteResult
+from db.data_lms import dbBookMarcToBinFile, dbBookToBinFile
+import os
 
 class DBSession:
     
 
     def __init__(self) -> None:
-        
-        self.connection = sqlite3.connect('LMS.db')
+
+        db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../db/LMS.db'))
+        self.connection = sqlite3.connect(db_path)
         self.cursor = self.connection.cursor()
         
     
@@ -396,7 +398,8 @@ class DBSession:
             raise err
         
     def connect(self) -> None:
-        self.connection = sqlite3.connect('LMS.db')
+        db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../db/LMS.db'))
+        self.connection = sqlite3.connect(db_path)
         self.cursor = self.connection.cursor()
 
     def close(self) -> None:

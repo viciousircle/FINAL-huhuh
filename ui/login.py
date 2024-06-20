@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from db_session import DBSession
+from db.db_session import DBSession
 
 # ---------LOGIN_UI CLASS--------------------------------
 class Login_UI(QMainWindow):
@@ -55,7 +55,7 @@ class Login_UI(QMainWindow):
 
         # Check if username and password are correct
         if admin_data is not None:
-            from mainwindow import MainWindow_UI
+            from ui.mainwindow import MainWindow_UI
             main_window = MainWindow_UI(self.db_session, admin_data.admin_id, admin_data.admin_name, None, guest=False)  
             main_window.show()
             self.close()

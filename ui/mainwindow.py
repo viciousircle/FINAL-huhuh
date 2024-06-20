@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from db_session import DBSession
+from db.db_session import DBSession
 
 from ui import Navigation_UI, ShowFile_UI, EditBook_UI, AddBook_UI, SearchBook_UI, Home_UI
 

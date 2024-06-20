@@ -7,8 +7,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from db_session import DBSession
-from lms_types import BooksBookMarcData, BooksBookData
+from db.db_session import DBSession
+from db.lms_types import BooksBookMarcData, BooksBookData
 
 # ------SHOWFILE_UI CLASS---------------------------------
 class ShowFile_UI:

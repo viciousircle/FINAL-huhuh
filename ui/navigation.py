@@ -2,7 +2,7 @@
 import sys
 import os
 from PyQt6.QtWidgets import  QPushButton, QMessageBox, QLabel
-from db_session import DBSession
+from db.db_session import DBSession
 from typing import Optional
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

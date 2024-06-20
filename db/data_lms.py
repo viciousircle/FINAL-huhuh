@@ -1,10 +1,13 @@
 import sqlite3
 import pyodbc
 import pickle
+import os
+
+db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../db/LMS.db'))
 
 def createDatabase():
 
-    conn = sqlite3.connect('LMS.db')  
+    conn = sqlite3.connect(db_path)  
     cursor = conn.cursor()  
 
     cursor.execute('''
