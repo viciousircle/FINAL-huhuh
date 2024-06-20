@@ -161,8 +161,7 @@ class AddBook_UI:
 
     def showInputFields(self):
         for field in self.input_fields.values():
-            if field != self.ui.input_stageAdd:
-                field.show()
+            field.show()
         labels = [
             self.ui.title,
             self.ui.author,
@@ -375,7 +374,7 @@ class AddBook_UI:
             not self.ui.input_compAdd.text().strip() and
             not self.ui.input_yearAdd.text().strip() and
             self.ui.input_quantityAdd.text() == 0 and
-            self.ui.input_stageAdd.currentText() == -1
+            self.ui.input_stageAdd.currentIndex() == -1
         )
 
         if not empty:
