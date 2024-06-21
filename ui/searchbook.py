@@ -1,16 +1,25 @@
+# FULL NAME: Vũ Thị Minh Quý
+# MSSV: 20227257
+# CLASS: 150328
+# PROJECT: 04 - Library Management System
+# DATE: 20/06/2024 
 # ------IMPORTS------------------------------------------
-from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel,QLineEdit,QSpinBox,QStackedWidget,QHeaderView,QFrame
-from PyQt6.QtCore import Qt,QDate, QRegularExpression
-from PyQt6.QtGui import QFont, QColor, QIntValidator, QRegularExpressionValidator
+from PyQt6.QtWidgets import QTableWidgetItem, QTableWidget, QPushButton, QMessageBox, QComboBox, QLabel, QLineEdit, QSpinBox, QStackedWidget, QHeaderView, QFrame
+from PyQt6.QtCore import Qt, QRegularExpression
+from PyQt6.QtGui import QFont, QIntValidator, QRegularExpressionValidator
 import sys
 import os
+
+# Ensure the project root is in the system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from db_session import DBSession
-from lms_types import BooksBookMarcData, BooksBookData
+# Import necessary modules from the project
+from db.db_session import DBSession
+from db.lms_types import BooksBookMarcData, BooksBookData
 
-# ------SEARCHBOOK_UI CLASS---------------------------------
+# ------SEARCHBOOK_UI CLASS (Continued)--------------------
 class SearchBook_UI:
+
     # List of objects in .ui file related to this module
     input_filterSearch      : QComboBox
     input_findSearch        : QLineEdit
@@ -30,24 +39,33 @@ class SearchBook_UI:
     input_quantityEdit      : QSpinBox
     input_stageEdit         : QComboBox
     
-    
     def __init__(self, ui, db_session: DBSession):
-        
+        """
+        Initialize the SearchBook_UI instance.
+
+        Args:
+        - ui: The UI instance containing necessary widgets.
+        - db_session: Database session object for querying data.
+        """
         # Connect to the database session
         self.ui         = ui
         self.db_session = db_session
 
+        # Connect signals and set up initial state
         self.connectSignals()
         self.initialize()
 
-        
     def connectSignals(self):
-
-
+        """
+        Connect signals from UI components to their respective functions.
+        """
         self.ui.find_btn.pressed.connect(self.findButtonClicked)
         self.ui.search_table.cellClicked.connect(self.displayBookDetails)
 
     def initialize(self):
+        """
+        Initialize UI components and state.
+        """
         self.hideButtons(all=True)
         self.ui.detail_box.hide()
 
@@ -56,6 +74,12 @@ class SearchBook_UI:
         self.initial_find_values = {}
 
     def hideButtons(self, all: bool):
+        """
+        Hide or show buttons based on 'all' flag.
+
+        Args:
+        - all: Boolean flag to determine if all buttons should be hidden.
+        """
         self.ui.delete_btn.hide()
         self.ui.save_btn.hide()
         self.ui.cancel_btn.hide()
@@ -65,7 +89,9 @@ class SearchBook_UI:
             self.ui.edit_btn.show()
 
     def setupFields(self):
-            
+        """
+        Set up input fields with validators and maximum lengths.
+        """
         self.detail_fields = [
             self.ui.input_warehouse_idEdit,
             self.ui.input_titleEdit,
@@ -95,8 +121,14 @@ class SearchBook_UI:
         self.ui.input_compEdit.setMaxLength(100)
         self.ui.input_yearEdit.setValidator(QIntValidator(1000, 9999))
         self.ui.input_quantityEdit.setMaximum(999999)  
-     
+
     def findButtonClicked(self, clear: bool = True):
+        """
+        Handle the click event of the Find button.
+
+        Args:
+        - clear: Boolean flag to determine if table and detail fields should be cleared.
+        """
         try:
             if clear:
                 self.clearTableAndDetailFields()
@@ -107,16 +139,11 @@ class SearchBook_UI:
             search_query = self.ui.input_findSearch.text().strip()
             
             if not search_query:
-
                 self.showMessageBox("Search", "Please enter a search query.", QMessageBox.Icon.Warning)
-                
                 self.ui.input_filterSearch.setCurrentIndex(-1)
-
-                
                 self.hideButtons(all=True)
-
                 return
-                        
+
             filter_criteria = self.ui.input_filterSearch.currentText()
             column_name     = self.getColumnFromFilter(filter_criteria)
             search_results = list(self.db_session.searchBook(column_name, search_query))
@@ -127,8 +154,6 @@ class SearchBook_UI:
                     'input_findSearch': search_query,
                     'input_filterSearch': filter_criteria
                 }
-
-                
             else:
                 self.showMessageBox("Search", "No results found.", QMessageBox.Icon.Warning)
                 
@@ -136,11 +161,14 @@ class SearchBook_UI:
             print("Error searching book information:", e)
             self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
 
-    # def getInitialFindValues(self):
-        
-
     def populateTableWithResults(self, search_results, filter_criteria):
-        # Display search results in the table
+        """
+        Populate the search_table with search results.
+
+        Args:
+        - search_results: List of tuples containing search results.
+        - filter_criteria: Current filter criteria selected.
+        """
         self.ui.search_table.setRowCount(len(search_results))
         column_count = len(search_results[0]) if search_results else 0
         self.ui.search_table.setColumnCount(column_count)
@@ -149,16 +177,28 @@ class SearchBook_UI:
         self.fillTableWithData(search_results)
         self.adjustColumnWidths(self.ui.search_table)
 
-    # def updateTable(self, initial_find_values):
-    #     self.populateTableWithResults(self, initial_find_values['input_findSearch'], initial_find_values['input_filterSearch'])
-
     def getHeaderLabels(self, filter_criteria: str) -> list[str]:
+        """
+        Determine header labels based on filter criteria.
+
+        Args:
+        - filter_criteria: Current filter criteria selected.
+
+        Returns:
+        - List of header labels.
+        """
         if filter_criteria in ["Book ID", "Title", "ISBN", "Warehouse ID", ""]:
             return ['Book ID', 'Title', 'ISBN', 'Warehouse ID']
         else:
             return ['Book ID', 'Title', 'ISBN', 'Warehouse ID', filter_criteria]
         
     def setTableHeaders(self, header_labels: list[str]):
+        """
+        Set headers for the search_table.
+
+        Args:
+        - header_labels: List of header labels.
+        """
         for col_idx, header in enumerate(header_labels):
             item = QTableWidgetItem(header)
             font = item.font()
@@ -167,6 +207,12 @@ class SearchBook_UI:
             self.ui.search_table.setHorizontalHeaderItem(col_idx, item)
 
     def fillTableWithData(self, search_results: list[tuple]):
+        """
+        Fill search_table with data.
+
+        Args:
+        - search_results: List of tuples containing search results.
+        """
         for row_idx, row_data in enumerate(search_results):
             for col_idx, value in enumerate(row_data):
                 item = QTableWidgetItem(str(value))
@@ -174,6 +220,15 @@ class SearchBook_UI:
                 self.ui.search_table.setItem(row_idx, col_idx, item)
 
     def getColumnFromFilter(self, filter_criteria: str) -> str:
+        """
+        Map filter criteria to database column name.
+
+        Args:
+        - filter_criteria: Current filter criteria selected.
+
+        Returns:
+        - Corresponding database column name.
+        """
         column_mapping = {
             "Book ID"       : "book_id",
             "Warehouse ID"  : "warehouse_id",
@@ -191,11 +246,22 @@ class SearchBook_UI:
         return column_mapping.get(filter_criteria, None)
 
     def clearTableAndDetailFields(self):
+        """
+        Clear contents of search_table and detail input fields.
+        """
         self.ui.search_table.clearContents()
         self.ui.search_table.setRowCount(0)
         self.clearDetailFields()
 
     def showMessageBox(self, title: str, message: str, icon: QMessageBox.Icon):
+        """
+        Display a message box with specified title, message, and icon.
+
+        Args:
+        - title: Title of the message box.
+        - message: Content of the message.
+        - icon: Icon type for the message box.
+        """
         msg_box = QMessageBox()
         msg_box.setWindowTitle(title)
         msg_box.setText(message)
@@ -203,6 +269,13 @@ class SearchBook_UI:
         msg_box.exec()
 
     def displayBookDetails(self, row, column):
+        """
+        Display details of the selected book in the detail_box.
+
+        Args:
+        - row: Row index of the selected cell.
+        - column: Column index of the selected cell.
+        """
         try:
             self.ui.message_edit.clear()
             self.ui.check_btn.hide()
@@ -212,7 +285,7 @@ class SearchBook_UI:
                 return
             
             book_id = int(book_id_item.text())
-            warehouse_id_item = self.ui.search_table.item(row, 3)  
+            warehouse_id_item = self.ui.search_table.item(row             , 3)  # Assuming warehouse_id is in column 3
 
             if warehouse_id_item is None:
                 self.showMessageBox("Error", "Warehouse ID not found.", QMessageBox.Icon.Warning)
@@ -235,21 +308,30 @@ class SearchBook_UI:
             self.ui.detail_box.show()
             self.disableEditFields()
 
-
         except Exception as e:
             self.showMessageBox("Error", str(e), QMessageBox.Icon.Critical)
 
-    def disableEditFields(self,):
+    def disableEditFields(self):
+        """
+        Disable editing for all detail input fields.
+        """
         for field in self.detail_fields:
             field.setDisabled(True)
             field.setStyleSheet("""
                 background-color: lightgrey;
                 color: black;
                 border: 2px solid black;
-                                """)
+            """)
 
     def setDataFields(self, bookMarcData: BooksBookMarcData, bookData: BooksBookData, warehouse_id: int):
+        """
+        Set data fields with values retrieved from database.
 
+        Args:
+        - bookMarcData: Object containing book MARC data.
+        - bookData: Object containing book data.
+        - warehouse_id: ID of the warehouse where the book is located.
+        """
         self.ui.input_titleEdit.setText(bookMarcData.title)
         self.ui.input_authorEdit.setText(bookMarcData.author)
         self.ui.input_isbnEdit.setText(bookMarcData.isbn)
@@ -273,13 +355,20 @@ class SearchBook_UI:
         self.old_bookMarcData = bookMarcData
         self.old_bookData = bookData
 
-    
     def adjustColumnWidths(self, table):
+        """
+        Adjust column widths of the specified table.
+
+        Args:
+        - table: TableWidget object to adjust column widths for.
+        """
         table.resizeColumnsToContents()
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         
     def clearDetailFields(self):
-        """Clear the book detail input fields."""
+        """
+        Clear all input fields in the detail_box.
+        """
         for field in self.detail_fields:
             if isinstance(field, QLineEdit):
                 field.clear()
@@ -287,3 +376,5 @@ class SearchBook_UI:
                 field.setValue(0)
             elif isinstance(field, QComboBox):
                 field.setCurrentIndex(-1)
+
+

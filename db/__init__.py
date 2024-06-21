@@ -3,5 +3,7 @@
 # CLASS: 150328
 # PROJECT: 04 - Library Management System
 # DATE: 20/06/2024 
-# Auto detect text files and perform LF normalization
-* text=auto
+
+from .db_session import DBSession
+
+__all__ = ['DBSession']

@@ -1,11 +1,19 @@
+
+# FULL NAME: Vũ Thị Minh Quý
+# MSSV: 20227257
+# CLASS: 150328
+# PROJECT: 04 - Library Management System
+# DATE: 20/06/2024 
+
+# ----IMPORTS------------------------------------------
 from PyQt6.QtWidgets import QPushButton, QMessageBox, QComboBox, QLineEdit, QSpinBox
 from PyQt6.QtCore import QRegularExpression
 from PyQt6.QtGui import QRegularExpressionValidator, QIntValidator
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from db_session import DBSession
-from lms_types import BooksBookMarcData, BooksBookData
+from db.db_session import DBSession
+from db.lms_types import BooksBookMarcData, BooksBookData
 
 class AddBook_UI:
     # List of objects in .ui file related to this module
@@ -161,8 +169,7 @@ class AddBook_UI:
 
     def showInputFields(self):
         for field in self.input_fields.values():
-            if field != self.ui.input_stageAdd:
-                field.show()
+            field.show()
         labels = [
             self.ui.title,
             self.ui.author,
@@ -375,7 +382,7 @@ class AddBook_UI:
             not self.ui.input_compAdd.text().strip() and
             not self.ui.input_yearAdd.text().strip() and
             self.ui.input_quantityAdd.text() == 0 and
-            self.ui.input_stageAdd.currentText() == -1
+            self.ui.input_stageAdd.currentIndex() == -1
         )
 
         if not empty:

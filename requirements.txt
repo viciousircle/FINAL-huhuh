@@ -3,5 +3,8 @@
 # CLASS: 150328
 # PROJECT: 04 - Library Management System
 # DATE: 20/06/2024 
-# Auto detect text files and perform LF normalization
-* text=auto
+
+pyodbc==5.1.0
+PyQt6==6.7.0
+PyQt6-Qt6==6.7.1
+PyQt6-sip==13.6.0
